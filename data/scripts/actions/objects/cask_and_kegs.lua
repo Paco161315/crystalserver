@@ -1,61 +1,96 @@
 local targetIdList = {
-	[25879] = { itemId = 285, transform = 266 },
-	[25880] = { itemId = 283, transform = 236 },
-	[25881] = { itemId = 284, transform = 239 },
-	[25882] = { itemId = 284, transform = 7643 },
-	[25883] = { itemId = 284, transform = 23375 },
-	[25889] = { itemId = 285, transform = 268 },
-	[25890] = { itemId = 283, transform = 237 },
-	[25891] = { itemId = 284, transform = 238 },
-	[25892] = { itemId = 284, transform = 23373 },
-	[25899] = { itemId = 284, transform = 7642 },
-	[25900] = { itemId = 284, transform = 23374 },
-	[25903] = { itemId = 285, transform = 266 },
-	[25904] = { itemId = 283, transform = 236 },
-	[25905] = { itemId = 284, transform = 239 },
-	[25906] = { itemId = 284, transform = 7643 },
-	[25907] = { itemId = 284, transform = 23375 },
-	[25908] = { itemId = 285, transform = 268 },
-	[25909] = { itemId = 283, transform = 237 },
-	[25910] = { itemId = 284, transform = 238 },
-	[25911] = { itemId = 284, transform = 23373 },
-	[25913] = { itemId = 284, transform = 7642 },
-	[25914] = { itemId = 284, transform = 23374 },
+    --health potions casks
+    [25879] = { transform = 266, house = true }, -- Health Potion --
+    [25880] = { transform = 236, house = true }, -- Strong Health --
+    [25881] = { transform = 239, house = true }, -- Great Health --
+    [25882] = { transform = 7643, house = true }, -- Ultimate Health --
+    [25883] = { transform = 23375, house = true }, -- Supreme Health --
+    --mana potions casks
+    [25889] = { transform = 268, house = true }, -- Mana Potion --
+    [25890] = { transform = 237, house = true }, -- Strong Mana --
+    [25891] = { transform = 238, house = true }, -- Great Mana --
+    [25892] = { transform = 23373, house = true }, -- Ultimate Mana --
+    --spirit potions casks
+    [25899] = { transform = 7642, house = true }, -- Great Spirit --
+    [25900] = { transform = 23374, house = true }, -- Ultimate Spirit --
+    --health potions kegs
+    [25903] = { transform = 266 }, -- Health Potion --
+    [25904] = { transform = 236 }, -- Strong Health --
+    [25905] = { transform = 239 }, -- Great Health --
+    [25906] = { transform = 7643 }, -- Ultimate Health --
+    [25907] = { transform = 23375 }, -- Supreme Health --
+    --mana potion kegs
+    [25908] = { transform = 268 }, -- Mana Potion --
+    [25909] = { transform = 237 }, -- Strong Mana --
+    [25910] = { transform = 238 }, -- Great Mana --
+    [25911] = { transform = 23373 }, -- Ultimate Mana --
+    --spirit potions kegs
+    [25913] = { transform = 7642 }, -- Great Spirit --
+    [25914] = { transform = 23374 }, -- Ultimate Spirit --
 }
+
+local emptyVials = { 283, 284, 285 } -- empty vial IDs
 
 local flasks = Action()
 
 function flasks.onUse(player, item, fromPosition, target, toPosition, isHotkey)
-	if not target or not target:getItem() then
-		return false
-	end
+    local targetId = targetIdList[item:getId()] -- check list
 
-	local charges = target:getCharges()
-	local itemCount = item:getCount()
-	if itemCount > charges then
-		itemCount = charges
-	end
+    if not targetId then
+        return false
+    end
 
-	local targetId = targetIdList[target:getId()]
-	if targetId and item:getId() == targetId.itemId and charges > 0 then
-		local potMath = item:getCount() - itemCount
-		local parent = item:getParent()
-		if not (parent:isContainer() and parent:addItem(item:getId(), potMath)) then
-			player:addItem(item:getId(), potMath, true)
-		end
+    local charges = item:getCharges()
+    if charges <= 0 then
+        player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "The keg has run dry.")
+        -- Delete keg when charges are 0
+        item:remove()
+        return true
+    end
 
-		item:transform(targetId.transform, itemCount)
-		charges = charges - itemCount
-		target:transform(target:getId(), charges)
-		player:sendTextMessage(MESSAGE_EVENT_ADVANCE, string.format("Remaining %s charges.", charges))
+    -- Check if player has empty vials
+    local totalVialsFilled = 0
 
-		if charges == 0 then
-			target:remove()
-		end
-		return true
-	end
-	return false
+    for _, vialId in pairs(emptyVials) do
+        local vialCount = player:getItemCount(vialId)
+
+        -- limit de aumont of vials to the remaining cask charges
+        local fillableVials = math.min(vialCount, charges)
+
+        if fillableVials > 0 then
+            -- check if the item is at a house
+            if targetId.house and not player:getTile():getHouse() then
+                player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "You need to be in a house to use this.")
+                return false
+            end
+
+            -- refill empty vials
+            player:removeItem(vialId, fillableVials)
+            player:addItem(targetId.transform, fillableVials)
+            totalVialsFilled = totalVialsFilled + fillableVials
+            charges = charges - fillableVials -- Restar las cargas del barril
+        end
+    end
+
+    -- update cask charges
+    item:transform(item:getId(), charges)
+
+    -- messages to players
+    if totalVialsFilled > 0 then
+        player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "You refilled " .. totalVialsFilled .. " vial(s).")
+    else
+        player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "You don't have any empty vials to refill.")
+    end
+
+    -- Si el barril se queda sin cargas, eliminarlo
+    if charges == 0 then
+        player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "The keg is empty and has been removed.")
+        item:remove()
+    end
+
+    return true
 end
 
-flasks:id(283, 284, 285)
+flasks:id(25879, 25880, 25881, 25882, 25883, 25889, 25890, 25891, 25892, 25899, 25900,
+          25903, 25904, 25905, 25906, 25907, 25908, 25909, 25910, 25911, 25913, 25914)
 flasks:register()
