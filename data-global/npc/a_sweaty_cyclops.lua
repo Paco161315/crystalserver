@@ -192,7 +192,28 @@ local function creatureSayCallback(npc, creature, type, message)
 			npcHandler:setTopic(playerId, 0)
 		end
 	end
-
+-- cup of molten gold
+	if MsgContains(message, "melt") then
+		npcHandler:say("Can melt gold ingot for li'l one. You want?", npc, creature)
+		npcHandler:setTopic(playerId, 10)
+	elseif MsgContains(message, "yes") and npcHandler:getTopic(playerId) == 10 then
+		if player:removeItem(9058, 1) then
+			npcHandler:say("Whoooosh There!", npc, creature)
+			player:addItem(8775, 1)
+			npcHandler:setTopic(playerId, 0)
+		end
+	end
+-- gear wheel
+	if MsgContains(message, "gear wheel") then
+		npcHandler:say("Want to make gear wheel from an iron ore li'l one?", npc, creature)
+		npcHandler:setTopic(playerId, 11)
+	elseif MsgContains(message, "yes") and npcHandler:getTopic(playerId) == 11 then
+		if player:removeItem(5880, 1) then
+			npcHandler:say("Cling clang!", npc, creature)
+			player:addItem(8775, 1)
+			npcHandler:setTopic(playerId, 0)
+		end
+	end
 	return true
 end
 
