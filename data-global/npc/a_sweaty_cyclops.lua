@@ -192,7 +192,52 @@ local function creatureSayCallback(npc, creature, type, message)
 			npcHandler:setTopic(playerId, 0)
 		end
 	end
-
+-- cup of molten gold
+	if MsgContains(message, "melt") then
+		npcHandler:say("Can melt gold ingot for li'l one. You want?", npc, creature)
+		npcHandler:setTopic(playerId, 10)
+	elseif MsgContains(message, "yes") and npcHandler:getTopic(playerId) == 10 then
+		if player:removeItem(9058, 1) then
+			npcHandler:say("Whoooosh There!", npc, creature)
+			player:addItem(8775, 1)
+			npcHandler:setTopic(playerId, 0)
+		end
+	end
+-- gear wheel
+	if MsgContains(message, "gear wheel") then
+		npcHandler:say("Want to make gear wheel from an iron ore li'l one?", npc, creature)
+		npcHandler:setTopic(playerId, 11)
+	elseif MsgContains(message, "yes") and npcHandler:getTopic(playerId) == 11 then
+		if player:removeItem(5880, 1) then
+			npcHandler:say("Cling clang!", npc, creature)
+			player:addItem(8775, 1)
+			npcHandler:setTopic(playerId, 0)
+		end
+	end
+-- Broken Amulet Pieces Quest
+	if MsgContains(message, "amulet") then
+		npcHandler:say("Me can do unbroken but Big Ben want gold 5000 and Big Ben need all four pieces. {Yes}?", npc, creature)
+		npcHandler:setTopic(playerId, 12)	
+	elseif MsgContains(message, "yes") and npcHandler:getTopic(playerId) == 12 then
+	if player:removeMoneyBank(5000) then
+	 if player:getItemCount(7528) > 0 and player:getItemCount(7529) > 0 and player:getItemCount(7530) > 0 and player:getItemCount(7531) > 0 then
+        player:removeItem(7528, 1)
+        player:removeItem(7529, 1)
+        player:removeItem(7530, 1)
+        player:removeItem(7531, 1)
+		player:addItem(7532, 1)
+        npcHandler:say("Well, well, I do that! Big Ben unbroken amulet with big Hammer big hands! No worry! Here! Have it! Mighty, mighty amulet lil'one has. Don't know what but mighty, mighty it is!!! ", npc, creature)
+		npcHandler:setTopic(playerId, 0)
+    else
+        npcHandler:say("Lil' one not have all pieces! Bring all four pieces.", npc, creature)
+		npcHandler:setTopic(playerId, 0)
+	end
+	    else
+	    npcHandler:say("Lil'one has not enough money.", npc, creature)
+		npcHandler:setTopic(playerId, 0)
+	end
+    end
+	
 	return true
 end
 
