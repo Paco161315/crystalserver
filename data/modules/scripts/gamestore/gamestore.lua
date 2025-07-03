@@ -2930,7 +2930,7 @@ GameStore.Categories = {
 			},
 			{
 				icons = { "Outfit_Necromancer_Male_Addon_3.png", "Outfit_Necromancer_Female_Addon_3.png" },
-				name = "Full Martial Artist Outfit",
+				name = "Full Necromancer Outfit",
 				price = 870,
 				sexId = { female = 1846, male = 1845 },
 				addon = 3,
