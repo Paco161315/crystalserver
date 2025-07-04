@@ -7,6 +7,7 @@
 	<raid name="RotwormQueen4" file="abdendriel/rotworm_queen.xml" interval2="500" margin="60" />
 	<raid name="WarWolf" file="abdendriel/warwolf.xml" interval2="500" margin="30" />
 	<raid name="WaspBear" file="abdendriel/wasp_bear.xml" interval2="500" margin="40" />
+	<raid name="WhiteDeers" file="abdendriel/white_deers.xml" interval2="1440" margin="120" />
 	<raid name="Zevelon" file="abdendriel/zevelon_duskbringer.xml" interval2="500" margin="80" />
 
 	<!-- Ankrahmun -->
