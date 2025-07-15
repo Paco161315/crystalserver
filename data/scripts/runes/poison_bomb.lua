@@ -24,7 +24,8 @@ function rune.onCastSpell(creature, var, isHotkey)
         rune:setPzLocked(true)
         return true
     else
-        combatNoPvp:execute(creature, var)
+        --combatNoPvp:execute(creature, var) -- monsters ignore non-pvp fields for some unknown reason, enable at your own risk
+		combatPvp:execute(creature, var)
         return true
     end
 end
