@@ -81327,6 +81327,9 @@ Granted by TibiaGoals.com" />
 		<attribute key="decayTo" value="49150" />
 		<attribute key="duration" value="5" />
 	</item>
+	<item id="49161" name="stairs">
+		<attribute key="floorchange" value="down" />
+	</item>
 	<item id="49163" article="an" name="ominous soul core">
 		<attribute key="primarytype" value="soul cores" />
 		<attribute key="description" value="Offers a soul to the Soulpit. Combine with an exalted core to turn it into a lesser soul core." />
@@ -81335,9 +81338,6 @@ Granted by TibiaGoals.com" />
 	<item id="49164" article="a" name="soul prism">
 		<attribute key="description" value="Focalises the soul within a core. Can be used to turn a soul core into a greater version" />
 		<attribute key="weight" value="100" />
-	</item>
-	<item id="49161" name="stairs">
-		<attribute key="floorchange" value="down" />
 	</item>
 	<item id="49271" article="a" name="transcendence potion">
 		<attribute key="primarytype" value="liquids" />
@@ -82986,8 +82986,12 @@ Granted by TibiaGoals.com" />
 		<attribute key="description" value="Offers a soul to the Soulpit. Combine with another soul core to create a random new soul core." />
 		<attribute key="weight" value="100" />
 	</item>
-	<item id="50122" article="a" name="stair" />
-	<item id="50123" article="a" name="stair" />
+	<item id="50122" article="a" name="ladder" >
+		<attribute key="type" value="ladder" />
+	</item>
+	<item id="50123" article="a" name="ladder" >
+		<attribute key="type" value="ladder" />
+	</item>
 	<item id="50124" article="a" name="arbaziloth santa">
 		<attribute key="primarytype" value="dolls and bears" />
 		<attribute key="weight" value="100" />
