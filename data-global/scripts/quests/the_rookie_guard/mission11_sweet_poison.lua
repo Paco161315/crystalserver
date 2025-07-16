@@ -55,7 +55,7 @@ local specialFlask = Action()
 
 function specialFlask.onUse(player, item, frompos, item2, topos)
 	local missionState = player:getStorageValue(Storage.Quest.U9_1.TheRookieGuard.Mission11)
-	if missionState == 2 and item2.itemid == 5989 then
+	if item2.itemid == 5989 then
 		player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "You carefully gather some of the wasp poison. Bring it back to Vascalir.")
 		player:setStorageValue(Storage.Quest.U9_1.TheRookieGuard.Mission11, 3)
 		player:removeItem(12785, 1)
