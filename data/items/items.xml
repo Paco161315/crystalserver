@@ -8170,6 +8170,10 @@
 		<attribute key="description" value="(This item has 2 charges left)" />
 		<attribute key="weight" value="600" />
 	</item>
+	<!--<item id="3247" article="a" name="djinn's lamp"> -- delete original 3247 and add this in case you want to implement this feature
+		<attribute key="description" value="Summons a trader Djinn to your location"/>
+		<attribute key="weight" value="600" />
+	</item>-->
 	<item id="3248" article="a" name="portable hole">
 		<attribute key="primarytype" value="utilities" />
 	</item>
