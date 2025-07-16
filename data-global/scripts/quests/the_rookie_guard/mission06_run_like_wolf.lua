@@ -135,33 +135,34 @@ warWolfDenTiles:register()
 -- War wolf den boost tiles
 
 local function teleportBack(uid)
-	local player = Player(uid)
-	if player and player:getStorageValue(Storage.Quest.U9_1.TheRookieGuard.Mission06) == 5 then
-		player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "Oh no... you were too slow and the wolves caught up with you. You may try again.")
-		player:setStorageValue(Storage.Quest.U9_1.TheRookieGuard.Mission06, 4)
-		player:teleportTo({ x = 32109, y = 32131, z = 11 })
-	end
+    local player = Player(uid)
+    if player and player:getStorageValue(Storage.Quest.U9_1.TheRookieGuard.Mission06) == 5 then
+        player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "Oh no... you were too slow and the wolves caught up with you. You may try again.")
+        player:setStorageValue(Storage.Quest.U9_1.TheRookieGuard.Mission06, 4)
+        player:teleportTo({ x = 32109, y = 32131, z = 11 })
+    end
 end
 
 local warWolfDenBoostTiles = MoveEvent()
 
 function warWolfDenBoostTiles.onStepIn(creature, item, position, fromPosition)
-	local player = creature:getPlayer()
-	if not player then
-		return true
-	end
-	local missionState = player:getStorageValue(Storage.Quest.U9_1.TheRookieGuard.Mission06)
-	if missionState == 4 then
-		player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "RUUUUUUUUUUUUUUUUUN!")
-		player:setStorageValue(Storage.Quest.U9_1.TheRookieGuard.Mission06, 5)
-		player:getPosition():sendMagicEffect(CONST_ME_POFF)
-		local conditionHaste = Condition(CONDITION_HASTE)
-		conditionHaste:setParameter(CONDITION_PARAM_TICKS, 25000)
-		conditionHaste:setFormula(0.3, -24, 0.3, -24)
-		player:addCondition(conditionHaste)
-		addEvent(teleportBack, 25000, player:getId())
-	end
-	return true
+    local player = creature:getPlayer()
+    if not player then
+        return true
+    end
+    local missionState = player:getStorageValue(Storage.Quest.U9_1.TheRookieGuard.Mission06)
+    if missionState == 4 then
+        player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "RUUUUUUUUUUUUUUUUUN!")
+        player:setStorageValue(Storage.Quest.U9_1.TheRookieGuard.Mission06, 5)
+        player:getPosition():sendMagicEffect(CONST_ME_POFF)
+        local condition = Condition(CONDITION_HASTE)
+        condition:setTicks(25000)
+        condition:setParameter(CONDITION_PARAM_SPEED, 300)
+        player:addCondition(condition)
+        
+        addEvent(teleportBack, 60000, player:getId())
+    end
+    return true
 end
 
 warWolfDenBoostTiles:aid(50334)
@@ -173,16 +174,16 @@ local poacherCorpse = Action()
 
 function poacherCorpse.onUse(player, item, frompos, itemEx, topos)
 	local missionState = player:getStorageValue(Storage.Quest.U9_1.TheRookieGuard.Mission06)
-	local corpseState = player:getStorageValue(Storage.Quest.U9_1.TheRookieGuard.PoacherCorpse)
-	if corpseState == -1 then
-		local reward = Game.createItem(12672, 1)
-		player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "You have found " .. reward:getArticle() .. " " .. reward:getName() .. ".")
-		player:setStorageValue(Storage.Quest.U9_1.TheRookieGuard.PoacherCorpse, 1)
-		player:setStorageValue(Storage.Quest.U9_1.TheRookieGuard.Mission06, 3)
-		player:addItemEx(reward, true, CONST_SLOT_WHEREEVER)
-	else
-		player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "The " .. item:getName() .. " is empty.")
-	end
+		local corpseState = player:getStorageValue(Storage.Quest.U9_1.TheRookieGuard.PoacherCorpse)
+		if corpseState == -1 then
+			local reward = Game.createItem(12672, 1)
+			player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "You have found " .. reward:getArticle() .. " " .. reward:getName() .. ".")
+			player:setStorageValue(Storage.Quest.U9_1.TheRookieGuard.PoacherCorpse, 1)
+			player:setStorageValue(Storage.Quest.U9_1.TheRookieGuard.Mission06, 3)
+			player:addItemEx(reward, true, CONST_SLOT_WHEREEVER)
+		else
+			player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "The " .. item:getName() .. " is empty.")
+		end
 	return true
 end
 
