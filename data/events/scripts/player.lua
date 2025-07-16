@@ -539,6 +539,12 @@ function Player:onGainExperience(target, exp, rawExp)
 		end
 	end
 
+    -- Double Exp Event Bonus
+    local globalExpBoost = Game.getStorageValue(442025) or 0
+    if globalExpBoost >= 3000 then
+        exp = exp * 2
+    end
+
 	-- Soul War Experience by Taint
 	if SoulWarQuest then
 		local monsterType = target:getType()
