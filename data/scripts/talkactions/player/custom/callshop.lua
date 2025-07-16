@@ -6,7 +6,6 @@ local function removeNPC(npcId)
 end
 
 local callShop = TalkAction("!callshop")
-
 function callShop.onSay(player, words, param)
     if player:getStorageValue(3121990) < 1 then
         player:sendCancelMessage("You cannot use call shop command.")
@@ -17,8 +16,8 @@ function callShop.onSay(player, words, param)
         player:sendCancelMessage("You do not have enough soul.")
         return true
     end
-    player:addSoul(-100)
 
+    player:addSoul(-100)
     local position = player:getPosition()
     local npc = Game.createNpc("Trader Djinn", position)
     if not npc then
