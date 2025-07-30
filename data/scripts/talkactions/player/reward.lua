@@ -1,21 +1,26 @@
 local config = {
 	items = {
-		{ id = 35284, charges = 64400 },
-		{ id = 35279, charges = 64400 },
-		{ id = 35281, charges = 64400 },
-		{ id = 35283, charges = 64400 },
-		{ id = 35282, charges = 64400 },
-		{ id = 35280, charges = 64400 },
-		{ id = 44066, charges = 64400 },
-		{ id = 50294, charges = 64400 },
+		{ id = 35284, charges = 1800 },
+		{ id = 35279, charges = 1800 },
+		{ id = 35281, charges = 1800 },
+		{ id = 35283, charges = 1800 },
+		{ id = 35282, charges = 1800 },
+		{ id = 35280, charges = 1800 },
+		{ id = 44066, charges = 1800 },
+		{ id = 50294, charges = 1800 },
 	},
-	storage = tonumber(Storage.PlayerWeaponReward), -- storage key, player can only win once
+	storage = tonumber(Storage.PlayerWeaponReward),
+	cooldownDays = 14,
+	coinReward = {
+		enabled = true,
+		amount = 250,
+	},
 }
 
 local function sendExerciseRewardModal(player)
 	local window = ModalWindow({
-		title = "Exercise Reward",
-		message = "choose a item",
+		title = "Reward Menu",
+		message = "Choose a reward",
 	})
 	for _, it in pairs(config.items) do
 		local iType = ItemType(it.id)
@@ -26,22 +31,32 @@ local function sendExerciseRewardModal(player)
 				end
 
 				local inbox = player:getStoreInbox()
-				local inboxItems = inbox:getItems()
-				if inbox and #inboxItems < inbox:getMaxCapacity() and player:getFreeCapacity() >= iType:getWeight() then
-					local item = inbox:addItem(it.id, it.charges)
-					if item then
-						item:setActionId(IMMOVABLE_ACTION_ID)
-						item:setAttribute(ITEM_ATTRIBUTE_STORE, systemTime())
-						item:setAttribute(ITEM_ATTRIBUTE_DESCRIPTION, string.format("You won this exercise weapon as a reward to be a %s player. Use it in a dummy!\nHave a nice game..", configManager.getString(configKeys.SERVER_NAME)))
-					else
-						player:sendTextMessage(MESSAGE_LOOK, "You need to have capacity and empty slots to receive.")
-						return
-					end
-					player:sendTextMessage(MESSAGE_LOOK, string.format("Congratulations, you received a %s with %i charges in your store inbox.", iType:getName(), it.charges))
-					player:setStorageValue(config.storage, 1)
-				else
-					player:sendTextMessage(MESSAGE_LOOK, "You need to have capacity and empty slots to receive.")
+				if not inbox or #inbox:getItems() >= inbox:getMaxCapacity() or player:getFreeCapacity() < iType:getWeight() then
+					player:sendCancelMessage("You don't have enough capacity or empty slots to receive the reward.")
+					return true
 				end
+
+				local item = inbox:addItem(it.id, it.charges)
+				if not item then
+					player:sendCancelMessage("Failed to add the reward.")
+					return true
+				end
+
+				item:setActionId(IMMOVABLE_ACTION_ID)
+				item:setAttribute(ITEM_ATTRIBUTE_STORE, systemTime())
+
+				if config.coinReward.enabled then
+					if player.addTibiaCoins then
+						player:addTibiaCoins(config.coinReward.amount)
+						player:sendTextMessage(MESSAGE_EVENT_ADVANCE, string.format("You have received %d Tibia coins.", config.coinReward.amount))
+					else
+						player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "The Tibia Coin reward system is currently unavailable.")
+					end
+				end
+
+				player:sendTextMessage(MESSAGE_EVENT_ADVANCE, string.format("You received a %s with %d charges in your store inbox.", iType:getName(), it.charges))
+				player:setStorageValue(config.storage, os.time())
+				return true
 			end)
 		end
 	end
@@ -55,12 +70,22 @@ end
 local exerciseRewardModal = TalkAction("!reward")
 function exerciseRewardModal.onSay(player, words, param)
 	if not configManager.getBoolean(configKeys.TOGGLE_RECEIVE_REWARD) or player:getTown():getId() < TOWNS_LIST.AB_DENDRIEL then
+		player:sendCancelMessage("The reward system is currently disabled.")
 		return true
 	end
-	if player:getStorageValue(config.storage) > 0 then
-		player:sendTextMessage(MESSAGE_LOOK, "You already received your exercise weapon reward!")
+
+	local lastClaimTime = player:getStorageValue(config.storage)
+	local currentTime = os.time()
+	local cooldownSeconds = config.cooldownDays * 24 * 60 * 60
+
+	if lastClaimTime > 0 and (lastClaimTime + cooldownSeconds) > currentTime then
+		local timeRemaining = (lastClaimTime + cooldownSeconds) - currentTime
+		local daysLeft = math.floor(timeRemaining / (24 * 60 * 60))
+		local hoursLeft = math.floor((timeRemaining % (24 * 60 * 60)) / (60 * 60))
+		player:sendCancelMessage(string.format("You can claim another reward in %d days and %d hours.", daysLeft, hoursLeft))
 		return true
 	end
+
 	sendExerciseRewardModal(player)
 	return true
 end
