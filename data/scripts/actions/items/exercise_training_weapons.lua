@@ -18,6 +18,10 @@ local exerciseWeaponsTable = {
 	[44065] = { skill = SKILL_SHIELD },
 	[44066] = { skill = SKILL_SHIELD },
 	[44067] = { skill = SKILL_SHIELD },
+	[50292] = { skill = SKILL_FIST },
+	[50293] = { skill = SKILL_FIST },
+	[50294] = { skill = SKILL_FIST },
+	[50295] = { skill = SKILL_FIST },
 	-- ROD
 	[28544] = { skill = SKILL_MAGLEVEL, effect = CONST_ANI_SMALLICE, allowFarUse = true },
 	[28556] = { skill = SKILL_MAGLEVEL, effect = CONST_ANI_SMALLICE, allowFarUse = true },
@@ -33,26 +37,61 @@ local exerciseWeaponsTable = {
 	[28557] = { skill = SKILL_MAGLEVEL, effect = CONST_ANI_FIRE, allowFarUse = true },
 	[35284] = { skill = SKILL_MAGLEVEL, effect = CONST_ANI_FIRE, allowFarUse = true },
 	[35290] = { skill = SKILL_MAGLEVEL, effect = CONST_ANI_FIRE, allowFarUse = true },
-	-- FIST
-	[50292] = { skill = SKILL_FIST, effect = CONST_ANI_WHIRLWINDAXE },
-	[50293] = { skill = SKILL_FIST, effect = CONST_ANI_WHIRLWINDAXE },
-	[50294] = { skill = SKILL_FIST, effect = CONST_ANI_WHIRLWINDAXE },
-	[50295] = { skill = SKILL_FIST, effect = CONST_ANI_WHIRLWINDAXE },
 }
 
 local dummies = Game.getDummies()
 
-local function leaveExerciseTraining(playerId)
+local function getNextChargedWeapon(player, weaponId)
+	local function searchContainer(container)
+		if not container or not container:isContainer() then
+			return nil
+		end
+		for i = 0, container:getSize() - 1 do
+			local item = container:getItem(i)
+			if item then
+				if item:getId() == weaponId and item:getAttribute(ITEM_ATTRIBUTE_CHARGES) > 0 then
+					return item
+				elseif item:isContainer() then
+					local found = searchContainer(item)
+					if found then
+						return found
+					end
+				end
+			end
+		end
+		return nil
+	end
+
+	-- Find item in backpack
+	local backpack = player:getSlotItem(CONST_SLOT_BACKPACK)
+	local item = searchContainer(backpack)
+	if item then
+		return item
+	end
+
+	-- Find item in store inbox
+	local inbox = player:getSlotItem(CONST_SLOT_STORE_INBOX)
+	local inboxItem = searchContainer(inbox)
+	if inboxItem then
+		return inboxItem
+	end
+
+	return nil
+end
+
+function leaveExerciseTraining(playerId)
+	local player = Player(playerId)
+	if not player then
+		_G.OnExerciseTraining[playerId] = nil
+		return
+	end
+
 	if _G.OnExerciseTraining[playerId] then
 		stopEvent(_G.OnExerciseTraining[playerId].event)
 		_G.OnExerciseTraining[playerId] = nil
 	end
 
-	local player = Player(playerId)
-	if player then
-		player:setTraining(false)
-	end
-	return
+	player:setTraining(false)
 end
 
 local function exerciseTrainingEvent(playerId, tilePosition, weaponId, dummyId)
@@ -92,12 +131,25 @@ local function exerciseTrainingEvent(playerId, tilePosition, weaponId, dummyId)
 		return false
 	end
 
-	local weaponCharges = weapon:getAttribute(ITEM_ATTRIBUTE_CHARGES)
+	--[[local weaponCharges = weapon:getAttribute(ITEM_ATTRIBUTE_CHARGES)
 	if not weaponCharges or weaponCharges <= 0 then
 		weapon:remove(1) -- ??
 		player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "Your training weapon has disappeared.")
 		leaveExerciseTraining(playerId)
 		return false
+	end]]
+	local weaponCharges = weapon:getAttribute(ITEM_ATTRIBUTE_CHARGES)
+	if not weaponCharges or weaponCharges <= 0 then
+		weapon:remove(1)
+		local nextWeapon = getNextChargedWeapon(player, weaponId)
+		if not nextWeapon then
+			player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "Your training weapon has disappeared.")
+			leaveExerciseTraining(playerId)
+			return false
+		end
+		-- continue with another weapon
+		weapon = nextWeapon
+		weaponCharges = weapon:getAttribute(ITEM_ATTRIBUTE_CHARGES)
 	end
 
 	if not dummies[dummyId] then
@@ -107,9 +159,9 @@ local function exerciseTrainingEvent(playerId, tilePosition, weaponId, dummyId)
 	local rate = dummies[dummyId] / 100
 	local isMagic = exerciseWeaponsTable[weaponId].skill == SKILL_MAGLEVEL
 	if isMagic then
-		player:addManaSpent(500 * rate)
+		player:addManaSpent(1000 * rate)
 	else
-		player:addSkillTries(exerciseWeaponsTable[weaponId].skill, 7 * rate)
+		player:addSkillTries(exerciseWeaponsTable[weaponId].skill, 10 * rate)
 	end
 
 	weapon:setAttribute(ITEM_ATTRIBUTE_CHARGES, (weaponCharges - 1))
@@ -119,11 +171,21 @@ local function exerciseTrainingEvent(playerId, tilePosition, weaponId, dummyId)
 		playerPosition:sendDistanceEffect(tilePosition, exerciseWeaponsTable[weaponId].effect)
 	end
 
-	if weapon:getAttribute(ITEM_ATTRIBUTE_CHARGES) <= 0 then
+	--[[if weapon:getAttribute(ITEM_ATTRIBUTE_CHARGES) <= 0 then
 		weapon:remove(1)
 		player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "Your training weapon has disappeared.")
 		leaveExerciseTraining(playerId)
 		return false
+	end]]
+	if weapon:getAttribute(ITEM_ATTRIBUTE_CHARGES) <= 0 then
+		weapon:remove(1)
+		local nextWeapon = getNextChargedWeapon(player, weaponId)
+		if not nextWeapon then
+			player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "Your training weapon has disappeared.")
+			leaveExerciseTraining(playerId)
+			return false
+		end
+		weapon = nextWeapon
 	end
 
 	local vocation = player:getVocation()
