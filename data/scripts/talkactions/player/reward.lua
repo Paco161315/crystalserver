@@ -9,7 +9,8 @@ local config = {
 		{ id = 44066, charges = 1800 },
 		{ id = 50294, charges = 1800 },
 	},
-	storage = tonumber(Storage.PlayerWeaponReward),
+	storage = 12345,
+	accountStorage = 67890,
 	cooldownDays = 14,
 	coinReward = {
 		enabled = true,
@@ -46,11 +47,18 @@ local function sendExerciseRewardModal(player)
 				item:setAttribute(ITEM_ATTRIBUTE_STORE, systemTime())
 
 				if config.coinReward.enabled then
-					if player.addTibiaCoins then
-						player:addTibiaCoins(config.coinReward.amount)
-						player:sendTextMessage(MESSAGE_EVENT_ADVANCE, string.format("You have received %d Tibia coins.", config.coinReward.amount))
-					else
-						player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "The Tibia Coin reward system is currently unavailable.")
+					local accountCooldown = player:getAccountStorage(config.accountStorage) or -1
+					local currentTime = os.time()
+					local cooldownSeconds = config.cooldownDays * 24 * 60 * 60
+
+					if accountCooldown == -1 or (accountCooldown + cooldownSeconds) <= currentTime then
+						if player.addTibiaCoins then
+							player:addTibiaCoins(config.coinReward.amount)
+							player:sendTextMessage(MESSAGE_EVENT_ADVANCE, string.format("You have received %d Tibia coins.", config.coinReward.amount))
+							player:setStorageValue(config.accountStorage, currentTime)
+						else
+							player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "The Tibia Coin reward system is currently unavailable.")
+						end
 					end
 				end
 
