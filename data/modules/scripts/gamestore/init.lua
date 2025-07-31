@@ -2097,7 +2097,7 @@ end
 -- @param coinType (string) - The type of the offer.
 -- @return (boolean) - Returns true if the player can pay for the offer, false otherwise.
 function Player.canPayForOffer(self, coinsToRemove, coinType)
-    -- Si el tipo de moneda está especificado, respeta la lógica antigua
+    -- If coin type is specified, respect the logic
     if coinType == GameStore.CoinType.Coin then
         return self:canRemoveCoins(coinsToRemove)
     end
@@ -2106,7 +2106,7 @@ function Player.canPayForOffer(self, coinsToRemove, coinType)
         return self:canRemoveTransferableCoins(coinsToRemove)
     end
 
-    -- Si no se especifica (o se especifica algo genérico/null), permite cualquiera
+    -- If coin type isn't specified or null, allow any
     return self:canRemoveCoins(coinsToRemove) or self:canRemoveTransferableCoins(coinsToRemove)
 end
 
