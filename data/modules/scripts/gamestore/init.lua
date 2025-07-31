@@ -1787,9 +1787,11 @@ function GameStore.processExpBoostPurchase(player)
 	player:setXpBoostPercent(50)
 	player:setXpBoostTime(currentXpBoostTime + 3600)
 
-	if expBoostCount == -1 or expBoostCount > 5 then
+	if expBoostCount == -1 or expBoostCount == 6 then
 		expBoostCount = 1
 	end
+
+	player:setStorageValue(GameStore.Storages.expBoostCount, expBoostCount + 1)
 end
 
 function GameStore.processPreyThirdSlot(player)
@@ -2063,59 +2065,51 @@ end
 
 --- Support Functions
 function Player.makeCoinTransaction(self, offer, desc)
-	local op = false
+    local op = false
+    local usedCoinType
 
-	if desc then
-		desc = offer.name .. " (" .. desc .. ")"
-	else
-		desc = offer.name
-	end
+    if desc then
+        desc = offer.name .. " (" .. desc .. ")"
+    else
+        desc = offer.name
+    end
 
-	if offer.Type == GameStore.OfferTypes.OFFER_TYPE_EXPBOOST then
-		local expBoostCount = self:getStorageValue(GameStore.Storages.expBoostCount)
+    -- Fallback: primero transferibles, luego normales
+    if self:canRemoveTransferableCoins(offer.price) then
+        op = self:removeTransferableCoinsBalance(offer.price)
+        usedCoinType = GameStore.CoinType.Transferable
+    elseif self:canRemoveCoins(offer.price) then
+        op = self:removeCoinsBalance(offer.price)
+        usedCoinType = GameStore.CoinType.Coin
+    else
+        return false
+    end
 
-		if expBoostCount == -1 or expBoostCount == 0 or expBoostCount > 5 then
-			expBoostCount = 1
-		end
-		if GameStore.ExpBoostValues[expBoostCount] then
-			offer.price = GameStore.ExpBoostValues[expBoostCount]
-		else
-			offer.price = offer.price
-		end
-		self:setStorageValue(GameStore.Storages.expBoostCount, expBoostCount + 1)
-	end
+    if op then
+        GameStore.insertHistory(self:getAccountId(), GameStore.HistoryTypes.HISTORY_TYPE_NONE, desc, offer.price * -1, usedCoinType)
+        offer.coinType = usedCoinType
+    end
 
-	if offer.coinType == GameStore.CoinType.Coin and self:canRemoveCoins(offer.price) then
-		op = self:removeCoinsBalance(offer.price)
-	elseif offer.coinType == GameStore.CoinType.Transferable and self:canRemoveTransferableCoins(offer.price) then
-		op = self:removeTransferableCoinsBalance(offer.price)
-	end
-
-	-- When the transaction is successful add to the history
-	if op then
-		GameStore.insertHistory(self:getAccountId(), GameStore.HistoryTypes.HISTORY_TYPE_NONE, desc, offer.price * -1, offer.coinType)
-	end
-
-	return op
+    return op
 end
-
 -- Verifies if the player has enough resources to afford a given offer.
 -- @param coinsToRemove (number) - The amount of coins required for the offer.
 -- @param coinType (string) - The type of the offer.
 -- @return (boolean) - Returns true if the player can pay for the offer, false otherwise.
 function Player.canPayForOffer(self, coinsToRemove, coinType)
-	-- Check if the player has the required amount of regular coins and the offer type is regular.
-	if coinType == GameStore.CoinType.Coin then
-		return self:canRemoveCoins(coinsToRemove)
-	end
+    -- Si el tipo de moneda está especificado, respeta la lógica antigua
+    if coinType == GameStore.CoinType.Coin then
+        return self:canRemoveCoins(coinsToRemove)
+    end
 
-	-- Check if the player has the required amount of transferable coins and the offer type is transferable.
-	if coinType == GameStore.CoinType.Transferable then
-		return self:canRemoveTransferableCoins(coinsToRemove)
-	end
+    if coinType == GameStore.CoinType.Transferable then
+        return self:canRemoveTransferableCoins(coinsToRemove)
+    end
 
-	return false
+    -- Si no se especifica (o se especifica algo genérico/null), permite cualquiera
+    return self:canRemoveCoins(coinsToRemove) or self:canRemoveTransferableCoins(coinsToRemove)
 end
+
 
 --- Other players functions
 

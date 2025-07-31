@@ -6933,6 +6933,7 @@ GameStore.Categories = {
 
 -- Each outfit must be uniquely identified to distinguish between addons.
 -- Here we dynamically assign ids for outfits. These ids must be unique.
+-- You can coinType = GameStore.CoinType.Transferable or coinType = GameStore.CoinType.Coin in specific offers
 local runningId = 45000
 for k, category in ipairs(GameStore.Categories) do
 	if category.offers then
@@ -6952,7 +6953,7 @@ for k, category in ipairs(GameStore.Categories) do
 				offer.type = GameStore.OfferTypes.OFFER_TYPE_NONE
 			end
 			if not offer.coinType then
-				offer.coinType = GameStore.CoinType.Transferable
+				offer.coinType = {GameStore.CoinType.Transferable, GameStore.CoinType.NonTransferable}
 			end
 		end
 	end
