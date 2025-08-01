@@ -174,6 +174,12 @@ function playerLoginGlobal.onLogin(player)
 		onMovementRemoveProtection(playerId, player:getPosition(), 10)
 	end
 
+	-- global double exp
+	local globalExpBoost = Game.getStorageValue(442025) or 0
+	if globalExpBoost >= 250 then
+		player:sendTextMessage(MESSAGE_LOGIN, string.format("Congratulations! Double Experience event is active. Enjoy!"))
+	end
+
 	-- fix stash
 	player:setSpecialContainersAvailable(true, true, true)
 

@@ -39,7 +39,7 @@ local itemsTable = {
 	["potions"] = {
 		{ itemName = "antidote potion", clientId = 7644, buy = 50 },
 		{ itemName = "berserk potion", clientId = 7439, buy = 2000 },
-		{ itemName = "bullseye potion", clientId = 7443, buy = 6000 },	
+		{ itemName = "bullseye potion", clientId = 7443, buy = 6000 },
 		{ itemName = "empty potion flask", clientId = 283, sell = 5 },
 		{ itemName = "empty potion flask", clientId = 284, sell = 5 },
 		{ itemName = "empty potion flask", clientId = 285, sell = 5 },
@@ -48,7 +48,7 @@ local itemsTable = {
 		{ itemName = "great spirit potion", clientId = 7642, buy = 254 },
 		{ itemName = "health potion", clientId = 266, buy = 50 },
 		{ itemName = "mana potion", clientId = 268, buy = 56 },
-		{ itemName = "mastermind potion", clientId = 7440, buy = 6500 },	
+		{ itemName = "mastermind potion", clientId = 7440, buy = 6500 },
 		{ itemName = "small health potion", clientId = 7876, buy = 20 },
 		{ itemName = "strong health potion", clientId = 236, buy = 115 },
 		{ itemName = "strong mana potion", clientId = 237, buy = 108 },
@@ -62,7 +62,7 @@ local itemsTable = {
 		{ itemName = "strike enhancement", clientId = 36724, buy = 1000000 },
 		{ itemName = "stamina extension", clientId = 36725, buy = 5000000 },
 		{ itemName = "charm upgrade", clientId = 36726, buy = 1500000 },
-		{ itemName = "wealth duplex", clientId = 36727, buy = 10000000 },
+		{ itemName = "wealth duplex", clientId = 36727, buy = 1000000 },
 		{ itemName = "bestiary betterment", clientId = 36728, buy = 2500000 },
 		{ itemName = "fire resilience", clientId = 36729, buy = 800000 },
 		{ itemName = "ice resilience", clientId = 36730, buy = 800000 },
@@ -102,7 +102,7 @@ local itemsTable = {
 		{ itemName = "intense healing rune", clientId = 3152, buy = 95 },
 		{ itemName = "light magic missile rune", clientId = 3174, buy = 4 },
 		{ itemName = "magic wall rune", clientId = 3180, buy = 116 },
-		{ itemName = "paralyse rune", clientId = 3165, buy = 700 },		
+		{ itemName = "paralyse rune", clientId = 3165, buy = 700 },
 		{ itemName = "poison bomb rune", clientId = 3173, buy = 85 },
 		{ itemName = "poison field rune", clientId = 3172, buy = 21 },
 		{ itemName = "poison wall rune", clientId = 3176, buy = 52 },
@@ -113,7 +113,6 @@ local itemsTable = {
 		{ itemName = "thunderstorm rune", clientId = 3202, buy = 52 },
 		{ itemName = "ultimate healing rune", clientId = 3160, buy = 175 },
 		{ itemName = "wild growth rune", clientId = 3156, buy = 160 },
-
 	},
 
 	["ammunition"] = {
@@ -1508,7 +1507,6 @@ npcType.onCloseChannel = function(npc, creature)
 	playerImbuementData[creature:getId()] = nil
 end
 
-
 function addItemsToShoppingBag(npc, player)
 	local playerId = player:getId()
 	local playerData = playerImbuementData[playerId]
@@ -1812,12 +1810,116 @@ local function creatureSayCallback(npc, creature, type, message)
 		npc:openShopWindowTable(player, categoryTable)
 	end
 
+	local GLOBAL_STORAGE_KEY = 442025
+	local REQUIRED_POINTS = 3000
+	local GOLD_TOKEN_ID = 22721
+	local TIBIA_COIN_ID = 22118
+
+	local function getCurrentPoints()
+		local points = Game.getStorageValue(GLOBAL_STORAGE_KEY)
+
+		if points == nil or points == -1 then
+			return 0
+		end
+		return points
+	end
+
+	if MsgContains(message, "donate") or MsgContains(message, "exp") or MsgContains(message, "double") then
+		local currentPoints = getCurrentPoints()
+		if currentPoints >= REQUIRED_POINTS then
+			npcHandler:say("The Double Experience Event is already active! Thank you, but we don't need more donations now.", npc, creature)
+			npcHandler:setTopic(playerId, 0)
+			return true
+		end
+		npcHandler:say("We need 3000 points to activate Double Experience Event for the server. Would you like to donate {Gold Tokens} (30 points each) or {Tibia Coins} (1 point each)? Or check the current {status}?", npc, creature)
+		npcHandler:setTopic(playerId, 1)
+	elseif npcHandler:getTopic(playerId) == 1 then
+		if MsgContains(message, "gold") or MsgContains(message, "token") then
+			npcHandler:say("How many gold tokens would you like to donate? Each Gold Token is worth 30 points.", npc, creature)
+			npcHandler:setTopic(playerId, 2)
+		elseif MsgContains(message, "tibia") or MsgContains(message, "coin") then
+			npcHandler:say("How many Tibia coins would you like to donate? Each Tibia Coin is worth 1 point.", npc, creature)
+			npcHandler:setTopic(playerId, 3)
+		elseif MsgContains(message, "status") then
+			local currentPoints = getCurrentPoints()
+			local remaining = REQUIRED_POINTS - currentPoints
+			if currentPoints >= REQUIRED_POINTS then
+				npcHandler:say("The goal has been reached! Double Experience Event is active!", npc, creature)
+			else
+				npcHandler:say("Current status: " .. currentPoints .. " of " .. REQUIRED_POINTS .. " points donated. We need " .. remaining .. " more points to activate Double Experience Event.", npc, creature)
+			end
+			npcHandler:setTopic(playerId, 0)
+		end
+	elseif npcHandler:getTopic(playerId) == 2 then
+		local amount = tonumber(message)
+		if amount then
+			if amount <= 0 then
+				npcHandler:say("Please enter a valid number of tokens to donate.", npc, creature)
+				npcHandler:setTopic(playerId, 0)
+			elseif player:getItemCount(GOLD_TOKEN_ID) < amount then
+				npcHandler:say("You don't have enough gold tokens. You only have " .. player:getItemCount(GOLD_TOKEN_ID) .. ".", npc, creature)
+				npcHandler:setTopic(playerId, 0)
+			else
+				player:removeItem(GOLD_TOKEN_ID, amount)
+				local currentPoints = getCurrentPoints()
+				currentPoints = currentPoints + (amount * 30)
+				Game.setStorageValue(GLOBAL_STORAGE_KEY, currentPoints)
+				npcHandler:say("Thank you for your contribution of " .. amount .. " gold tokens (worth " .. (amount * 30) .. " points).", npc, creature)
+
+				if currentPoints >= REQUIRED_POINTS then
+					Game.broadcastMessage("DOUBLE EXPERIENCE EVENT HAS BEEN ACTIVATED!", MESSAGE_STATUS_WARNING)
+					npcHandler:say("We've reached the goal! Double Experience Event is now active for everyone! Thank You!", npc, creature)
+				else
+					npcHandler:say("We now have " .. currentPoints .. " points. We need " .. (REQUIRED_POINTS - currentPoints) .. " more points to activate Double Experience Event.", npc, creature)
+				end
+				npcHandler:setTopic(playerId, 0)
+			end
+		else
+			npcHandler:say("Please enter a valid number of tokens you want to donate.", npc, creature)
+		end
+	elseif npcHandler:getTopic(playerId) == 3 then
+		local amount = tonumber(message)
+		if amount then
+			if amount <= 0 then
+				npcHandler:say("Please enter a valid number of coins to donate.", npc, creature)
+				npcHandler:setTopic(playerId, 0)
+			elseif player:getItemCount(TIBIA_COIN_ID) < amount then
+				npcHandler:say("You don't have enough Tibia coins. You only have " .. player:getItemCount(TIBIA_COIN_ID) .. ".", npc, creature)
+				npcHandler:setTopic(playerId, 0)
+			else
+				player:removeItem(TIBIA_COIN_ID, amount)
+				local currentPoints = getCurrentPoints()
+				currentPoints = currentPoints + amount
+				Game.setStorageValue(GLOBAL_STORAGE_KEY, currentPoints)
+				npcHandler:say("Thank you for your contribution of " .. amount .. " Tibia coins.", npc, creature)
+
+				if currentPoints >= REQUIRED_POINTS then
+					Game.broadcastMessage("Double Experience Event has been activated!", MESSAGE_STATUS_WARNING)
+					npcHandler:say("We've reached the goal! Double Experience Event is now active for everyone! Thank You!", npc, creature)
+				else
+					npcHandler:say("We now have " .. currentPoints .. " points. We need " .. (REQUIRED_POINTS - currentPoints) .. " more points to activate Double Experience Event.", npc, creature)
+				end
+				npcHandler:setTopic(playerId, 0)
+			end
+		else
+			npcHandler:say("Please enter a valid number of coins you want to donate.", npc, creature)
+		end
+	elseif MsgContains(message, "status") then
+		local currentPoints = getCurrentPoints()
+		local remaining = REQUIRED_POINTS - currentPoints
+		if currentPoints >= REQUIRED_POINTS then
+			npcHandler:say("The Double Experience Event is already active!", npc, creature)
+		else
+			npcHandler:say("Current status: " .. currentPoints .. " of " .. REQUIRED_POINTS .. " points donated. We need " .. remaining .. " more points to activate Double Experience Event.", npc, creature)
+		end
+	end
+
 	return true
 end
 
 npcHandler:setMessage(MESSAGE_SENDTRADE, "Of course, just browse through my wares. Or do you want to look only at " .. GetFormattedShopCategoryNames(itemsTable) .. ".")
 npcHandler:setCallback(CALLBACK_MESSAGE_DEFAULT, creatureSayCallback)
-npcHandler:setMessage(MESSAGE_GREET, "Master |PLAYERNAME|! What will be? Do you need " .. GetFormattedShopCategoryNames(itemsTable) .. "? Ask for {trade} if you need imbuements. You can also buy imbuements with {packages}.")
+npcHandler:setMessage(MESSAGE_GREET, "Master |PLAYERNAME|! What will be? Do you wish to activate the {experience} event? Or do you need " .. GetFormattedShopCategoryNames(itemsTable) .. "? Ask for {trade} if you need imbuements. You can also buy imbuements with {packages}.")
 npcHandler:setMessage(MESSAGE_FAREWELL, "May your wishes come true.")
 npcHandler:setMessage(MESSAGE_WALKAWAY, "Hmp! No manners.")
 npcHandler:addModule(FocusModule:new(), npcConfig.name, true, true, true)

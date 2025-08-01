@@ -1,8 +1,8 @@
-local djinnslamp = Action();
+local djinnslamp = Action()
 function djinnslamp.onUse(player, item, fromPosition, target, toPosition, isHotkey)
 	if player:getStorageValue(3121990) == 1 then
 		toPosition:sendMagicEffect(CONST_ME_POFF)
-		return true;
+		return true
 	end
 
 	item:remove(1)
