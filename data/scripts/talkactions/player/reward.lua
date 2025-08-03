@@ -21,7 +21,7 @@ local config = {
 local function sendExerciseRewardModal(player)
 	local window = ModalWindow({
 		title = "Reward Menu",
-		message = "Choose a Reward",
+		message = "Choose a reward",
 	})
 
 	for _, it in pairs(config.items) do
