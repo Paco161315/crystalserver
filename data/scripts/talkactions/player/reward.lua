@@ -1,28 +1,33 @@
 local config = {
 	items = {
-		{ id = 35284, charges = 1800 },
-		{ id = 35279, charges = 1800 },
-		{ id = 35281, charges = 1800 },
-		{ id = 35283, charges = 1800 },
-		{ id = 35282, charges = 1800 },
-		{ id = 35280, charges = 1800 },
-		{ id = 44066, charges = 1800 },
-		{ id = 50294, charges = 1800 },
+		{ id = 28557, charges = 250 },
+		{ id = 28556, charges = 250 },
+		{ id = 28555, charges = 250 },
+		{ id = 28554, charges = 250 },
+		{ id = 28553, charges = 250 },
+		{ id = 28552, charges = 250 },
+		{ id = 44065, charges = 250 },
+		{ id = 50293, charges = 250 },
 	},
-	storage = 12345,
-	accountStorage = 67890,
-	cooldownDays = 14,
+	storage = 67891, -- Character cooldown storage
+	accountStorage = 67890, -- Account lock storage
+	cooldownDays = 1,
 	coinReward = {
 		enabled = true,
-		amount = 250,
+		amount = 15,
 	},
 }
 
 local function sendExerciseRewardModal(player)
 	local window = ModalWindow({
 		title = "Reward Menu",
+<<<<<<< Updated upstream
+		message = "Choose a Reward",
+=======
 		message = "Choose a reward",
+>>>>>>> Stashed changes
 	})
+
 	for _, it in pairs(config.items) do
 		local iType = ItemType(it.id)
 		if iType then
@@ -31,12 +36,14 @@ local function sendExerciseRewardModal(player)
 					return true
 				end
 
+				-- Inventory checks
 				local inbox = player:getStoreInbox()
 				if not inbox or #inbox:getItems() >= inbox:getMaxCapacity() or player:getFreeCapacity() < iType:getWeight() then
 					player:sendCancelMessage("You don't have enough capacity or empty slots to receive the reward.")
 					return true
 				end
 
+				-- Add item
 				local item = inbox:addItem(it.id, it.charges)
 				if not item then
 					player:sendCancelMessage("Failed to add the reward.")
@@ -46,28 +53,26 @@ local function sendExerciseRewardModal(player)
 				item:setActionId(IMMOVABLE_ACTION_ID)
 				item:setAttribute(ITEM_ATTRIBUTE_STORE, systemTime())
 
+				-- Account lock
 				if config.coinReward.enabled then
-					local accountCooldown = player:getAccountStorage(config.accountStorage) or -1
-					local currentTime = os.time()
-					local cooldownSeconds = config.cooldownDays * 24 * 60 * 60
+					if Player.getAccountStorage(player, config.accountStorage, true) < 1 then
+						player:addTibiaCoins(config.coinReward.amount)
+						player:sendTextMessage(MESSAGE_EVENT_ADVANCE, string.format("You received %d Tibia Coins.", config.coinReward.amount))
 
-					if accountCooldown == -1 or (accountCooldown + cooldownSeconds) <= currentTime then
-						if player.addTibiaCoins then
-							player:addTibiaCoins(config.coinReward.amount)
-							player:sendTextMessage(MESSAGE_EVENT_ADVANCE, string.format("You have received %d Tibia coins.", config.coinReward.amount))
-							player:setStorageValue(config.accountStorage, currentTime)
-						else
-							player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "The Tibia Coin reward system is currently unavailable.")
-						end
+						-- Permanent account lock
+						player:setStorageValue(config.accountStorage, 1)
+					else
+						player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "You already claimed your Tibia Coins reward.")
 					end
 				end
 
-				player:sendTextMessage(MESSAGE_EVENT_ADVANCE, string.format("You received a %s with %d charges in your store inbox.", iType:getName(), it.charges))
-				player:setStorageValue(config.storage, os.time())
+				player:sendTextMessage(MESSAGE_EVENT_ADVANCE, string.format("You received a %s with %d charges.", iType:getName(), it.charges))
+				player:setStorageValue(config.storage, os.time()) -- Character cooldown
 				return true
 			end)
 		end
 	end
+
 	window:addButton("Select")
 	window:addButton("Close")
 	window:setDefaultEnterButton(0)
@@ -76,21 +81,22 @@ local function sendExerciseRewardModal(player)
 end
 
 local exerciseRewardModal = TalkAction("!reward")
+
 function exerciseRewardModal.onSay(player, words, param)
 	if not configManager.getBoolean(configKeys.TOGGLE_RECEIVE_REWARD) or player:getTown():getId() < TOWNS_LIST.AB_DENDRIEL then
 		player:sendCancelMessage("The reward system is currently disabled.")
 		return true
 	end
 
+	-- Character cooldown check (for items only)
 	local lastClaimTime = player:getStorageValue(config.storage)
 	local currentTime = os.time()
 	local cooldownSeconds = config.cooldownDays * 24 * 60 * 60
 
-	if lastClaimTime > 0 and (lastClaimTime + cooldownSeconds) > currentTime then
-		local timeRemaining = (lastClaimTime + cooldownSeconds) - currentTime
-		local daysLeft = math.floor(timeRemaining / (24 * 60 * 60))
-		local hoursLeft = math.floor((timeRemaining % (24 * 60 * 60)) / (60 * 60))
-		player:sendCancelMessage(string.format("You can claim another reward in %d days and %d hours.", daysLeft, hoursLeft))
+	if lastClaimTime > 0 and (currentTime - lastClaimTime) < cooldownSeconds then
+		local remaining = cooldownSeconds - (currentTime - lastClaimTime)
+		local hoursLeft = math.ceil(remaining / 3600)
+		player:sendCancelMessage(string.format("You can claim another reward in %d hours.", hoursLeft))
 		return true
 	end
 

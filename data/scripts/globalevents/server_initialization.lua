@@ -1,7 +1,7 @@
 -- Function to perform database cleanup tasks
 local function cleanupDatabase()
 	db.query("TRUNCATE TABLE `players_online`")
-
+	db.query("UPDATE `player_storage` SET `value` = 0 WHERE `key` = 67890;") -- !reward talkaction account storage reset
 	local currentTime = os.time()
 	db.asyncQuery("DELETE FROM `guild_wars` WHERE `status` IN (0, 2, 3) OR (`status` = 0 AND (`started` + 72 * 60 * 60) <= " .. currentTime .. ")")
 	db.asyncQuery("DELETE FROM `players` WHERE `deletion` != 0 AND `deletion` < " .. currentTime)
