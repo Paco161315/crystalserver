@@ -51,7 +51,8 @@ local function sendExerciseRewardModal(player)
 
 				-- Account lock
 				if config.coinReward.enabled then
-					if Player.getAccountStorage(player, config.accountStorage, true) < 1 then
+					local accountStorageValue = Player.getAccountStorage(player, config.accountStorage, true)
+					if not accountStorageValue or accountStorageValue < 1 then
 						player:addTibiaCoins(config.coinReward.amount)
 						player:sendTextMessage(MESSAGE_EVENT_ADVANCE, string.format("You received %d Tibia Coins.", config.coinReward.amount))
 
@@ -80,7 +81,6 @@ local exerciseRewardModal = TalkAction("!reward")
 
 function exerciseRewardModal.onSay(player, words, param)
 	if not configManager.getBoolean(configKeys.TOGGLE_RECEIVE_REWARD) or player:getTown():getId() < TOWNS_LIST.AB_DENDRIEL then
-		player:sendCancelMessage("The reward system is currently disabled.")
 		return true
 	end
 
