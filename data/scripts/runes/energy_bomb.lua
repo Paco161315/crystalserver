@@ -15,19 +15,19 @@ combatNoPvp:setArea(createCombatArea(AREA_SQUARE1X1))
 local rune = Spell("rune")
 
 function rune.onCastSpell(creature, var, isHotkey)
-    if not creature:isPlayer() then
-        return false
-    end
+	if not creature:isPlayer() then
+		return false
+	end
 
-    if creature:isPzLocked() then
-        combatPvp:execute(creature, var)
-        rune:setPzLocked(true)
-        return true
-    else
-        --combatNoPvp:execute(creature, var) -- monsters ignore non-pvp fields for some unknown reason, enable at your own risk
+	if creature:isPzLocked() then
 		combatPvp:execute(creature, var)
-        return true
-    end
+		rune:setPzLocked(true)
+		return true
+	else
+		--combatNoPvp:execute(creature, var) -- monsters ignore non-pvp fields for some unknown reason, enable at your own risk
+		combatPvp:execute(creature, var)
+		return true
+	end
 end
 
 rune:id(55)
