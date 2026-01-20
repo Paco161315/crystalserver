@@ -88,7 +88,7 @@ local function executeChain(player, min, max, effectData)
 				end
 			end
 
-			local damageMultiplier = 0.5 ^ jump
+			local damageMultiplier = 1.03 ^ jump
 			local adjustedMin = math.floor(min * damageMultiplier + 0.5)
 			local adjustedMax = math.floor(max * damageMultiplier + 0.5)
 			doTargetCombatHealth(player, newCreature, effectData.combat, adjustedMin, adjustedMax, effectData.effect)
@@ -110,7 +110,7 @@ local config = {
 }
 
 local function onGetFormulaValues(player, weaponDamage)
-	local basePower = 70
+	local basePower = 99
 
 	--[[
 	local helmetItem = player:getSlotItem(CONST_SLOT_HEAD)
@@ -135,7 +135,7 @@ end
 local spell = Spell("instant")
 
 function spell.onCastSpell(creature, var)
-	local maxTargets = 5
+	local maxTargets = 4
 	maxTargets = maxTargets + creature:getWheelSpellAdditionalTarget("Chained Penance") or 0
 
 	local legsItem = creature:getSlotItem(CONST_SLOT_LEGS)
@@ -186,6 +186,6 @@ spell:needWeapon(false)
 spell:castSound(SOUND_EFFECT_TYPE_SPELL_FLURRY_OF_BLOWS)
 spell:groupCooldown(2 * 1000)
 spell:cooldown(4 * 1000)
-spell:needLearn(false)
+spell:needLearn(true)
 spell:vocation("monk;true", "exalted monk;true")
 spell:register()

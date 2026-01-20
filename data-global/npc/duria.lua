@@ -45,15 +45,22 @@ npcType.onCloseChannel = function(npc, creature)
 	npcHandler:onCloseChannel(npc, creature)
 end
 
-keywordHandler:addSpellKeyword({ "find", "person" }, { npcHandler = npcHandler, spellName = "Find Person", price = 80, level = 8, vocation = VOCATION.BASE_ID.KNIGHT })
-keywordHandler:addSpellKeyword({ "light" }, { npcHandler = npcHandler, spellName = "Light", price = 0, level = 8, vocation = VOCATION.BASE_ID.KNIGHT })
-keywordHandler:addSpellKeyword({ "cure", "poison" }, { npcHandler = npcHandler, spellName = "Cure Poison", price = 150, level = 10, vocation = VOCATION.BASE_ID.KNIGHT })
-keywordHandler:addSpellKeyword({ "wound", "cleansing" }, { npcHandler = npcHandler, spellName = "Wound Cleansing", price = 0, level = 8, vocation = VOCATION.BASE_ID.KNIGHT })
-keywordHandler:addSpellKeyword({ "great", "light" }, { npcHandler = npcHandler, spellName = "Great Light", price = 500, level = 13, vocation = VOCATION.BASE_ID.KNIGHT })
+keywordHandler:addKeyword({ "spells" }, StdModule.say, { npcHandler = npcHandler, text = "I can teach you these spells: {Find Person}, {Light}, {Cure Poison}, {Wound Cleansing} and {Great Light}." })
 
-keywordHandler:addKeyword({ "healing", "spells" }, StdModule.say, { npcHandler = npcHandler, text = "In this category I have '{Wound Cleansing}' and '{Cure Poison}'." })
-keywordHandler:addKeyword({ "support", "spells" }, StdModule.say, { npcHandler = npcHandler, text = "In this category I have '{Light}', '{Find Person}' and '{Great Light}'." })
-keywordHandler:addKeyword({ "spells" }, StdModule.say, { npcHandler = npcHandler, text = "I can teach you {healing spells} and {support spells}. What kind of spell do you wish to learn? You can also tell me for which level you would like to learn a spell, if you prefer that." })
+local node1 = keywordHandler:addKeyword({'find person'}, StdModule.say, {npcHandler = npcHandler, onlyFocus = true, text = 'Would you like to learn {find person} magic spell for 80 gold?'})
+node1:addChildKeyword({'yes'}, StdModule.learnSpell, {npcHandler = npcHandler, premium = false, spellName = 'find person', vocation = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, price = 80, level = 8})
+
+local node2 = keywordHandler:addKeyword({'light'}, StdModule.say, {npcHandler = npcHandler, onlyFocus = true, text = 'Would you like to learn {light} magic spell for free?'})
+node2:addChildKeyword({'yes'}, StdModule.learnSpell, {npcHandler = npcHandler, premium = false, spellName = 'light', vocation = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, price = 0, level = 8})
+
+local node3 = keywordHandler:addKeyword({'cure poison'}, StdModule.say, {npcHandler = npcHandler, onlyFocus = true, text = 'Would you like to learn {cure poison} magic spell for 150 gold?'})
+node3:addChildKeyword({'yes'}, StdModule.learnSpell, {npcHandler = npcHandler, premium = false, spellName = 'cure poison', vocation = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, price = 150, level = 10})
+
+local node4 = keywordHandler:addKeyword({'wound cleansing'}, StdModule.say, {npcHandler = npcHandler, onlyFocus = true, text = 'Would you like to learn {wound cleansing} magic spell for free?'})
+node4:addChildKeyword({'yes'}, StdModule.learnSpell, {npcHandler = npcHandler, premium = false, spellName = 'wound cleansing', vocation = {4, 8}, price = 0, level = 8})
+
+local node5 = keywordHandler:addKeyword({'great light'}, StdModule.say, {npcHandler = npcHandler, onlyFocus = true, text = 'Would you like to learn {great light} magic spell for 500 gold?'})
+node5:addChildKeyword({'yes'}, StdModule.learnSpell, {npcHandler = npcHandler, premium = false, spellName = 'great light', vocation = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, price = 500, level = 13})
 
 npcHandler:setMessage(MESSAGE_GREET, "Hiho, fellow knight |PLAYERNAME|!")
 npcHandler:setMessage(MESSAGE_FAREWELL, "Goodbye.")
