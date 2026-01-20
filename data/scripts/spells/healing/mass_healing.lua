@@ -1,28 +1,28 @@
 local function targetFunction(creature, target)
-    local min, max
-    
-    local player = creature:getPlayer()
-    if player then
-        min = ((player:getLevel() / 5) + (player:getMagicLevel() * 5.7) + 26)
-        max = ((player:getLevel() / 5) + (player:getMagicLevel() * 10.43) + 62)
-    else
-        min = 250
-        max = 650
-        if not target:isPlayer() then
-            return false
-        end
-    end
+	local min, max
 
-    local bosses = { "leiden", "ravennous hunger", "dorokoll the mystic", "eshtaba the conjurer", "eliz the unyielding", "mezlon the defiler", "malkhar deathbringer", "containment crystal" }
-    local master = target:getMaster()
-    if target:isMonster() and not master or master and master:isMonster() then
-        if not table.contains(bosses, target:getName():lower()) then
-            return true
-        end
-    end
+	local player = creature:getPlayer()
+	if player then
+		min = ((player:getLevel() / 5) + (player:getMagicLevel() * 5.7) + 26)
+		max = ((player:getLevel() / 5) + (player:getMagicLevel() * 10.43) + 62)
+	else
+		min = 250
+		max = 650
+		if not target:isPlayer() then
+			return false
+		end
+	end
 
-    doTargetCombatHealth(creature, target, COMBAT_HEALING, min, max, CONST_ME_NONE, ORIGIN_SPELL, "Mass Healing")
-    return true
+	local bosses = { "leiden", "ravennous hunger", "dorokoll the mystic", "eshtaba the conjurer", "eliz the unyielding", "mezlon the defiler", "malkhar deathbringer", "containment crystal" }
+	local master = target:getMaster()
+	if target:isMonster() and not master or master and master:isMonster() then
+		if not table.contains(bosses, target:getName():lower()) then
+			return true
+		end
+	end
+
+	doTargetCombatHealth(creature, target, COMBAT_HEALING, min, max, CONST_ME_NONE, ORIGIN_SPELL, "Mass Healing")
+	return true
 end
 
 function onTargetCreature(creature, target)

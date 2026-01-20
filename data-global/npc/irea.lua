@@ -65,19 +65,19 @@ npcConfig.shop = {
 	{ itemName = "spear", clientId = 3277, buy = 10 },
 }
 
-keywordHandler:addKeyword({ "spell" }, StdModule.say, { npcHandler = npcHandler, text = "I can teach you these spells: {Arrow Call}, {Conjure Arrow}, {Conjure Explosive Arrow} and {Divine Healing}."})
+keywordHandler:addKeyword({ "spell" }, StdModule.say, { npcHandler = npcHandler, text = "I can teach you these spells: {Arrow Call}, {Conjure Arrow}, {Conjure Explosive Arrow} and {Divine Healing}." })
 
-local node1 = keywordHandler:addKeyword({'arrow call'}, StdModule.say, {npcHandler = npcHandler, onlyFocus = true, text = 'Would you like to learn {arrow call} magic spell for free?'})
-node1:addChildKeyword({'yes'}, StdModule.learnSpell, {npcHandler = npcHandler, premium = false, spellName = 'arrow call', vocation = {3, 7}, price = 0, level = 1})
+local node1 = keywordHandler:addKeyword({ "arrow call" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {arrow call} magic spell for free?" })
+node1:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "arrow call", vocation = { 3, 7 }, price = 0, level = 1 })
 
-local node2 = keywordHandler:addKeyword({'conjure arrow'}, StdModule.say, {npcHandler = npcHandler, onlyFocus = true, text = 'Would you like to learn {conjure arrow} magic spell for 450 gold?'})
-node2:addChildKeyword({'yes'}, StdModule.learnSpell, {npcHandler = npcHandler, premium = false, spellName = 'conjure arrow', vocation = {3, 7}, price = 450, level = 13})
+local node2 = keywordHandler:addKeyword({ "conjure arrow" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {conjure arrow} magic spell for 450 gold?" })
+node2:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "conjure arrow", vocation = { 3, 7 }, price = 450, level = 13 })
 
-local node3 = keywordHandler:addKeyword({'conjure explosive arrow'}, StdModule.say, {npcHandler = npcHandler, onlyFocus = true, text = 'Would you like to learn {conjure explosive arrow} magic spell for 1000 gold?'})
-node3:addChildKeyword({'yes'}, StdModule.learnSpell, {npcHandler = npcHandler, premium = false, spellName = 'conjure explosive arrow', vocation = {3, 7}, price = 1000, level = 25})
+local node3 = keywordHandler:addKeyword({ "conjure explosive arrow" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {conjure explosive arrow} magic spell for 1000 gold?" })
+node3:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "conjure explosive arrow", vocation = { 3, 7 }, price = 1000, level = 25 })
 
-local node4 = keywordHandler:addKeyword({'divine healing'}, StdModule.say, {npcHandler = npcHandler, onlyFocus = true, text = 'Would you like to learn {divine healing} magic spell for 3000 gold?'})
-node4:addChildKeyword({'yes'}, StdModule.learnSpell, {npcHandler = npcHandler, premium = false, spellName = 'divine healing', vocation = {3, 7}, price = 3000, level = 35})
+local node4 = keywordHandler:addKeyword({ "divine healing" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {divine healing} magic spell for 3000 gold?" })
+node4:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "divine healing", vocation = { 3, 7 }, price = 3000, level = 35 })
 
 -- On buy npc shop message
 npcType.onBuyItem = function(npc, player, itemId, subType, amount, ignore, inBackpacks, totalCost)

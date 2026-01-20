@@ -162,31 +162,31 @@ keywordHandler:addAliasKeyword({ "spark" })
 keywordHandler:addKeyword({ "solitude" }, StdModule.say, { npcHandler = npcHandler, text = "Talk to the hermit Eremo on the isle of Cormaya about this blessing." })
 keywordHandler:addAliasKeyword({ "wisdom" })
 
-keywordHandler:addKeyword({ "spell" }, StdModule.say, { npcHandler = npcHandler, text = "I can teach you these spells: {Cure Poison}, {Cure Poison Rune}, {Intense Healing}, {Intense Healing Rune}, {Light Healing}, {Magic Patch}, {Ultimate Healing} and {Ultimate Healing Rune}."})
+keywordHandler:addKeyword({ "spell" }, StdModule.say, { npcHandler = npcHandler, text = "I can teach you these spells: {Cure Poison}, {Cure Poison Rune}, {Intense Healing}, {Intense Healing Rune}, {Light Healing}, {Magic Patch}, {Ultimate Healing} and {Ultimate Healing Rune}." })
 
-local node1 = keywordHandler:addKeyword({'cure poison'}, StdModule.say, {npcHandler = npcHandler, onlyFocus = true, text = 'Would you like to learn {cure poison} magic spell for 150 gold?'})
-node1:addChildKeyword({'yes'}, StdModule.learnSpell, {npcHandler = npcHandler, premium = false, spellName = 'cure poison', vocation = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, price = 150, level = 10})
+local node1 = keywordHandler:addKeyword({ "cure poison" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {cure poison} magic spell for 150 gold?" })
+node1:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "cure poison", vocation = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }, price = 150, level = 10 })
 
-local node2 = keywordHandler:addKeyword({'cure poison rune'}, StdModule.say, {npcHandler = npcHandler, onlyFocus = true, text = 'Would you like to learn {cure poison rune} magic spell for 600 gold?'})
-node2:addChildKeyword({'yes'}, StdModule.learnSpell, {npcHandler = npcHandler, premium = false, spellName = 'cure poison rune', vocation = {2, 6}, price = 600, level = 15})
+local node2 = keywordHandler:addKeyword({ "cure poison rune" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {cure poison rune} magic spell for 600 gold?" })
+node2:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "cure poison rune", vocation = { 2, 6 }, price = 600, level = 15 })
 
-local node3 = keywordHandler:addKeyword({'intense healing'}, StdModule.say, {npcHandler = npcHandler, onlyFocus = true, text = 'Would you like to learn {intense healing} magic spell for 350 gold?'})
-node3:addChildKeyword({'yes'}, StdModule.learnSpell, {npcHandler = npcHandler, premium = false, spellName = 'intense healing', vocation = {1, 2, 3, 5, 6, 7, 9, 10}, price = 350, level = 20})
+local node3 = keywordHandler:addKeyword({ "intense healing" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {intense healing} magic spell for 350 gold?" })
+node3:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "intense healing", vocation = { 1, 2, 3, 5, 6, 7, 9, 10 }, price = 350, level = 20 })
 
-local node4 = keywordHandler:addKeyword({'intense healing rune'}, StdModule.say, {npcHandler = npcHandler, onlyFocus = true, text = 'Would you like to learn {intense healing rune} magic spell for 600 gold?'})
-node4:addChildKeyword({'yes'}, StdModule.learnSpell, {npcHandler = npcHandler, premium = false, spellName = 'intense healing rune', vocation = {2, 6}, price = 600, level = 15})
+local node4 = keywordHandler:addKeyword({ "intense healing rune" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {intense healing rune} magic spell for 600 gold?" })
+node4:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "intense healing rune", vocation = { 2, 6 }, price = 600, level = 15 })
 
-local node5 = keywordHandler:addKeyword({'light healing'}, StdModule.say, {npcHandler = npcHandler, onlyFocus = true, text = 'Would you like to learn {light healing} magic spell for free?'})
-node5:addChildKeyword({'yes'}, StdModule.learnSpell, {npcHandler = npcHandler, premium = false, spellName = 'light healing', vocation = {1, 2, 3, 5, 6, 7, 9, 10}, price = 0, level = 8})
+local node5 = keywordHandler:addKeyword({ "light healing" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {light healing} magic spell for free?" })
+node5:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "light healing", vocation = { 1, 2, 3, 5, 6, 7, 9, 10 }, price = 0, level = 8 })
 
-local node6 = keywordHandler:addKeyword({'magic patch'}, StdModule.say, {npcHandler = npcHandler, onlyFocus = true, text = 'Would you like to learn {magic patch} magic spell for free?'})
-node6:addChildKeyword({'yes'}, StdModule.learnSpell, {npcHandler = npcHandler, premium = false, spellName = 'magic patch', vocation = {2, 3, 6, 7}, price = 0, level = 1})
+local node6 = keywordHandler:addKeyword({ "magic patch" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {magic patch} magic spell for free?" })
+node6:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "magic patch", vocation = { 2, 3, 6, 7 }, price = 0, level = 1 })
 
-local node7 = keywordHandler:addKeyword({'ultimate healing'}, StdModule.say, {npcHandler = npcHandler, onlyFocus = true, text = 'Would you like to learn {ultimate healing} magic spell for 1000 gold?'})
-node7:addChildKeyword({'yes'}, StdModule.learnSpell, {npcHandler = npcHandler, premium = false, spellName = 'ultimate healing', vocation = {1, 2, 5, 6}, price = 1000, level = 30})
+local node7 = keywordHandler:addKeyword({ "ultimate healing" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {ultimate healing} magic spell for 1000 gold?" })
+node7:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "ultimate healing", vocation = { 1, 2, 5, 6 }, price = 1000, level = 30 })
 
-local node8 = keywordHandler:addKeyword({'ultimate healing rune'}, StdModule.say, {npcHandler = npcHandler, onlyFocus = true, text = 'Would you like to learn {ultimate healing rune} magic spell for 1500 gold?'})
-node8:addChildKeyword({'yes'}, StdModule.learnSpell, {npcHandler = npcHandler, premium = false, spellName = 'ultimate healing rune', vocation = {2, 6}, price = 1500, level = 24})
+local node8 = keywordHandler:addKeyword({ "ultimate healing rune" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {ultimate healing rune} magic spell for 1500 gold?" })
+node8:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "ultimate healing rune", vocation = { 2, 6 }, price = 1500, level = 24 })
 
 -- Greeting message
 keywordHandler:addGreetKeyword({ "ashari" }, { npcHandler = npcHandler, text = "Welcome, young |PLAYERNAME|! If you are heavily wounded or poisoned, I can {heal} you for free." })
