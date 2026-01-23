@@ -475,16 +475,29 @@ bool Spell::playerSpellCheck(const std::shared_ptr<Player> &player) const {
 		return false;
 	}
 
-	if (isInstant() && getNeedLearn()) {
-		if (!player->hasLearnedInstantSpell(getName())) {
-			player->sendCancelMessage(RETURNVALUE_YOUNEEDTOLEARNTHISSPELL);
+
+	if (g_configManager().getBoolean(LEARN_SPELLS)) {
+
+		if (isInstant()) {
+			if (!player->hasLearnedInstantSpell(getName())) {
+				player->sendCancelMessage(RETURNVALUE_YOUNEEDTOLEARNTHISSPELL);
+				g_game().addMagicEffect(player->getPosition(), CONST_ME_POFF);
+				return false;
+				}
+			}
+		} else {
+
+		if (isInstant() && getNeedLearn()) {
+			if (!player->hasLearnedInstantSpell(getName())) {
+				player->sendCancelMessage(RETURNVALUE_YOUNEEDTOLEARNTHISSPELL);
+				g_game().addMagicEffect(player->getPosition(), CONST_ME_POFF);
+				return false;
+			}
+		} else if (!vocSpellMap.empty() && !vocSpellMap.contains(player->getVocationId()) && player->getGroup()->id < GROUP_TYPE_GAMEMASTER) {
+			player->sendCancelMessage(RETURNVALUE_YOURVOCATIONCANNOTUSETHISSPELL);
 			g_game().addMagicEffect(player->getPosition(), CONST_ME_POFF);
 			return false;
 		}
-	} else if (!vocSpellMap.empty() && !vocSpellMap.contains(player->getVocationId()) && player->getGroup()->id < GROUP_TYPE_GAMEMASTER) {
-		player->sendCancelMessage(RETURNVALUE_YOURVOCATIONCANNOTUSETHISSPELL);
-		g_game().addMagicEffect(player->getPosition(), CONST_ME_POFF);
-		return false;
 	}
 
 	if (needWeapon) {
@@ -1363,25 +1376,29 @@ void InstantSpell::setBlockWalls(bool w) {
 }
 
 bool InstantSpell::canCast(const std::shared_ptr<Player> &player) const {
-	if (player->hasFlag(PlayerFlags_t::CannotUseSpells)) {
-		return false;
-	}
+    if (player->hasFlag(PlayerFlags_t::CannotUseSpells)) {
+        return false;
+    }
 
-	if (player->hasFlag(PlayerFlags_t::IgnoreSpellCheck)) {
-		return true;
-	}
+    if (player->hasFlag(PlayerFlags_t::IgnoreSpellCheck)) {
+        return true;
+    }
 
-	if (getNeedLearn()) {
-		if (player->hasLearnedInstantSpell(getName())) {
-			return true;
-		}
-	} else {
-		if (vocSpellMap.empty() || vocSpellMap.contains(player->getVocationId())) {
-			return true;
-		}
-	}
+    if (g_configManager().getBoolean(LEARN_SPELLS)) {
+        return player->hasLearnedInstantSpell(getName());
+    }
 
-	return false;
+    if (getNeedLearn()) {
+        if (player->hasLearnedInstantSpell(getName())) {
+            return true;
+        }
+    } else {
+        if (vocSpellMap.empty() || vocSpellMap.contains(player->getVocationId())) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 LuaScriptInterface* RuneSpell::getRuneSpellScriptInterface() const {

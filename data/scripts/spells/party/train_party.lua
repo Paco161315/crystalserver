@@ -82,5 +82,5 @@ spell:mana(60)
 spell:isSelfTarget(true)
 spell:isAggressive(false)
 spell:isPremium(true)
-spell:needLearn(true)
+
 spell:register()
