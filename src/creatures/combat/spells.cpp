@@ -475,7 +475,6 @@ bool Spell::playerSpellCheck(const std::shared_ptr<Player> &player) const {
 		return false;
 	}
 
-
 	if (g_configManager().getBoolean(LEARN_SPELLS)) {
 
 		if (isInstant()) {
@@ -483,9 +482,9 @@ bool Spell::playerSpellCheck(const std::shared_ptr<Player> &player) const {
 				player->sendCancelMessage(RETURNVALUE_YOUNEEDTOLEARNTHISSPELL);
 				g_game().addMagicEffect(player->getPosition(), CONST_ME_POFF);
 				return false;
-				}
 			}
-		} else {
+		}
+	} else {
 
 		if (isInstant() && getNeedLearn()) {
 			if (!player->hasLearnedInstantSpell(getName())) {
@@ -1376,29 +1375,29 @@ void InstantSpell::setBlockWalls(bool w) {
 }
 
 bool InstantSpell::canCast(const std::shared_ptr<Player> &player) const {
-    if (player->hasFlag(PlayerFlags_t::CannotUseSpells)) {
-        return false;
-    }
+	if (player->hasFlag(PlayerFlags_t::CannotUseSpells)) {
+		return false;
+	}
 
-    if (player->hasFlag(PlayerFlags_t::IgnoreSpellCheck)) {
-        return true;
-    }
+	if (player->hasFlag(PlayerFlags_t::IgnoreSpellCheck)) {
+		return true;
+	}
 
-    if (g_configManager().getBoolean(LEARN_SPELLS)) {
-        return player->hasLearnedInstantSpell(getName());
-    }
+	if (g_configManager().getBoolean(LEARN_SPELLS)) {
+		return player->hasLearnedInstantSpell(getName());
+	}
 
-    if (getNeedLearn()) {
-        if (player->hasLearnedInstantSpell(getName())) {
-            return true;
-        }
-    } else {
-        if (vocSpellMap.empty() || vocSpellMap.contains(player->getVocationId())) {
-            return true;
-        }
-    }
+	if (getNeedLearn()) {
+		if (player->hasLearnedInstantSpell(getName())) {
+			return true;
+		}
+	} else {
+		if (vocSpellMap.empty() || vocSpellMap.contains(player->getVocationId())) {
+			return true;
+		}
+	}
 
-    return false;
+	return false;
 }
 
 LuaScriptInterface* RuneSpell::getRuneSpellScriptInterface() const {
