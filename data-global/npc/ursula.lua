@@ -45,14 +45,10 @@ npcType.onCloseChannel = function(npc, creature)
 	npcHandler:onCloseChannel(npc, creature)
 end
 
-keywordHandler:addKeyword(
-	{ "spells" },
-	StdModule.say,
-	{
-		npcHandler = npcHandler,
-		text = "I can teach you these spells: {Arrow Call}, {Cancel Invisibility}, {Conjure Arrow}, {Conjure Explosive Arrow}, {Cure Curse}, {Cure Poison}, {Destroy Field}, {Disintegrate}, {Divine Caldera}, {Divine Healing}, {Divine Missile}, {Enchant Spear}, {Ethereal Spear}, {Find Fiend}, {Find Person}, {Great Light}, {Haste}, {Holy Flash}, {Holy Missile}, {Intense Healing}, {Intense Recovery}, {Levitate}, {Light}, {Light Healing}, {Magic Patch}, {Magic Rope}, {Recovery}, {Salvation}, {Strong Ethereal Spear} and {Summon Paladin Familiar}.",
-	}
-)
+keywordHandler:addKeyword({ "spells" }, StdModule.say, {
+	npcHandler = npcHandler,
+	text = "I can teach you these spells: {Arrow Call}, {Cancel Invisibility}, {Conjure Arrow}, {Conjure Explosive Arrow}, {Cure Curse}, {Cure Poison}, {Destroy Field}, {Disintegrate}, {Divine Caldera}, {Divine Healing}, {Divine Missile}, {Enchant Spear}, {Ethereal Spear}, {Find Fiend}, {Find Person}, {Great Light}, {Haste}, {Holy Flash}, {Holy Missile}, {Intense Healing}, {Intense Recovery}, {Levitate}, {Light}, {Light Healing}, {Magic Patch}, {Magic Rope}, {Recovery}, {Salvation}, {Strong Ethereal Spear} and {Summon Paladin Familiar}.",
+})
 
 local node1 = keywordHandler:addKeyword({ "arrow call" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {arrow call} magic spell for free?" })
 node1:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "arrow call", vocation = { 3, 7 }, price = 0, level = 1 })

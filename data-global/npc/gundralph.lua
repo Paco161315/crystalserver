@@ -51,14 +51,10 @@ npcType.onCloseChannel = function(npc, creature)
 	npcHandler:onCloseChannel(npc, creature)
 end
 
-keywordHandler:addKeyword(
-	{ "spells" },
-	StdModule.say,
-	{
-		npcHandler = npcHandler,
-		text = "I can teach you these spells: {Animate Dead}, {Apprentice's Strike}, {Avalanche}, {Buzz}, {Cancel Magic Shield}, {Chameleon}, {Chill Out}, {Convince Creature}, {Creature Illusion}, {Cure Bleeding}, {Cure Burning}, {Cure Electrification}, {Cure Poison}, {Cure Poison Rune}, {Curse}, {Death Strike}, {Destroy Field}, {Disintegrate}, {Electrify}, {Energy Beam}, {Energy Bomb}, {Energy Field}, {Energy Strike}, {Energy Wall}, {Energy Wave}, {Envenom}, {Explosion}, {Expose Weakness}, {Find Fiend}, {Find Person}, {Fire Bomb}, {Fire Field}, {Fire Wall}, {Fire Wave}, {Fireball}, {Flame Strike}, {Food (Spell)}, {Great Energy Beam}, {Great Fire Wave}, {Great Fireball}, {Great Light}, {Haste}, {Heal Friend}, {Heavy Magic Missile}, {Ice Strike}, {Ice Wave}, {Icicle}, {Ignite}, {Intense Healing}, {Intense Healing Rune}, {Invisible}, {Levitate}, {Light}, {Light Healing}, {Light Magic Missile}, {Lightning}, {Magic Patch}, {Magic Rope}, {Magic Shield}, {Magic Wall}, {Mass Healing}, {Mud Attack}, {Nature's Embrace}, {Paralyse}, {Physical Strike}, {Poison Bomb}, {Poison Field}, {Poison Wall}, {Restoration}, {Sap Strength}, {Scorch}, {Soulfire}, {Stalagmite}, {Stone Shower}, {Strong Energy Strike}, {Strong Flame Strike}, {Strong Haste}, {Strong Ice Strike}, {Strong Ice Wave}, {Strong Terra Strike}, {Sudden Death}, {Summon Creature}, {Summon Druid Familiar}, {Summon Sorcerer Familiar}, {Terra Strike}, {Terra Wave}, {Thunderstorm}, {Ultimate Healing}, {Ultimate Healing Rune} and {Ultimate Light}.",
-	}
-)
+keywordHandler:addKeyword({ "spells" }, StdModule.say, {
+	npcHandler = npcHandler,
+	text = "I can teach you these spells: {Animate Dead}, {Apprentice's Strike}, {Avalanche}, {Buzz}, {Cancel Magic Shield}, {Chameleon}, {Chill Out}, {Convince Creature}, {Creature Illusion}, {Cure Bleeding}, {Cure Burning}, {Cure Electrification}, {Cure Poison}, {Cure Poison Rune}, {Curse}, {Death Strike}, {Destroy Field}, {Disintegrate}, {Electrify}, {Energy Beam}, {Energy Bomb}, {Energy Field}, {Energy Strike}, {Energy Wall}, {Energy Wave}, {Envenom}, {Explosion}, {Expose Weakness}, {Find Fiend}, {Find Person}, {Fire Bomb}, {Fire Field}, {Fire Wall}, {Fire Wave}, {Fireball}, {Flame Strike}, {Food (Spell)}, {Great Energy Beam}, {Great Fire Wave}, {Great Fireball}, {Great Light}, {Haste}, {Heal Friend}, {Heavy Magic Missile}, {Ice Strike}, {Ice Wave}, {Icicle}, {Ignite}, {Intense Healing}, {Intense Healing Rune}, {Invisible}, {Levitate}, {Light}, {Light Healing}, {Light Magic Missile}, {Lightning}, {Magic Patch}, {Magic Rope}, {Magic Shield}, {Magic Wall}, {Mass Healing}, {Mud Attack}, {Nature's Embrace}, {Paralyse}, {Physical Strike}, {Poison Bomb}, {Poison Field}, {Poison Wall}, {Restoration}, {Sap Strength}, {Scorch}, {Soulfire}, {Stalagmite}, {Stone Shower}, {Strong Energy Strike}, {Strong Flame Strike}, {Strong Haste}, {Strong Ice Strike}, {Strong Ice Wave}, {Strong Terra Strike}, {Sudden Death}, {Summon Creature}, {Summon Druid Familiar}, {Summon Sorcerer Familiar}, {Terra Strike}, {Terra Wave}, {Thunderstorm}, {Ultimate Healing}, {Ultimate Healing Rune} and {Ultimate Light}.",
+})
 
 local node1 = keywordHandler:addKeyword({ "animate dead" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {animate dead} magic spell for 1200 gold?" })
 node1:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "animate dead", vocation = { 1, 2, 5, 6 }, price = 1200, level = 27 })

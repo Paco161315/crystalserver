@@ -61,14 +61,10 @@ npcType.onSellItem = function(npc, player, itemId, subtype, amount, ignore, name
 	player:sendTextMessage(MESSAGE_TRADE, string.format("Sold %ix %s for %i gold.", amount, name, totalCost))
 end
 
-keywordHandler:addKeyword(
-	{ "spells" },
-	StdModule.say,
-	{
-		npcHandler = npcHandler,
-		text = "I can teach you these spells: {Magic Patch}, {Tiger Clash}, {Swift Jab}, {Light Healing}, {Find Person}, {Light}, {Magic Rope}, {Cure Poison}, {Levitate}, {Great Light}, {Haste}, {Double Jab}, {Restore Balance}, {Greater Tiger Clash}, {Intense Healing}, {Strong Haste}, {Find Fiend}, {Enlighten Party}, {Flurry of Blows}, {Sweeping Takedown}, {Chained Penance}, {Spirit Mend}, {Greater Flurry of Blows}, {Devastating Knockout}, {Mass Spirit Mend}, {Focus Serenity}, {Mentor Other}, {Balanced Brawl} and {Summon Monk Familiar}.",
-	}
-)
+keywordHandler:addKeyword({ "spells" }, StdModule.say, {
+	npcHandler = npcHandler,
+	text = "I can teach you these spells: {Magic Patch}, {Tiger Clash}, {Swift Jab}, {Light Healing}, {Find Person}, {Light}, {Magic Rope}, {Cure Poison}, {Levitate}, {Great Light}, {Haste}, {Double Jab}, {Restore Balance}, {Greater Tiger Clash}, {Intense Healing}, {Strong Haste}, {Find Fiend}, {Enlighten Party}, {Flurry of Blows}, {Sweeping Takedown}, {Chained Penance}, {Spirit Mend}, {Greater Flurry of Blows}, {Devastating Knockout}, {Mass Spirit Mend}, {Focus Serenity}, {Mentor Other}, {Balanced Brawl} and {Summon Monk Familiar}.",
+})
 
 local node1 = keywordHandler:addKeyword({ "magic patch" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {magic patch} magic spell for free?" })
 node1:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "magic patch", vocation = { 1, 2, 3, 5, 6, 7, 9, 10 }, price = 0, level = 1 })

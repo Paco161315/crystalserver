@@ -156,14 +156,10 @@ local function creatureSayCallback(npc, creature, type, message)
 	return true
 end
 
-keywordHandler:addKeyword(
-	{ "spell" },
-	StdModule.say,
-	{
-		npcHandler = npcHandler,
-		text = "I can teach you these spells: {Apprentice's Strike}, {Buzz}, {Creature Illusion}, {Cure Poison}, {Destroy Field}, {Energy Beam}, {Energy Field}, {Energy Wall}, {Energy Wave}, {Explosion}, {Find Fiend}, {Find Person}, {Fire Bomb}, {Fire Field}, {Fire Wall}, {Fire Wave}, {Great Energy Beam}, {Great Fireball}, {Great Light}, {Heavy Magic Missile}, {Intense Healing}, {Invisible}, {Light}, {Light Healing}, {Light Magic Missile}, {Magic Patch}, {Magic Shield}, {Poison Field}, {Poison Wall}, {Scorch}, {Stalagmite}, {Sudden Death}, {Summon Creature} and {Ultimate Healing}.",
-	}
-)
+keywordHandler:addKeyword({ "spell" }, StdModule.say, {
+	npcHandler = npcHandler,
+	text = "I can teach you these spells: {Apprentice's Strike}, {Buzz}, {Creature Illusion}, {Cure Poison}, {Destroy Field}, {Energy Beam}, {Energy Field}, {Energy Wall}, {Energy Wave}, {Explosion}, {Find Fiend}, {Find Person}, {Fire Bomb}, {Fire Field}, {Fire Wall}, {Fire Wave}, {Great Energy Beam}, {Great Fireball}, {Great Light}, {Heavy Magic Missile}, {Intense Healing}, {Invisible}, {Light}, {Light Healing}, {Light Magic Missile}, {Magic Patch}, {Magic Shield}, {Poison Field}, {Poison Wall}, {Scorch}, {Stalagmite}, {Sudden Death}, {Summon Creature} and {Ultimate Healing}.",
+})
 
 local node1 = keywordHandler:addKeyword({ "apprentice's strike" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {apprentice's strike} magic spell for free?" })
 node1:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "apprentice's strike", vocation = { 1, 2, 5, 6 }, price = 0, level = 8 })
