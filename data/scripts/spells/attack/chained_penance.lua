@@ -71,14 +71,24 @@ local function executeChain(player, min, max, effectData)
 		return false
 	end
 
-	local oldCreature = player
+	local oldCreature = Creature(player:getId())
+	if not oldCreature then
+		return false
+	end
+
 	for jump, targetId in ipairs(creaturesArray) do
 		local newCreature = Creature(targetId)
 		if newCreature then
 			local targetPos = newCreature:getPosition()
+
+			if not oldCreature or not oldCreature:getPosition() then
+				break
+			end
+
 			if not oldCreature:getPosition():isSightClear(targetPos) then
 				break
 			end
+
 			local path = oldCreature:getPathTo(targetPos)
 			if path and #path > 0 then
 				local tempPos = Position(oldCreature:getPosition())
