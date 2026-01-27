@@ -50,14 +50,10 @@ npcType.onCloseChannel = function(npc, creature)
 	npcHandler:onCloseChannel(npc, creature)
 end
 
-keywordHandler:addKeyword(
-	{ "spell" },
-	StdModule.say,
-	{
-		npcHandler = npcHandler,
-		text = "I can teach you these spells: {Apprentice's Strike}, {Avalanche}, {Chameleon}, {Chill Out}, {Convince Creature}, {Creature Illusion}, {Cure Poison}, {Cure Poison Rune}, {Destroy Field}, {Energy Field}, {Energy Wall}, {Explosion}, {Find Fiend}, {Find Person}, {Fire Bomb}, {Fire Field}, {Fire Wall}, {Food}, {Great Light}, {Heavy Magic Missile}, {Ice Wave}, {Intense Healing}, {Intense Healing Rune}, {Invisible}, {Light}, {Light Healing}, {Light Magic Missile}, {Magic Patch}, {Magic Shield}, {Mud Attack}, {Poison Field}, {Poison Wall}, {Stalagmite}, {Summon Creature}, {Terra Wave}, {Ultimate Healing} and {Ultimate Healing Rune}.",
-	}
-)
+keywordHandler:addKeyword({ "spell" }, StdModule.say, {
+	npcHandler = npcHandler,
+	text = "I can teach you these spells: {Apprentice's Strike}, {Avalanche}, {Chameleon}, {Chill Out}, {Convince Creature}, {Creature Illusion}, {Cure Poison}, {Cure Poison Rune}, {Destroy Field}, {Energy Field}, {Energy Wall}, {Explosion}, {Find Fiend}, {Find Person}, {Fire Bomb}, {Fire Field}, {Fire Wall}, {Food}, {Great Light}, {Heavy Magic Missile}, {Ice Wave}, {Intense Healing}, {Intense Healing Rune}, {Invisible}, {Light}, {Light Healing}, {Light Magic Missile}, {Magic Patch}, {Magic Shield}, {Mud Attack}, {Poison Field}, {Poison Wall}, {Stalagmite}, {Summon Creature}, {Terra Wave}, {Ultimate Healing} and {Ultimate Healing Rune}.",
+})
 
 local node1 = keywordHandler:addKeyword({ "apprentice's strike" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {apprentice's strike} magic spell for free?" })
 node1:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "apprentice's strike", vocation = { 1, 2, 5, 6 }, price = 0, level = 8 })

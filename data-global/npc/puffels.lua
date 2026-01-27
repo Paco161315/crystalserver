@@ -45,14 +45,10 @@ npcType.onCloseChannel = function(npc, creature)
 	npcHandler:onCloseChannel(npc, creature)
 end
 
-keywordHandler:addKeyword(
-	{ "spells" },
-	StdModule.say,
-	{
-		npcHandler = npcHandler,
-		text = "I can teach you these spells: {Annihilation}, {Berserk}, {Bruise Bane}, {Brutal Strike}, {Charge}, {Chivalrous Challenge}, {Cure Bleeding}, {Cure Poison}, {Fair Wound Cleansing}, {Fierce Berserk}, {Find Fiend}, {Find Person}, {Front Sweep}, {Great Light}, {Groundshaker}, {Haste}, {Inflict Wound}, {Intense Recovery}, {Intense Wound Cleansing}, {Lesser Front Sweep}, {Levitate}, {Light}, {Magic Rope}, {Recovery}, {Summon Knight Familiar}, {Whirlwind Throw} and {Wound Cleansing}.",
-	}
-)
+keywordHandler:addKeyword({ "spells" }, StdModule.say, {
+	npcHandler = npcHandler,
+	text = "I can teach you these spells: {Annihilation}, {Berserk}, {Bruise Bane}, {Brutal Strike}, {Charge}, {Chivalrous Challenge}, {Cure Bleeding}, {Cure Poison}, {Fair Wound Cleansing}, {Fierce Berserk}, {Find Fiend}, {Find Person}, {Front Sweep}, {Great Light}, {Groundshaker}, {Haste}, {Inflict Wound}, {Intense Recovery}, {Intense Wound Cleansing}, {Lesser Front Sweep}, {Levitate}, {Light}, {Magic Rope}, {Recovery}, {Summon Knight Familiar}, {Whirlwind Throw} and {Wound Cleansing}.",
+})
 
 local node1 = keywordHandler:addKeyword({ "annihilation" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {annihilation} magic spell for 20000 gold?" })
 node1:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "annihilation", vocation = { 4, 8 }, price = 20000, level = 110 })
