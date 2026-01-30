@@ -83,7 +83,11 @@ local function creatureSayCallback(npc, creature, type, message)
 	return true
 end
 
-keywordHandler:addKeyword({ "spell" }, StdModule.say, { npcHandler = npcHandler, text = "I can teach you these spells: {Apprentice's Strike}, {Chameleon Rune}, {Chill Out}, {Convince Creature}, {Creature Illusion}, {Destroy Field Rune}, {Energy Field Rune}, {Energy Wall Rune}, {Fire Bomb Rune}, {Fire Field Rune}, {Fire Wall Rune}, {Invisibility}, {Magic Shield}, {Mud Attack}, {Poison Field Rune}, {Poison Wall Rune} and {Summon Creature}." })
+keywordHandler:addKeyword(
+	{ "spell" },
+	StdModule.say,
+	{ npcHandler = npcHandler, text = "I can teach you these spells: {Apprentice's Strike}, {Chameleon Rune}, {Chill Out}, {Convince Creature}, {Creature Illusion}, {Destroy Field Rune}, {Energy Field Rune}, {Energy Wall Rune}, {Fire Bomb Rune}, {Fire Field Rune}, {Fire Wall Rune}, {Invisibility}, {Magic Shield}, {Mud Attack}, {Poison Field Rune}, {Poison Wall Rune} and {Summon Creature}." }
+)
 
 local node1 = keywordHandler:addKeyword({ "apprentice's strike" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {apprentice's strike} magic spell for free?" })
 node1:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "apprentice's strike", vocation = { 1, 2, 5, 6 }, price = 0, level = 8 })
