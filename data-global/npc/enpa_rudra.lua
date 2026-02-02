@@ -63,7 +63,7 @@ end
 
 keywordHandler:addKeyword({ "spells" }, StdModule.say, {
 	npcHandler = npcHandler,
-	text = "I can teach you these spells: {Magic Patch}, {Tiger Clash}, {Swift Jab}, {Light Healing}, {Find Person}, {Light}, {Magic Rope}, {Cure Poison}, {Levitate}, {Great Light}, {Haste}, {Double Jab}, {Restore Balance}, {Greater Tiger Clash}, {Intense Healing}, {Strong Haste}, {Find Fiend}, {Enlighten Party}, {Flurry of Blows}, {Sweeping Takedown}, {Chained Penance}, {Spirit Mend}, {Greater Flurry of Blows}, {Devastating Knockout}, {Mass Spirit Mend}, {Focus Serenity}, {Mentor Other}, {Balanced Brawl} and {Summon Monk Familiar}.",
+	text = "I can teach you these spells: {Magic Patch}, {Tiger Clash}, {Swift Jab}, {Light Healing}, {Find Person}, {Light}, {Magic Rope}, {Cure Poison}, {Levitate}, {Great Light}, {Haste}, {Double Jab}, {Restore Balance}, {Greater Tiger Clash}, {Intense Healing}, {Strong Haste}, {Find Fiend}, {Enlighten Party}, {Flurry of Blows}, {Sweeping Takedown}, {Chained Penance}, {Spirit Mend}, {Greater Flurry of Blows}, {Devastating Knockout}, {Mass Spirit Mend}, {Focus Serenity}, {Mentor Other}, {Balanced Brawl}, {Virtue of Harmony}, {Virtue of Justice}, {Virtue of Sustain} and {Summon Monk Familiar}.",
 })
 
 local node1 = keywordHandler:addKeyword({ "magic patch" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {magic patch} magic spell for free?" })
@@ -152,6 +152,34 @@ node28:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandle
 
 local node29 = keywordHandler:addKeyword({ "summon monk familiar" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {summon monk familiar} magic spell for 50000 gold?" })
 node29:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "summon monk familiar", vocation = { 9, 10 }, price = 50000, level = 200 })
+
+local node30 = keywordHandler:addKeyword({ "virtue of harmony" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {virtue of harmony} magic spell for free?" })
+node30:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "virtue of harmony", vocation = { 10 }, price = 0, level = 20 })
+
+local node31 = keywordHandler:addKeyword({ "virtue of justice" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {virtue of justice} magic spell for free?" })
+node31:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "virtue of justice", vocation = { 10 }, price = 0, level = 20 })
+
+local node32 = keywordHandler:addKeyword({ "virtue of sustain" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {virtue of sustain} magic spell for free?" })
+node32:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "virtue of sustain", vocation = { 10 }, price = 0, level = 20 })
+
+-- Promotion
+local node1 = keywordHandler:addKeyword({ "promot" }, StdModule.say, {
+	npcHandler = npcHandler,
+	onlyFocus = true,
+	text = "I can promote you for 20000 gold coins. Do you want me to promote you?",
+})
+node1:addChildKeyword({ "yes" }, StdModule.promotePlayer, {
+	npcHandler = npcHandler,
+	cost = 20000,
+	level = 20,
+	text = "Congratulations! You are now promoted.",
+})
+node1:addChildKeyword({ "no" }, StdModule.say, {
+	npcHandler = npcHandler,
+	onlyFocus = true,
+	text = "Alright then, come back when you are ready.",
+	reset = true,
+})
 
 npcType.onCheckItem = function(npc, player, clientId, subType) end
 
