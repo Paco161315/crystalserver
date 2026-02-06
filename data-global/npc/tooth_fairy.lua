@@ -65,7 +65,7 @@ local function creatureSayCallback(npc, creature, type, message)
 	if not npcHandler:checkInteraction(npc, creature) then
 		return false
 	end
-	
+
 	local toothFairyStorage = 2033025
 	local teethCollectionStorage = 2033027
 
@@ -83,7 +83,7 @@ local function creatureSayCallback(npc, creature, type, message)
 				"I don't dare going to their homes at night but I know they will be sad about the missing presents. Would you help me?",
 			}, npc, creature)
 			npcHandler:setTopic(playerId, 1)
-		end	
+		end
 
 		if player:getStorageValue(toothFairyStorage) == 1 then
 			if player:removeItem(25303, 3) then
@@ -97,7 +97,6 @@ local function creatureSayCallback(npc, creature, type, message)
 				npcHandler:say("You need to bring me 3 milk teeth.", npc, creature)
 			end
 		end
-
 	elseif MsgContains(message, "yes") and npcHandler:getTopic(playerId) == 1 then
 		npcHandler:say({
 			"Thank you very much, human being! You have to find three children: Quero's daughter in Thais, Allen's son in Venore and Rowenna's daughter in Carlin. Go to their bedrooms and find their milk teeth. ...",

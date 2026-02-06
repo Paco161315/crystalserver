@@ -1,8 +1,7 @@
 local action = Action()
 local grumpyStoneStorage = 2033032
 function action.onUse(player, item, fromPosition, target, toPosition, isHotkey)
-	if player:getItemCount(24943) >= 1 and player:getItemCount(24944) >= 1 and 
-	   player:getItemCount(24945) >= 1 and player:getItemCount(24946) >= 1 then
+	if player:getItemCount(24943) >= 1 and player:getItemCount(24944) >= 1 and player:getItemCount(24945) >= 1 and player:getItemCount(24946) >= 1 then
 		player:removeItem(24943, 1)
 		player:removeItem(24944, 1)
 		player:removeItem(24945, 1)

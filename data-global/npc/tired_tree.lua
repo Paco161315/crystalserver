@@ -63,7 +63,7 @@ local function creatureSayCallback(npc, creature, type, message)
 	local tiredTreeStorage = 2033031
 	local toothFairyStorage = 2033025
 	if MsgContains(message, "mission") then
-		if (player:getStorageValue(tiredTreeStorage) < 1 and player:getStorageValue(toothFairyStorage) == 2) then
+		if player:getStorageValue(tiredTreeStorage) < 1 and player:getStorageValue(toothFairyStorage) == 2 then
 			npcHandler:say("My siblings and I, we are so tired. We'd love to sleep and dream but there are strange and wicked disturbances that trouble nature itself. Thus, it is very hard to fall asleep. Would you help us?", npc, creature)
 			npcHandler:setTopic(playerId, 1)
 		end
@@ -72,21 +72,21 @@ local function creatureSayCallback(npc, creature, type, message)
 			npcHandler:setTopic(playerId, 2)
 		end
 	elseif MsgContains(message, "yes") and npcHandler:getTopic(playerId) == 1 then
-			npcHandler:say("Thank you very much, human being! Perhaps a bedtime story would help. We'd like to hear something about the dryads.", npc, creature)
-			player:setStorageValue(tiredTreeStorage, 1)
-			npcHandler:setTopic(playerId, 0)
+		npcHandler:say("Thank you very much, human being! Perhaps a bedtime story would help. We'd like to hear something about the dryads.", npc, creature)
+		player:setStorageValue(tiredTreeStorage, 1)
+		npcHandler:setTopic(playerId, 0)
 	elseif MsgContains(message, "yes") and npcHandler:getTopic(playerId) == 2 then
-			npcHandler:say("I'm listening.", npc, creature)
-			npcHandler:setTopic(playerId, 3)
+		npcHandler:say("I'm listening.", npc, creature)
+		npcHandler:setTopic(playerId, 3)
 	elseif MsgContains(message, "seeds of life") and npcHandler:getTopic(playerId) == 3 then
-			npcHandler:say({
-				"Oh what a beautiful story. ... *yawn* Here, take this map part. We have no need for it when we are slumbering. *yawn* Some of our siblings have the third part. They took over a couple of stones in the north of some high mountains. ...",
-				"There are ... dwarves I guess. ... Zzzzzz ...",
-			}, npc, creature)
-			player:addItem(24944, 1)
-			player:setStorageValue(tiredTreeStorage, 2)
-			npcHandler:setTopic(playerId, 0)
-		end
+		npcHandler:say({
+			"Oh what a beautiful story. ... *yawn* Here, take this map part. We have no need for it when we are slumbering. *yawn* Some of our siblings have the third part. They took over a couple of stones in the north of some high mountains. ...",
+			"There are ... dwarves I guess. ... Zzzzzz ...",
+		}, npc, creature)
+		player:addItem(24944, 1)
+		player:setStorageValue(tiredTreeStorage, 2)
+		npcHandler:setTopic(playerId, 0)
+	end
 	return true
 end
 
