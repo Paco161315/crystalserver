@@ -86,7 +86,6 @@ local function creatureSayCallback(npc, creature, type, message)
 				npcHandler:say("You haven't tended to all the suffering stones yet.", npc, creature)
 			end
 		end
-		
 	elseif MsgContains(message, "yes") and npcHandler:getTopic(playerId) == 1 then
 		npcHandler:say("No, this won't work. Your hands are too smooth. I guess you have to search for an apropiate tool. But no metal please! The sound of metal on stone is gruesome!", npc, creature)
 		player:setStorageValue(grumpyStoneStorage, 1)
