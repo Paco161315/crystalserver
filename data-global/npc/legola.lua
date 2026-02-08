@@ -117,7 +117,7 @@ npcConfig.shop = {
 	{ itemName = "protective charm", clientId = 11444, sell = 60 },
 }
 
-keywordHandler:addKeyword({ "spell" }, StdModule.say, { npcHandler = npcHandler, text = "I can teach you these spells: {Arrow Call}, {Conjure Arrow}, {Conjure Explosive Arrow}, {Cure Poison}, {Destroy Field Rune}, {Divine Healing}, {Find Fiend}, {Find Person}, {Great Light}, {Intense Healing}, {Light}, {Light Healing} and {Magic Patch}." })
+keywordHandler:addKeyword({ "spell" }, StdModule.say, { npcHandler = npcHandler, text = "I can teach you these spells: {Arrow Call}, {Conjure Arrow}, {Conjure Explosive Arrow}, {Cure Poison}, {Destroy Field Rune}, {Divine Healing}, {Find Fiend}, {Find Person}, {Great Light}, {Intense Healing}, {Lesser Ethereal Spear}, {Light}, {Light Healing} and {Magic Patch}." })
 
 local node1 = keywordHandler:addKeyword({ "arrow call" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {arrow call} magic spell for free?" })
 node1:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "arrow call", vocation = { 3, 7 }, price = 0, level = 1 })
@@ -157,6 +157,9 @@ node12:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandle
 
 local node13 = keywordHandler:addKeyword({ "magic patch" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {magic patch} magic spell for free?" })
 node13:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "magic patch", vocation = { 1, 2, 3, 5, 6, 7 }, price = 0, level = 1 })
+
+local node14 = keywordHandler:addKeyword({ "lesser ethereal spear" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {lesser ethereal spear} magic spell for free?" })
+node14:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "lesser ethereal spear", vocation = { 3, 7 }, price = 0, level = 1 })
 
 -- On buy npc shop message
 npcType.onBuyItem = function(npc, player, itemId, subType, amount, ignore, inBackpacks, totalCost)

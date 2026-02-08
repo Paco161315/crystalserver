@@ -50,7 +50,7 @@ npcType.onCloseChannel = function(npc, creature)
 	npcHandler:onCloseChannel(npc, creature)
 end
 
-keywordHandler:addKeyword({ "spell" }, StdModule.say, { npcHandler = npcHandler, text = "I can teach you these spells: {Arrow Call}, {Conjure Arrow}, {Conjure Explosive Arrow}, {Cure Poison}, {Destroy Field Rune}, {Divine Healing}, {Find Fiend}, {Find Person}, {Great Light}, {Intense Healing}, {Light}, {Light Healing}, {Magic Patch}, {Bruise Bane}, {Lesser Front Sweep} and {Wound Cleansing}." })
+keywordHandler:addKeyword({ "spell" }, StdModule.say, { npcHandler = npcHandler, text = "I can teach you these spells: {Arrow Call}, {Conjure Arrow}, {Conjure Explosive Arrow}, {Cure Poison}, {Destroy Field Rune}, {Divine Healing}, {Find Fiend}, {Find Person}, {Great Light}, {Intense Healing}, {Lesser Ethereal Spear}, {Light}, {Light Healing}, {Magic Patch}, {Bruise Bane}, {Lesser Front Sweep} and {Wound Cleansing}." })
 
 local node1 = keywordHandler:addKeyword({ "arrow call" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {arrow call} magic spell for free?" })
 node1:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "arrow call", vocation = { 3, 7 }, price = 0, level = 1 })
@@ -99,6 +99,9 @@ node15:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandle
 
 local node16 = keywordHandler:addKeyword({ "wound cleansing" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {wound cleansing} magic spell for free?" })
 node16:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "wound cleansing", vocation = { 4, 8 }, price = 0, level = 8 })
+
+local node17 = keywordHandler:addKeyword({ "lesser ethereal spear" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {lesser ethereal spear} magic spell for free?" })
+node17:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "lesser ethereal spear", vocation = { 3, 7 }, price = 0, level = 1 })
 
 npcHandler:addModule(FocusModule:new(), npcConfig.name, true, true, true)
 

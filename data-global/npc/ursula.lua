@@ -45,10 +45,14 @@ npcType.onCloseChannel = function(npc, creature)
 	npcHandler:onCloseChannel(npc, creature)
 end
 
-keywordHandler:addKeyword({ "spells" }, StdModule.say, {
-	npcHandler = npcHandler,
-	text = "I can teach you these spells: {Arrow Call}, {Cancel Invisibility}, {Conjure Arrow}, {Conjure Explosive Arrow}, {Cure Curse}, {Cure Poison}, {Destroy Field}, {Disintegrate}, {Divine Caldera}, {Divine Healing}, {Divine Missile}, {Enchant Spear}, {Ethereal Spear}, {Find Fiend}, {Find Person}, {Great Light}, {Haste}, {Holy Flash}, {Holy Missile}, {Intense Healing}, {Intense Recovery}, {Levitate}, {Light}, {Light Healing}, {Magic Patch}, {Magic Rope}, {Recovery}, {Salvation}, {Strong Ethereal Spear} and {Summon Paladin Familiar}.",
-})
+keywordHandler:addKeyword(
+	{ "spells" },
+	StdModule.say,
+	{
+		npcHandler = npcHandler,
+		text = "I can teach you these spells: {Arrow Call}, {Cancel Invisibility}, {Conjure Arrow}, {Conjure Explosive Arrow}, {Cure Curse}, {Cure Poison}, {Destroy Field}, {Disintegrate}, {Divine Caldera}, {Divine Healing}, {Divine Missile}, {Enchant Spear}, {Ethereal Spear}, {Find Fiend}, {Find Person}, {Great Light}, {Haste}, {Holy Flash}, {Holy Missile}, {Intense Healing}, {Intense Recovery}, {Lesser Ethereal Spear}, {Levitate}, {Light}, {Light Healing}, {Magic Patch}, {Magic Rope}, {Recovery}, {Salvation}, {Strong Ethereal Spear} and {Summon Paladin Familiar}.",
+	}
+)
 
 local node1 = keywordHandler:addKeyword({ "arrow call" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {arrow call} magic spell for free?" })
 node1:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "arrow call", vocation = { 3, 7 }, price = 0, level = 1 })
@@ -86,9 +90,6 @@ node11:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandle
 local node12 = keywordHandler:addKeyword({ "enchant spear" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {enchant spear} magic spell for 2000 gold?" })
 node12:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "enchant spear", vocation = { 3, 7 }, price = 2000, level = 45 })
 
-local node13 = keywordHandler:addKeyword({ "ethereal spear" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {ethereal spear} magic spell for 1100 gold?" })
-node13:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "ethereal spear", vocation = { 3, 7 }, price = 1100, level = 23 })
-
 local node14 = keywordHandler:addKeyword({ "find fiend" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {find fiend} magic spell for 1000 gold?" })
 node14:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "find fiend", vocation = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }, price = 1000, level = 25 })
 
@@ -116,11 +117,11 @@ node21:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandle
 local node22 = keywordHandler:addKeyword({ "levitate" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {levitate} magic spell for 500 gold?" })
 node22:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "levitate", vocation = { 3, 7 }, price = 500, level = 12 })
 
-local node23 = keywordHandler:addKeyword({ "light" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {light} magic spell for free?" })
-node23:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "light", vocation = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }, price = 0, level = 8 })
+local node23 = keywordHandler:addKeyword({ "light healing" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {light healing} magic spell for free?" })
+node23:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "light healing", vocation = { 1, 2, 3, 5, 6, 7, 9, 10 }, price = 0, level = 8 })
 
-local node24 = keywordHandler:addKeyword({ "light healing" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {light healing} magic spell for free?" })
-node24:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "light healing", vocation = { 1, 2, 3, 5, 6, 7, 9, 10 }, price = 0, level = 8 })
+local node24 = keywordHandler:addKeyword({ "light" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {light} magic spell for free?" })
+node24:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "light", vocation = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }, price = 0, level = 8 })
 
 local node25 = keywordHandler:addKeyword({ "magic patch" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {magic patch} magic spell for free?" })
 node25:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "magic patch", vocation = { 3, 7 }, price = 0, level = 1 })
@@ -134,11 +135,20 @@ node27:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandle
 local node28 = keywordHandler:addKeyword({ "salvation" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {salvation} magic spell for 8000 gold?" })
 node28:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "salvation", vocation = { 3, 7 }, price = 8000, level = 60 })
 
-local node29 = keywordHandler:addKeyword({ "strong ethereal spear" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {strong ethereal spear} magic spell for 10000 gold?" })
-node29:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "strong ethereal spear", vocation = { 3, 7 }, price = 10000, level = 90 })
+local node29 = keywordHandler:addKeyword({ "lesser ethereal spear" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {lesser ethereal spear} magic spell for free?" })
+node29:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "lesser ethereal spear", vocation = { 3, 7 }, price = 0, level = 1 })
+
+local node32 = keywordHandler:addKeyword({ "strong ethereal spear" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {strong ethereal spear} magic spell for 10000 gold?" })
+node32:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "strong ethereal spear", vocation = { 3, 7 }, price = 10000, level = 90 })
+
+local node31 = keywordHandler:addKeyword({ "ethereal spear" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {ethereal spear} magic spell for 1100 gold?" })
+node31:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "ethereal spear", vocation = { 3, 7 }, price = 1100, level = 23 })
 
 local node30 = keywordHandler:addKeyword({ "summon paladin familiar" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {summon paladin familiar} magic spell for 50000 gold?" })
 node30:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "summon paladin familiar", vocation = { 3, 7 }, price = 50000, level = 200 })
+
+local node31 = keywordHandler:addKeyword({ "conjure bolt" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {conjure bolt} magic spell for 900 gold?" })
+node31:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "conjure bolt", vocation = { 3, 7 }, price = 900, level = 17 })
 
 npcHandler:addModule(FocusModule:new(), npcConfig.name, true, true, true)
 
