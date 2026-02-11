@@ -8,7 +8,7 @@ local vocationSpells = {
 	[VOCATION.ID.DRUID] = { "Magic Patch", "Chill Out", "Mud Attack" },
 	[VOCATION.ID.PALADIN] = { "Magic Patch", "Arrow Call", "Lesser Ethereal Spear" },
 	[VOCATION.ID.KNIGHT] = { "Bruise Bane", "Lesser Front Sweep" },
-	[VOCATION.ID.MONK] = { "Swift Jab", "Tiger Clash" },
+	[VOCATION.ID.MONK] = { "Magic Patch", "Swift Jab", "Tiger Clash" },
 }
 
 local dawnportSpells = {
