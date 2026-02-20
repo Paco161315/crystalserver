@@ -58,21 +58,43 @@ local raidAreas = {
 	{ from = Position(32431, 32240, 7), to = Position(32464, 32280, 7) },
 }
 
-local stableArea = {
+local stableAreaPalomino = {
 	from = Position(32437, 32230, 7),
 	to = Position(32448, 32239, 7),
 }
 
+local stableAreaAppaloosa = {
+	from = Position(32846, 32114, 7),
+	to = Position(32850, 32120, 7),
+}
+
 local function removeStableHorses()
-	for x = stableArea.from.x, stableArea.to.x do
-		for y = stableArea.from.y, stableArea.to.y do
-			local tile = Tile(Position(x, y, stableArea.from.z))
+	for x = stableAreaPalomino.from.x, stableAreaPalomino.to.x do
+		for y = stableAreaPalomino.from.y, stableAreaPalomino.to.y do
+			local tile = Tile(Position(x, y, stableAreaPalomino.from.z))
 			if tile then
 				local creatures = tile:getCreatures()
 				if creatures then
 					for _, creature in ipairs(creatures) do
 						local monster = Monster(creature)
-						if monster and monster:getName() == "Horse" then
+						if monster and (monster:getName() == "Horse" or monster:getName() == "Grey Horse" or monster:getName() == "Brown Horse") then
+							monster:remove()
+						end
+					end
+				end
+			end
+		end
+	end
+
+	for x = stableAreaAppaloosa.from.x, stableAreaAppaloosa.to.x do
+		for y = stableAreaAppaloosa.from.y, stableAreaAppaloosa.to.y do
+			local tile = Tile(Position(x, y, stableAreaAppaloosa.from.z))
+			if tile then
+				local creatures = tile:getCreatures()
+				if creatures then
+					for _, creature in ipairs(creatures) do
+						local monster = Monster(creature)
+						if monster and (monster:getName() == "Horse" or monster:getName() == "Grey Horse" or monster:getName() == "Brown Horse") then
 							monster:remove()
 						end
 					end
@@ -127,7 +149,7 @@ local function tryStartWildHorsesRaid()
 	end
 
 	local random = math.random(10)
-	if random > 9 then
+	if random <= 3 then
 		if waveEvent then
 			stopEvent(waveEvent)
 			waveEvent = nil
@@ -152,6 +174,11 @@ local function creatureSayCallback(npc, creature, type, message)
 	end
 
 	if MsgContains(message, "transport") then
+		local raidEndTime = Game.getStorageValue(RAID_STORAGE) or 0
+		if raidEndTime > os.time() then
+			npcHandler:say("Right now our horses are on the loose. As long as not enough horses are chased back into the barn there is no horse transport service.", npc, creature)
+			return true
+		end
 		npcHandler:say("We can bring you to Thais with one of our coaches for 125 gold. Are you interested?", npc, creature)
 		npcHandler:setTopic(playerId, 1)
 	elseif table.contains({ "rent", "horses" }, message) then
