@@ -102,11 +102,12 @@ function mounts.onUse(cid, item, fromPosition, itemEx, toPosition)
 	local targetNpc = Npc(itemEx.uid)
 	local targetItem = Item(itemEx.uid)
 	local mount = config[item.itemid]
+	local rand = math.random(100)
 
 	if mount == nil or player:hasMount(mount.ID) then
 		return false
 	end
-	local rand = math.random(100)
+
 	-- Glooth Glider
 	if mount.TYPE == TYPE_GLOOTH_GLIDER then
 		if mount.REQUIRED then
