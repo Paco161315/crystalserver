@@ -3796,7 +3796,7 @@ if not Quests then
 						[3] = "You have finished one mission. Ask Arelia again for another mission \z
 						This will improve your reputation in Sabrehaven.",
 						[4] = "Ariella asked you to bring a sample of whisper beer from a secret whisper bar in Carlin. \z
-						Help her and improve your reputation in Sabrehaven.",	
+						Help her and improve your reputation in Sabrehaven.",
 						[5] = "You have finished two missions. Ask Morgan in Sabrehaven for another mission \z
 						This will improve your reputation in Sabrehaven.",
 						[6] = "Morgan asked you to deliver a letter safely to old Eremo on Cormaya. \z
