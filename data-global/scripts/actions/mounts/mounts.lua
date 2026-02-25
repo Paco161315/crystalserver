@@ -106,7 +106,7 @@ function mounts.onUse(cid, item, fromPosition, itemEx, toPosition)
 	if mount == nil or player:hasMount(mount.ID) then
 		return false
 	end
-
+	local rand = math.random(100)
 	-- Glooth Glider
 	if mount.TYPE == TYPE_GLOOTH_GLIDER then
 		if mount.REQUIRED then
