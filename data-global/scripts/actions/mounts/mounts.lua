@@ -147,7 +147,7 @@ function mounts.onUse(cid, item, fromPosition, itemEx, toPosition)
 			toPosition:sendMagicEffect(CONST_ME_MAGIC_GREEN)
 			Item(item.uid):remove(1)
 			return true
-		elseif item.itemid == 12548 and targetMonster:getOutfit().lookType == 387 then
+		elseif item.itemid == 12548 and targetMonster:getOutfit().lookType == 399 then
 			if rand > mount.CHANCE then
 				doFailAction(cid, mount, toPosition, item, itemEx, mount.BREAK)
 				return true
