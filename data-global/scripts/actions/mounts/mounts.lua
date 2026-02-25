@@ -1,5 +1,7 @@
 local ACTION_RUN, ACTION_BREAK, ACTION_NONE, ACTION_ALL = 1, 2, 3, 4
 local TYPE_MONSTER, TYPE_NPC, TYPE_ITEM, TYPE_ACTION, TYPE_UNIQUE = 1, 2, 3, 4, 5
+local TYPE_SINGEING_STEED = 6
+local TYPE_GLOOTH_GLIDER = 7
 
 local config = {
 	[5907] = { NAME = "Bear", ID = 3, BREAK = true, TYPE = TYPE_MONSTER, CHANCE = 20, FAIL_MSG = { { 1, "The bear ran away." }, { 2, "Oh no! The slingshot broke." }, { 3, "The bear is trying to hit you with its claws." } }, SUCCESS_MSG = "You have tamed the war bear.", ACHIEV = "Bearbaiting" },
@@ -14,6 +16,23 @@ local config = {
 	[12550] = { NAME = "Enraged White Deer", ID = 18, BREAK = true, TYPE = TYPE_MONSTER, CHANCE = 40, FAIL_MSG = { { 2, "The cone broke." }, { 3, "The deer has fled in fear." } }, SUCCESS_MSG = "You have tamed the white deer.", ACHIEV = "Friend of Elves" },
 	[28791] = { NAME = "Flying Book", ID = 126, BREAK = false, TYPE = TYPE_MONSTER, CHANCE = 20, FAIL_MSG = { { 1, "Flying Book has run away." } }, SUCCESS_MSG = "You have converted your library ticket and receive permission to ride a flying book.", ACHIEV = "Bibliomaniac" },
 	[39548] = { NAME = "Giant Beaver", ID = 201, BREAK = false, TYPE = TYPE_MONSTER, CHANCE = 40, FAIL_MSG = { { 1, "The giant beaver ran away." }, { 3, "The giant beaver is ignoring you." } }, SUCCESS_MSG = "You tamed the giant beaver.", ACHIEV = "Beaver Away" },
+	[21897] = {
+		NAME = "Glooth Glider",
+		ID = 71,
+		BREAK = false,
+		TYPE = TYPE_GLOOTH_GLIDER,
+		REQUIRED = {
+			{ id = 21898, name = "roll of covering" },
+			{ id = 21906, name = "glooth glider gear wheel" },
+			{ id = 21902, name = "glooth glider crank" },
+			{ id = 21899, name = "glooth glider tubes and wires" },
+			{ id = 21905, name = "glooth glider hinge" },
+			{ id = 21901, name = "glooth glider casing" },
+			{ id = 21897, name = "glooth glider blueprint" },
+		},
+		SUCCESS_MSG = "You successfully constructed a Glooth Glider!",
+		ACHIEV = "Fabled Construction",
+	},
 	[19136] = { NAME = "Gravedigger", ID = 39, BREAK = false, TYPE = TYPE_MONSTER, CHANCE = 40, FAIL_MSG = { { 1, "The gravedigger got scared and ran away." }, { 3, "The gravedigger is trying to nibble." } }, SUCCESS_MSG = "You tamed the hellgrip.", ACHIEV = "Blacknailed" },
 	[31576] = { NAME = "Gryphon", ID = 144, BREAK = false, TYPE = TYPE_MONSTER, CHANCE = 30, FAIL_MSG = { { 1, "Gryphon has run away." } }, SUCCESS_MSG = "You have tamed the gryphon.", ACHIEV = "Gryphon Rider" },
 	[30171] = { NAME = "Hibernal Moth", ID = 131, BREAK = false, TYPE = TYPE_MONSTER, CHANCE = 20, FAIL_MSG = { { 2, "The hibernal moth is not interested in your lantern and flies away." }, { 4, "The hibernal moth is not interested in your lantern and flies away." } }, SUCCESS_MSG = "You have tamed a hibernal moth.", ACHIEV = "Moth Whisperer" },
@@ -40,6 +59,7 @@ local config = {
 	[12549] = { NAME = "Panda", ID = 19, BREAK = true, TYPE = TYPE_MONSTER, CHANCE = 40, FAIL_MSG = { { 4, "Panda the leaves and ran away." } }, SUCCESS_MSG = "You have tamed the panda.", ACHIEV = "Chequered Teddy" },
 	[12509] = { NAME = "Sandstone Scorpion", ID = 21, BREAK = true, TYPE = TYPE_MONSTER, CHANCE = 40, FAIL_MSG = { { 1, "The scorpion has vanished." }, { 2, "Scorpion broken the sceptre." } }, SUCCESS_MSG = "You have tamed the scorpion.", ACHIEV = "Golden Sands" },
 	[20274] = { NAME = "Shock Head", ID = 42, BREAK = true, TYPE = TYPE_MONSTER, CHANCE = 30, FAIL_MSG = { { 1, "The shock head ran away." }, { 3, "The shock head is growling at you." } }, SUCCESS_MSG = "You tamed the shock head.", ACHIEV = "Personal Nightmare" },
+	[36938] = { NAME = "Singeing Steed", ID = 184, BREAK = false, TYPE = TYPE_SINGEING_STEED, CHANCE = 100, REQUIRED = { key = "fiery-horseshoe", count = 4 }, SUCCESS_MSG = "Singeing Steed is now yours!", ACHIEV = "Hot on the Trail" },
 	[24960] = { NAME = "Stone Rhino", ID = 106, BREAK = false, TYPE = TYPE_MONSTER, CHANCE = 30, FAIL_MSG = { { 1, "The stone rhino ran away." }, { 3, "The stone rhino is growling at you." } }, SUCCESS_MSG = "You tamed the stone rhino.", ACHIEV = "Rhino Rider" },
 	[12519] = { NAME = "Slug", ID = 14, BREAK = true, TYPE = TYPE_MONSTER, CHANCE = 40, FAIL_MSG = { { 1, "The slug has run away." }, { 3, "The drug had no effect." } }, SUCCESS_MSG = "You have tamed the slug.", ACHIEV = "Slugging Around" },
 	[12311] = { NAME = "Terror Bird", ID = 2, BREAK = true, TYPE = TYPE_MONSTER, CHANCE = 15, FAIL_MSG = { { 1, "The bird ran away." }, { 3, "The terror bird is pecking you." } }, SUCCESS_MSG = "You have tamed the bird.", ACHIEV = "Pecking Order" },
@@ -82,11 +102,61 @@ function mounts.onUse(cid, item, fromPosition, itemEx, toPosition)
 	local targetNpc = Npc(itemEx.uid)
 	local targetItem = Item(itemEx.uid)
 	local mount = config[item.itemid]
+
 	if mount == nil or player:hasMount(mount.ID) then
 		return false
 	end
 
-	local rand = math.random(100)
+	-- Glooth Glider
+	if mount.TYPE == TYPE_GLOOTH_GLIDER then
+		if mount.REQUIRED then
+			local missing = {}
+			for _, req in ipairs(mount.REQUIRED) do
+				if player:getItemCount(req.id) < 1 then
+					table.insert(missing, req.name)
+				end
+			end
+
+			if #missing > 0 then
+				player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "You require the following items to construct a " .. mount.NAME .. ":\n- " .. table.concat(missing, "\n- "))
+				return true
+			end
+
+			for _, req in ipairs(mount.REQUIRED) do
+				player:removeItem(req.id, 1)
+			end
+
+			if mount.ACHIEV then
+				player:addAchievement(mount.ACHIEV)
+			end
+			player:addAchievement("Natural Born Cowboy")
+			player:addMount(mount.ID)
+			player:sendTextMessage(MESSAGE_EVENT_ADVANCE, mount.SUCCESS_MSG)
+			toPosition:sendMagicEffect(CONST_ME_MAGIC_GREEN)
+			return true
+		end
+	end
+
+	-- Singeing Steed
+	if mount.TYPE == TYPE_SINGEING_STEED then
+		if mount.REQUIRED then
+			local currentCount = (player:kv():get(mount.REQUIRED.key) or 0) + 1
+			player:kv():set(mount.REQUIRED.key, currentCount)
+			player:getPosition():sendMagicEffect(CONST_ME_FIREATTACK)
+			item:remove(1)
+
+			if currentCount >= mount.REQUIRED.count then
+				if mount.ACHIEV then
+					player:addAchievement(mount.ACHIEV)
+				end
+				player:addAchievement("Natural Born Cowboy")
+				player:addMount(mount.ID)
+				player:sendTextMessage(MESSAGE_EVENT_ADVANCE, mount.SUCCESS_MSG)
+				player:getPosition():sendMagicEffect(CONST_ME_MAGIC_GREEN)
+			end
+			return true
+		end
+	end
 
 	--Monster Mount
 	if targetMonster ~= nil and mount.TYPE == TYPE_MONSTER then
