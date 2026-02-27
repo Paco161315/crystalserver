@@ -58,7 +58,7 @@ local function creatureSayCallback(npc, creature, type, message)
 		if player:getStorageValue(Storage.Quest.U7_8.TheShatteredIsles.AccessToNargor) == 1 then
 			npcHandler:say("Do you want to sail Nargor for 50 gold coins?", npc, creature)
 			npcHandler:setTopic(playerId, 1)
-			else
+		else
 			npcHandler:say("Sorry, but I can't take you there.", npc, creature)
 		end
 	elseif MsgContains(message, "yes") then
