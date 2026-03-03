@@ -114,6 +114,10 @@ keywordHandler:addKeyword({ "plunderpurse" }, StdModule.say, {
 	text = "Pirates and gold, you get the rest. Hoards gold now for young adventurers - \z
 		keeps it safe while you go out hunting.",
 })
+keywordHandler:addKeyword({ "key" }, StdModule.say, {
+	npcHandler = npcHandler,
+	text = "Yep, I think it's quite likely that the key might have been stolen. Though who in Dawnport would do such a thing, I can't imagine. Nothing to be gained by it, only some dirty worn clothes. <laughs>",
+})
 
 npcHandler:setMessage(MESSAGE_GREET, "Hey there. Need some armor or weapon? Then ask me for a {trade}.")
 npcHandler:setMessage(MESSAGE_FAREWELL, "Yeah, bye..")

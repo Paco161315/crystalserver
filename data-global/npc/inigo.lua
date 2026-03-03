@@ -221,6 +221,12 @@ keywordHandler:addKeyword({ "fishing rod" }, StdModule.say, {
 		Eating is essential in {Tibia} - if you don't eat when you're hungry, you won't regenerate health or mana. \z
 		So you should aways have some {food} with you.",
 })
+keywordHandler:addKeyword({ "key" }, StdModule.say, {
+	npcHandler = npcHandler,
+	text = "I've seen that goblin Woblin sneaking around the place, and more than once he was eyeing the key suspiciously. ... \z
+		Woblin sometimes visits the outpost for a trade. Something of a loner, not like your usual goblin. ... \z
+		He lives in a cave somewhere to the west of the isle. On a map, that would be on the left-hand side.",
+})
 
 local function creatureSayCallback(npc, creature, type, message)
 	local player = Player(creature)

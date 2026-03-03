@@ -44,6 +44,7 @@ local itemsTable = {
 		{ itemName = "rope", clientId = 3003, sell = 8, count = 1 },
 		{ itemName = "shovel", clientId = 3457, sell = 2, count = 1 },
 		{ itemName = "torch", clientId = 2920, buy = 2, count = 1 },
+		{ itemName = "fishing rod", clientId = 3483, buy = 150, count = 1 },
 	},
 	["others"] = {
 		{ itemName = "scroll", clientId = 2815, buy = 5, count = 1 },
@@ -195,6 +196,10 @@ keywordHandler:addKeyword({ "hamish" }, StdModule.say, {
 	npcHandler = npcHandler,
 	text = "Tries to act tough, but he's quite a witty and decent bloke who wouldn't hurt a fly. \z
 			We enjoy a good laugh together in the evenings.",
+})
+keywordHandler:addKeyword({ "key" }, StdModule.say, {
+	npcHandler = npcHandler,
+	text = "I wouldn't be too surprised if the key had been stolen. As often as everybody left it lying around unattended, something like that was bound to happen sooner or later.",
 })
 
 npcHandler:setMessage(MESSAGE_GREET, "Hello there, mate. Here for a {trade}? My stock's just been refilled.")

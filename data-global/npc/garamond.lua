@@ -340,6 +340,10 @@ keywordHandler:addKeyword({ "wentworth" }, StdModule.say, {
 	text = "Ah, yes. Travelled with Plunderpurse a lot as I recall. Captain Plunderpurse, then. \z
 			Got his head full of numbers and statistics, that boy.",
 })
+keywordHandler:addKeyword({ "key" }, StdModule.say, {
+	npcHandler = npcHandler,
+	text = "How should I know where that key has gotten to? I rarely sleep at my age anyway! Though I must say that my young adventurer fellows handled it quite carelessly, from what I saw.",
+})
 
 local function creatureSayCallback(npc, creature, type, message)
 	local player = Player(creature)
