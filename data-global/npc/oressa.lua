@@ -152,7 +152,7 @@ local function creatureSayCallback(npc, creature, type, message)
 
 	local vocationDefaultMessages = {
 		"A vocation is your profession and destiny, determining your skills and way of fighting. \z
-			There are four vocations in Tibia: {knight}, {sorcerer}, {paladin} or {druid}. \z
+			There are five vocations in Tibia: {knight}, {sorcerer}, {paladin}, {druid} or {monk}. \z
 			Each one has its unique special abilities. ... ",
 		"When you leave the outpost through one of the four gates upstairs, you will be equipped with \z
 			training gear of a specific vocation in order to defend yourself against the monsters outside. ... ",
@@ -340,7 +340,9 @@ local function creatureSayCallback(npc, creature, type, message)
 			"If you want to be a tough melee fighter who can resist much longer than anyone else, \z
 				you should consider choosing the knight vocation.",
 		}
-
+	elseif MsgContains(message, "monk") and npcHandler:getTopic(playerId) == 0 then
+		npcHandler:say("If you are interested in becoming a monk, please speak to Ambassador Manop.", npc, creature)
+		npcHandler:setTopic(playerId, 0)
 		if player:getLevel() >= 8 then
 			table.insert(message, "DO YOU WISH TO BECOME A VALIANT KNIGHT? Answer with a proud {YES} if that is your choice!")
 			npcHandler:setTopic(playerId, 5)
