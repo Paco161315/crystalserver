@@ -82,7 +82,7 @@ local function creatureSayCallback(npc, creature, type, message)
 					Would you go on that errand?",
 			}, npc, creature, 10)
 			npcHandler:setTopic(playerId, 1)
-		elseif player:getStorageValue(Storage.Quest.U10_55.Dawnport.TheLostAmulet) == 2 and player:getItemCount(21379) == 1 then
+		elseif player:getStorageValue(Storage.Quest.U10_55.Dawnport.TheLostAmulet) == 2 and player:getItemCount(21379) >= 1 then
 			npcHandler:say({
 				"Ah, you found the amulet! Ah. Really? Poor Dormovo. \z
 					Always a bit hasty. Forgot his rope, or food, or potions - \z
@@ -103,7 +103,7 @@ local function creatureSayCallback(npc, creature, type, message)
 				creature
 			)
 			npcHandler:setTopic(playerId, 2)
-		elseif player:getStorageValue(Storage.Quest.U10_55.Dawnport.TornLogBook) == 1 and player:getStorageValue(Storage.Quest.U10_55.Dawnport.TheStolenLogBook) == 1 and player:getItemCount(21378) == 1 then
+		elseif player:getStorageValue(Storage.Quest.U10_55.Dawnport.TornLogBook) == 1 and player:getStorageValue(Storage.Quest.U10_55.Dawnport.TheStolenLogBook) == 1 and player:getItemCount(21378) >= 1 then
 			npcHandler:say(
 				"Ah, yes, that's it! Torn and gnawed, but, ah well, the information is still retrievable. \z
 				Thank you. Here's your reward.",
