@@ -509,13 +509,13 @@ void Creature::onDeath() {
 	std::shared_ptr<Creature> lastHitCreatureMaster;
 	if (lastHitCreature && getPlayer()) {
 		std::shared_ptr<Player> killerPlayer = nullptr;
-		
+
 		if (lastHitCreature->getPlayer()) {
 			killerPlayer = lastHitCreature->getPlayer();
 		} else if (lastHitCreature->isSummon() && lastHitCreature->getMaster() && lastHitCreature->getMaster()->getPlayer()) {
 			killerPlayer = lastHitCreature->getMaster()->getPlayer();
 		}
-		
+
 		if (killerPlayer) {
 			/**
 			 * @deprecated -- This is here to trigger the deprecated onKill events in lua
@@ -595,7 +595,7 @@ void Creature::onDeath() {
 			} else if (killer->isSummon() && killer->getMaster() && killer->getMaster()->getPlayer()) {
 				killerPlayer = killer->getMaster()->getPlayer();
 			}
-			
+
 			if (killerPlayer) {
 				killerPlayer->onKilledPlayer(player, false);
 			}
