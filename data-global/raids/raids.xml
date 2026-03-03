@@ -29,7 +29,6 @@
 	<raid name="darashia.arachirtheancientone" file="darashia/arachir_the_ancient_one.xml" interval2="1440" margin="180" />
 	<raid name="darashia.captainjones" file="darashia/captain_jones.xml" interval2="1440" margin="360" />
 	<raid name="darashia.gravelordoshuran" file="darashia/gravelord_oshuran.xml" interval2="1440" margin="360" />
-	<raid name="darashia.lions" file="darashia/lions.xml" interval2="1440" margin="180" />
 	<raid name="darashia.minotaurs" file="darashia/minotaurs.xml" interval2="1440" margin="180" />
 	<raid name="darashia.necropharus" file="darashia/necropharus.xml" interval2="1440" margin="360" />
 	<raid name="darashia.pirates" file="darashia/pirates.xml" interval2="1440" margin="180" />
