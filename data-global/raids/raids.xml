@@ -136,6 +136,7 @@
 	<raid name="svargrond.barbariansbittermor" file="svargrond/barbarians_bittermor.xml" interval2="1440" margin="360" />
 	<raid name="svargrond.barbarianssvargrond1" file="svargrond/barbarians_svargrond1.xml" interval2="1440" margin="360" />
 	<raid name="svargrond.barbarianssvargrond2" file="svargrond/barbarians_svargrond2.xml" interval2="1440" margin="180" />
+	<raid name="svargrond.direpenguins" file="svargrond/dire_penguins.xml" interval2="1440" margin="720" />
 	<raid name="svargrond.ghazbaran" file="svargrond/ghazbaran.xml" interval2="1440" margin="360" />
 	<raid name="svargrond.hirintror" file="svargrond/hirintror.xml" interval2="1440" margin="360" />
 	<raid name="svargrond.icegolems" file="svargrond/ice_golems.xml" interval2="1440" margin="180" />
