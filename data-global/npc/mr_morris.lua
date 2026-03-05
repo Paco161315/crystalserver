@@ -386,6 +386,10 @@ keywordHandler:addKeyword({ "wentworth" }, StdModule.say, {
 	npcHandler = npcHandler,
 	text = "Be careful that he doesn't bore you to death with accountants of, well, your bank account history.",
 })
+keywordHandler:addKeyword({ "menesto" }, StdModule.say, {
+	npcHandler = npcHandler,
+	text = "He's still down there? And what about the others of his group?",
+})
 keywordHandler:addKeyword({ "woblin" }, StdModule.say, {
 	npcHandler = npcHandler,
 	text = "Ah, the goblin who sneaks around here now and then? Lives in a cave to the west, somewhere.",
@@ -398,6 +402,8 @@ If you seek to help me with some things, I might have a little {quest} or {missi
 )
 
 npcHandler:setCallback(CALLBACK_MESSAGE_DEFAULT, creatureSayCallback)
+npcHandler:setMessage(MESSAGE_FAREWELL, "Watch your back, young friend.")
+npcHandler:setMessage(MESSAGE_WALKAWAY, "Manners.")
 
 npcHandler:addModule(FocusModule:new(), npcConfig.name, true, true, true)
 

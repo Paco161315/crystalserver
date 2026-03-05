@@ -125,9 +125,33 @@ keywordHandler:addKeyword({ "goblins" }, StdModule.say, {
 	npcHandler = npcHandler,
 	text = "No part of clan. Me prefer company of {precious}. Or mirror image. Always nice to see pretty me!",
 })
+keywordHandler:addKeyword({ "minotaur" }, StdModule.say, {
+	npcHandler = npcHandler,
+	text = "Me not like minos either. Huge mean bullies! Woblin peaceful here.",
+})
+keywordHandler:addKeyword({ "troll" }, StdModule.say, {
+	npcHandler = npcHandler,
+	text = "Me not like trolls. Big furry stinky trolls!",
+})
+keywordHandler:addKeyword({ "dwarf", "dwarves" }, StdModule.say, {
+	npcHandler = npcHandler,
+	text = "Mean short people, make Woblin's clan do slave work for them.",
+})
+keywordHandler:addKeyword({ "cyclops" }, StdModule.say, {
+	npcHandler = npcHandler,
+	text = "Ugly stomping giants, always busy hammering stone.",
+})
 keywordHandler:addKeyword({ "quest" }, StdModule.say, {
 	npcHandler = npcHandler,
 	text = "What you on quest for? Go leave Woblin alone with {precious}.",
+})
+keywordHandler:addKeyword({ "help" }, StdModule.say, {
+	npcHandler = npcHandler,
+	text = "Fish good. Fish quiet and tasty. Woblin try to catch fishes, but... hm you could earn yourself {reward}!",
+})
+keywordHandler:addKeyword({ "trade", "offer" }, StdModule.say, {
+	npcHandler = npcHandler,
+	text = "Me not trade! Goods my precious now! By old goblin law all that one has in his pockets for two days is family heirloom! Me no part with my goods ... hm unless you provide Woblin with some {reward}!",
 })
 keywordHandler:addKeyword({ "key" }, StdModule.say, {
 	npcHandler = npcHandler,
@@ -135,6 +159,8 @@ keywordHandler:addKeyword({ "key" }, StdModule.say, {
 })
 
 npcHandler:setMessage(MESSAGE_GREET, "Hi there human!")
+npcHandler:setMessage(MESSAGE_FAREWELL, "Bye, bye!")
+npcHandler:setMessage(MESSAGE_WALKAWAY, "Bye, bye!")
 
 npcHandler:setCallback(CALLBACK_MESSAGE_DEFAULT, creatureSayCallback)
 

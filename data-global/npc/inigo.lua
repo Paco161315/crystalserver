@@ -184,6 +184,10 @@ keywordHandler:addKeyword({ "richard" }, StdModule.say, {
 	text = "Richard came here as a shipwrecked carpenter, and now sells {tools} and {food} to all adventurers. \z
 		If you need a {rope} or {shovel}, {fishing rod} or some provisions for a hunt, you should trade with him!",
 })
+keywordHandler:addKeyword({ "menesto" }, StdModule.say, {
+	npcHandler = npcHandler,
+	text = "Hasn't been with us for very long. Very interested in all things mystical.",
+})
 keywordHandler:addKeyword({ "knight" }, StdModule.say, {
 	npcHandler = npcHandler,
 	text = "Knights are close combat fighters, the toughest vocation of all. \z
@@ -620,6 +624,8 @@ local function creatureSayCallback(npc, creature, type, message)
 end
 
 npcHandler:setCallback(CALLBACK_MESSAGE_DEFAULT, creatureSayCallback)
+npcHandler:setMessage(MESSAGE_FAREWELL, "Good hunting!")
+npcHandler:setMessage(MESSAGE_WALKAWAY, "Good bye!")
 
 npcHandler:addModule(FocusModule:new(), npcConfig.name, true, true, true)
 

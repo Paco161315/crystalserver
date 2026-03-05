@@ -108,6 +108,10 @@ keywordHandler:addKeyword({ "hamish" }, StdModule.say, {
 	npcHandler = npcHandler,
 	text = "He lives only for his experiments and potions",
 })
+keywordHandler:addKeyword({ "menesto" }, StdModule.say, {
+	npcHandler = npcHandler,
+	text = "He is injured? Then I should see to his wounds. I will pack some herbs and be off presently. Thank you.",
+})
 keywordHandler:addKeyword({ "dawnport" }, StdModule.say, {
 	npcHandler = npcHandler,
 	text = {
@@ -418,6 +422,7 @@ end
 npcHandler:setCallback(CALLBACK_GREET, greetCallback)
 
 npcHandler:setMessage(MESSAGE_FAREWELL, "Good bye, child.")
+npcHandler:setMessage(MESSAGE_WALKAWAY, "Good bye.")
 
 npcHandler:setCallback(CALLBACK_MESSAGE_DEFAULT, creatureSayCallback)
 
