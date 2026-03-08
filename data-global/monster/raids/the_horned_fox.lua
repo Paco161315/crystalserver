@@ -85,10 +85,10 @@ monster.loot = {
 	{ id = 5878, chance = 96880 }, -- minotaur leather
 	{ id = 11472, chance = 93750, maxCount = 2 }, -- minotaur horn
 	{ id = 11482, chance = 81250 }, -- piece of warrior armor
-	{ id = 7363, chance = 46880, maxCount = 14 }, -- piercing bolt	
-	{ id = 3359, chance = 28130,  }, -- brass armor
-	{ id = 3577, chance = 15630,  }, -- meat
-	{ id = 3413, chance = 12500,  }, -- battle shield
+	{ id = 7363, chance = 46880, maxCount = 14 }, -- piercing bolt
+	{ id = 3359, chance = 28130 }, -- brass armor
+	{ id = 3577, chance = 15630 }, -- meat
+	{ id = 3413, chance = 12500 }, -- battle shield
 	{ id = 236, chance = 9380 }, -- strong health potion
 	{ id = 3396, chance = 9380 }, -- dwarven helmet
 	{ id = 3483, chance = 6250 }, -- fishing rod
