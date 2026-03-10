@@ -110,8 +110,6 @@ local function creatureSayCallback(npc, creature, type, message)
 	return true
 end
 
-keywordHandler:addKeyword({ "spells" }, StdModule.say, { npcHandler = npcHandler, text = "I can teach you these spells: {Blood Rage}, {Eternal Winter}, {Hell's Core}, {Protector}, {Rage of the Skies}, {Sharpshooter}, {Swift Foot}, {Ultimate Energy Strike}, {Ultimate Flame Strike}, {Ultimate Ice Strike}, {Ultimate Terra Strike} and {Wrath of Nature}." })
-
 local node1 = keywordHandler:addKeyword({ "blood rage" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {blood rage} magic spell for 8000 gold?" })
 node1:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "blood rage", vocation = { 4, 8 }, price = 8000, level = 60 })
 
@@ -147,6 +145,17 @@ node11:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandle
 
 local node12 = keywordHandler:addKeyword({ "wrath of nature" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {wrath of nature} magic spell for 6000 gold?" })
 node12:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "wrath of nature", vocation = { 2, 6 }, price = 6000, level = 55 })
+
+keywordHandler:addKeyword({ "spells" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "I can teach you {support} and {attack} spells. What kind of spell do you wish to learn? I can also tell you which spells are available at your {level}." })
+keywordHandler:addKeyword({ "support" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Support spells: {Blood Rage} (Knight), {Protector} (Knight), {Sharpshooter} (Paladin), {Swift Foot} (Paladin)." })
+keywordHandler:addKeyword({ "attack" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Attack spells: {Eternal Winter} (Druid), {Hell's Core} (Sorcerer), {Rage of the Skies} (Sorcerer), {Ultimate Energy Strike} (Sorcerer), {Ultimate Flame Strike} (Sorcerer), {Ultimate Ice Strike} (Druid), {Ultimate Terra Strike} (Druid), {Wrath of Nature} (Druid)." })
+
+local nodeLevels = keywordHandler:addKeyword({ "level" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "I have spells for level {100}, {90}, {60} and {55}." })
+
+nodeLevels:addChildKeyword({ "100" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "For level 100 I have {Ultimate Energy Strike} for 15000 gold and {Ultimate Ice Strike} for 15000 gold." })
+nodeLevels:addChildKeyword({ "90" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "For level 90 I have {Ultimate Flame Strike} for 15000 gold and {Ultimate Terra Strike} for 15000 gold." })
+nodeLevels:addChildKeyword({ "60" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "For level 60 I have {Blood Rage} for 8000 gold, {Eternal Winter} for 8000 gold, {Hell's Core} for 8000 gold and {Sharpshooter} for 8000 gold." })
+nodeLevels:addChildKeyword({ "55" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "For level 55 I have {Protector} for 6000 gold, {Rage of the Skies} for 6000 gold, {Swift Foot} for 6000 gold and {Wrath of Nature} for 6000 gold." })
 
 npcHandler:setMessage(MESSAGE_GREET, "Welcome |PLAYERNAME|, student of the arcane arts. I teach the fiercest {spells} available.")
 npcHandler:setMessage(MESSAGE_FAREWELL, "Use your knowledge wisely, |PLAYERNAME|.")
