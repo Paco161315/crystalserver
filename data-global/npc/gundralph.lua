@@ -321,64 +321,44 @@ node89:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandle
 local node91 = keywordHandler:addKeyword({ "light" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {light} magic spell for free?" })
 node91:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "light", vocation = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }, price = 0, level = 8 })
 
-keywordHandler:addKeyword(
-	{ "spells" },
-	StdModule.say,
-	{
-		npcHandler = npcHandler,
-		text = "I can teach you {healing} spells, {support} spells, {attack} spells and spells for {runes}. What kind of spell do you wish to learn? I can also tell you which spells are available at your {level}.",
-	}
-)
+keywordHandler:addKeyword({ "spells" }, StdModule.say, {
+	npcHandler = npcHandler,
+	text = "I can teach you {healing} spells, {support} spells, {attack} spells and spells for {runes}. What kind of spell do you wish to learn? I can also tell you which spells are available at your {level}.",
+})
 
 -- HEALING SPELLS
-keywordHandler:addKeyword(
-	{ "healing" },
-	StdModule.say,
-	{
-		npcHandler = npcHandler,
-		onlyFocus = true,
-		text = "My healing spells are: {Cure Bleeding}, {Cure Burning}, {Cure Electrification}, {Cure Poison}, {Heal Friend}, {Intense Healing}, {Light Healing}, {Magic Patch}, {Mass Healing}, {Nature's Embrace}, {Restoration} and {Ultimate Healing}.",
-	}
-)
+keywordHandler:addKeyword({ "healing" }, StdModule.say, {
+	npcHandler = npcHandler,
+	onlyFocus = true,
+	text = "My healing spells are: {Cure Bleeding}, {Cure Burning}, {Cure Electrification}, {Cure Poison}, {Heal Friend}, {Intense Healing}, {Light Healing}, {Magic Patch}, {Mass Healing}, {Nature's Embrace}, {Restoration} and {Ultimate Healing}.",
+})
 
 -- SUPPORT SPELLS
-keywordHandler:addKeyword(
-	{ "support" },
-	StdModule.say,
-	{
-		npcHandler = npcHandler,
-		onlyFocus = true,
-		text = "My support spells are: {Animate Dead}, {Cancel Magic Shield}, {Chameleon} Rune, {Convince Creature}, {Creature Illusion}, {Find Fiend}, {Find Person}, {Food}, {Great Light}, {Haste}, {Invisibility}, {Levitate}, {Light}, {Magic Rope}, {Magic Shield}, {Strong Haste}, {Summon Creature}, {Summon Druid Familiar}, {Summon Sorcerer Familiar} and {Ultimate Light}.",
-	}
-)
+keywordHandler:addKeyword({ "support" }, StdModule.say, {
+	npcHandler = npcHandler,
+	onlyFocus = true,
+	text = "My support spells are: {Animate Dead}, {Cancel Magic Shield}, {Chameleon} Rune, {Convince Creature}, {Creature Illusion}, {Find Fiend}, {Find Person}, {Food}, {Great Light}, {Haste}, {Invisibility}, {Levitate}, {Light}, {Magic Rope}, {Magic Shield}, {Strong Haste}, {Summon Creature}, {Summon Druid Familiar}, {Summon Sorcerer Familiar} and {Ultimate Light}.",
+})
 
 -- ATTACK SPELLS
-keywordHandler:addKeyword(
-	{ "attack" },
-	StdModule.say,
-	{
-		npcHandler = npcHandler,
-		onlyFocus = true,
-		text = "My attack spells are: {Apprentice's Strike}, {Buzz}, {Chill Out}, {Curse}, {Death Strike}, {Electrify}, {Energy Beam}, {Energy Strike}, {Energy Wave}, {Envenom}, {Expose Weakness}, {Fire Wave}, {Flame Strike}, {Great Energy Beam}, {Great Fire Wave}, {Ice Strike}, {Ice Wave}, {Lightning}, {Mud Attack}, {Physical Strike}, {Sap Strength}, {Scorch}, {Strong Energy Strike}, {Strong Flame Strike}, {Strong Ice Strike}, {Strong Ice Wave}, {Strong Terra Strike}, {Terra Strike} and {Terra Wave}.",
-	}
-)
+keywordHandler:addKeyword({ "attack" }, StdModule.say, {
+	npcHandler = npcHandler,
+	onlyFocus = true,
+	text = "My attack spells are: {Apprentice's Strike}, {Buzz}, {Chill Out}, {Curse}, {Death Strike}, {Electrify}, {Energy Beam}, {Energy Strike}, {Energy Wave}, {Envenom}, {Expose Weakness}, {Fire Wave}, {Flame Strike}, {Great Energy Beam}, {Great Fire Wave}, {Ice Strike}, {Ice Wave}, {Lightning}, {Mud Attack}, {Physical Strike}, {Sap Strength}, {Scorch}, {Strong Energy Strike}, {Strong Flame Strike}, {Strong Ice Strike}, {Strong Ice Wave}, {Strong Terra Strike}, {Terra Strike} and {Terra Wave}.",
+})
 
 -- RUNE SPELLS
-keywordHandler:addKeyword(
-	{ "runes" },
-	StdModule.say,
-	{
-		npcHandler = npcHandler,
-		onlyFocus = true,
-		text = "My rune spells are: {Avalanche} Rune, {Cure Poison Rune}, {Destroy Field} Rune, {Disintegrate} Rune, {Energy Bomb} Rune, {Energy Field} Rune, {Energy Wall} Rune, {Explosion} Rune, {Fire Bomb} Rune, {Fire Field} Rune, {Fire Wall} Rune, {Fireball} Rune, {Great Fireball} Rune, {Heavy Magic Missile} Rune, {Icicle} Rune, {Ignite}, {Intense Healing Rune}, {Light Magic Missile} Rune, {Magic Wall} Rune, {Paralyse} Rune, {Poison Bomb} Rune, {Poison Field} Rune, {Poison Wall} Rune, {Soulfire} Rune, {Stalagmite} Rune, {Stone Shower} Rune, {Sudden Death} Rune, {Thunderstorm} Rune and {Ultimate Healing Rune}.",
-	}
-)
+keywordHandler:addKeyword({ "runes" }, StdModule.say, {
+	npcHandler = npcHandler,
+	onlyFocus = true,
+	text = "My rune spells are: {Avalanche} Rune, {Cure Poison Rune}, {Destroy Field} Rune, {Disintegrate} Rune, {Energy Bomb} Rune, {Energy Field} Rune, {Energy Wall} Rune, {Explosion} Rune, {Fire Bomb} Rune, {Fire Field} Rune, {Fire Wall} Rune, {Fireball} Rune, {Great Fireball} Rune, {Heavy Magic Missile} Rune, {Icicle} Rune, {Ignite}, {Intense Healing Rune}, {Light Magic Missile} Rune, {Magic Wall} Rune, {Paralyse} Rune, {Poison Bomb} Rune, {Poison Field} Rune, {Poison Wall} Rune, {Soulfire} Rune, {Stalagmite} Rune, {Stone Shower} Rune, {Sudden Death} Rune, {Thunderstorm} Rune and {Ultimate Healing Rune}.",
+})
 
 -- LEVEL SYSTEM
 local nodeLevels = keywordHandler:addKeyword({ "level" }, StdModule.say, {
 	npcHandler = npcHandler,
 	onlyFocus = true,
-	text = "I have spells for level {1}, {8}, {9}, {12}, {13}, {14}, {15}, {16}, {17}, {18}, {20}, {21}, {22}, {23}, {24}, {25}, {26}, {27}, {28}, {29}, {30}, {31}, {32}, {33}, {34}, {35}, {36}, {37}, {38}, {40}, {41}, {45}, {50}, {54}, {55}, {70}, {75}, {80}, {175}, {200}, {275} and {300}."
+	text = "I have spells for level {1}, {8}, {9}, {12}, {13}, {14}, {15}, {16}, {17}, {18}, {20}, {21}, {22}, {23}, {24}, {25}, {26}, {27}, {28}, {29}, {30}, {31}, {32}, {33}, {34}, {35}, {36}, {37}, {38}, {40}, {41}, {45}, {50}, {54}, {55}, {70}, {75}, {80}, {175}, {200}, {275} and {300}.",
 })
 
 nodeLevels:addChildKeyword({ "300" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "For level 300 I have {Nature's Embrace} for 500000 gold and {Restoration} for 500000 gold." })
