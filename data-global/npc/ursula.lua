@@ -45,7 +45,6 @@ npcType.onCloseChannel = function(npc, creature)
 	npcHandler:onCloseChannel(npc, creature)
 end
 
-
 local node1 = keywordHandler:addKeyword({ "strong ethereal spear" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {strong ethereal spear} magic spell for 10000 gold?" })
 node1:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "strong ethereal spear", vocation = { 3, 7 }, price = 10000, level = 90 })
 
@@ -139,75 +138,51 @@ node30:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandle
 local node31 = keywordHandler:addKeyword({ "summon paladin familiar" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "Would you like to learn {summon paladin familiar} magic spell for 50000 gold?" })
 node31:addChildKeyword({ "yes" }, StdModule.learnSpell, { npcHandler = npcHandler, premium = false, spellName = "summon paladin familiar", vocation = { 3, 7 }, price = 50000, level = 200 })
 
-keywordHandler:addKeyword(
-	{ "spells" },
-	StdModule.say,
-	{
-		npcHandler = npcHandler,
-		text = "I can teach you {healing} spells, {support} spells, {conjure} spells, {attack} spells and spells for {runes}. What kind of spell do you wish to learn? I can also tell you which spells are available at your {level}.",
-	}
-)
+keywordHandler:addKeyword({ "spells" }, StdModule.say, {
+	npcHandler = npcHandler,
+	text = "I can teach you {healing} spells, {support} spells, {conjure} spells, {attack} spells and spells for {runes}. What kind of spell do you wish to learn? I can also tell you which spells are available at your {level}.",
+})
 
 -- HEALING SPELLS
-keywordHandler:addKeyword(
-	{ "healing" },
-	StdModule.say,
-	{
-		npcHandler = npcHandler,
-		onlyFocus = true,
-		text = "My healing spells are: {Cure Curse}, {Cure Poison}, {Divine Healing}, {Intense Healing}, {Intense Recovery}, {Light Healing}, {Magic Patch}, {Recovery} and {Salvation}.",
-	}
-)
+keywordHandler:addKeyword({ "healing" }, StdModule.say, {
+	npcHandler = npcHandler,
+	onlyFocus = true,
+	text = "My healing spells are: {Cure Curse}, {Cure Poison}, {Divine Healing}, {Intense Healing}, {Intense Recovery}, {Light Healing}, {Magic Patch}, {Recovery} and {Salvation}.",
+})
 
 -- SUPPORT SPELLS
-keywordHandler:addKeyword(
-	{ "support" },
-	StdModule.say,
-	{
-		npcHandler = npcHandler,
-		onlyFocus = true,
-		text = "My support spells are: {Arrow Call}, {Cancel Invisibility}, {Find Fiend}, {Find Person}, {Great Light}, {Haste}, {Lesser Ethereal Spear}, {Levitate}, {Light} and {Magic Rope}.",
-	}
-)
+keywordHandler:addKeyword({ "support" }, StdModule.say, {
+	npcHandler = npcHandler,
+	onlyFocus = true,
+	text = "My support spells are: {Arrow Call}, {Cancel Invisibility}, {Find Fiend}, {Find Person}, {Great Light}, {Haste}, {Lesser Ethereal Spear}, {Levitate}, {Light} and {Magic Rope}.",
+})
 
 -- CONJURE SPELLS
-keywordHandler:addKeyword(
-	{ "conjure" },
-	StdModule.say,
-	{
-		npcHandler = npcHandler,
-		onlyFocus = true,
-		text = "My conjure spells are: {Conjure Arrow}, {Conjure Explosive Arrow} and {Enchant Spear}.",
-	}
-)
+keywordHandler:addKeyword({ "conjure" }, StdModule.say, {
+	npcHandler = npcHandler,
+	onlyFocus = true,
+	text = "My conjure spells are: {Conjure Arrow}, {Conjure Explosive Arrow} and {Enchant Spear}.",
+})
 
 -- ATTACK SPELLS
-keywordHandler:addKeyword(
-	{ "attack" },
-	StdModule.say,
-	{
-		npcHandler = npcHandler,
-		onlyFocus = true,
-		text = "My attack spells are: {Divine Caldera}, {Divine Missile}, {Ethereal Spear}, {Holy Flash}, {Strong Ethereal Spear} and {Summon Paladin Familiar}.",
-	}
-)
+keywordHandler:addKeyword({ "attack" }, StdModule.say, {
+	npcHandler = npcHandler,
+	onlyFocus = true,
+	text = "My attack spells are: {Divine Caldera}, {Divine Missile}, {Ethereal Spear}, {Holy Flash}, {Strong Ethereal Spear} and {Summon Paladin Familiar}.",
+})
 
 -- RUNE SPELLS
-keywordHandler:addKeyword(
-	{ "runes" },
-	StdModule.say,
-	{
-		npcHandler = npcHandler,
-		onlyFocus = true,
-		text = "My rune spells are: {Destroy Field} Rune, {Disintegrate} Rune and {Holy Missile} Rune.",
-	}
-)
+keywordHandler:addKeyword({ "runes" }, StdModule.say, {
+	npcHandler = npcHandler,
+	onlyFocus = true,
+	text = "My rune spells are: {Destroy Field} Rune, {Disintegrate} Rune and {Holy Missile} Rune.",
+})
 
 -- LEVEL SYSTEM
 local nodeLevels = keywordHandler:addKeyword({ "level" }, StdModule.say, {
 	npcHandler = npcHandler,
 	onlyFocus = true,
-	text = "I have spells for level {1}, {8}, {9}, {10}, {12}, {13}, {14}, {17}, {20}, {21}, {23}, {25}, {26}, {27}, {35}, {40}, {45}, {50}, {60}, {70}, {80}, {90}, {100} and {200}."
+	text = "I have spells for level {1}, {8}, {9}, {10}, {12}, {13}, {14}, {17}, {20}, {21}, {23}, {25}, {26}, {27}, {35}, {40}, {45}, {50}, {60}, {70}, {80}, {90}, {100} and {200}.",
 })
 
 nodeLevels:addChildKeyword({ "200" }, StdModule.say, { npcHandler = npcHandler, onlyFocus = true, text = "For level 200 I have {Summon Paladin Familiar} for 50000 gold." })
