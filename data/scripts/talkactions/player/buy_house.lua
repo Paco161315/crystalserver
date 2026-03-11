@@ -82,9 +82,9 @@ function buyHouse.onSay(player, words, param)
 
 	house:setHouseOwner(player:getGuid())
 	player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "You have successfully bought this house, be sure to have the money for the rent in the bank.")
-	local houseSpells = {"House Door List", "House Guest List", "House Kick", "House Subowner List"}
+	local houseSpells = { "House Door List", "House Guest List", "House Kick", "House Subowner List" }
 	local learnedSpells = {}
-	
+
 	for i = 1, #houseSpells do
 		local spellName = houseSpells[i]
 		if not player:hasLearnedSpell(spellName) then
@@ -92,7 +92,7 @@ function buyHouse.onSay(player, words, param)
 			table.insert(learnedSpells, spellName)
 		end
 	end
-	
+
 	return true
 end
 
