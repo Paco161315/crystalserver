@@ -85,7 +85,7 @@ local function creatureSayCallback(npc, creature, type, message)
 			}, npc, creature)
 			npcHandler:setTopic(playerId, 5)
 		elseif npcHandler:getTopic(playerId) == 5 then
-			local rand = math.random(3) -- the real stat chance for achievement is unkown, set as you like here
+			local rand = math.random(3) -- the real stats chance for achievement is unknown, set as you like here
 			if rand == 1 then
 				npcHandler:setMessage(MESSAGE_WALKAWAY, "Oh, the nerve. Go to the rats which raised you.")
 				player:teleportTo(Position(32759, 31241, 9))
