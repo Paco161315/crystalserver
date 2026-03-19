@@ -3591,6 +3591,6 @@ ItemUnique = {
 	-- Blood Brothers Quest
 	[58104] = {
 		itemId = 2472,
-		itemPos = {x = 32776, y = 31105, z = 10},
+		itemPos = { x = 32776, y = 31105, z = 10 },
 	},
 }
