@@ -85,12 +85,12 @@ local function creatureSayCallback(npc, creature, type, message)
 			}, npc, creature)
 			npcHandler:setTopic(playerId, 5)
 		elseif npcHandler:getTopic(playerId) == 5 then
-			local rand = math.random(100) -- 1/100 chance to fight secret boss
-			if rand < 99 then
+			local rand = math.random(3) -- the real stat chance for achievement is unkown, set as you like here
+			if rand == 1 then
 				npcHandler:setMessage(MESSAGE_WALKAWAY, "Oh, the nerve. Go to the rats which raised you.")
 				player:teleportTo(Position(32759, 31241, 9))
 				player:getPosition():sendMagicEffect(CONST_ME_TELEPORT)
-			elseif rand == 100 then
+			elseif rand == 2 then
 				npcHandler:setMessage(MESSAGE_WALKAWAY, "You know what, I changed my mind, BRING IT!")
 				player:teleportTo(Position(32856, 31324, 8))
 				player:getPosition():sendMagicEffect(CONST_ME_TELEPORT)
