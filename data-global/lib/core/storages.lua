@@ -2335,6 +2335,7 @@ Storage = {
 				DiamondServant = 45508,
 				AstralPowerCounter = 45509,
 				AstralGlyph = 45510,
+				ForbiddenFruit = 193226,
 			},
 		},
 		U11_40 = { -- update 11.40 - Reserved Storages 45651 - 45850
