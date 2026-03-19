@@ -1213,6 +1213,13 @@ Storage = {
 				DiarySTG = 41932,
 				MapMarks_CastleEntrance = 41933,
 				MapMarks = 41934,
+				MapMarks_BlackGap = 41935,
+				MapMarks_BoneTotems = 41936,
+				MapMarks_HauntedRuins = 41937,
+				MapMarks_LonelyGrave = 41938,
+				MapMarks_BurningTrees = 41939,
+				MapMarks_OldShrine = 41940,
+				MapMarks_CastleGarden = 41941,
 			},
 			InServiceOfYalahar = {
 				TheWayToYalahar = 41950,

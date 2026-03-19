@@ -6341,7 +6341,7 @@ if not Quests then
 					},
 				},
 				[5] = {
-					name = "Mission 05: Inside the Castle",
+					name = "Mission 05: Into the Castle",
 					storageId = Storage.Quest.U8_4.BloodBrothers.Mission05,
 					missionId = 10467,
 					startValue = 1,
@@ -6354,7 +6354,7 @@ if not Quests then
 					},
 				},
 				[6] = {
-					name = "Mission 06: A Dark History",
+					name = "Mission 06: A Black History",
 					storageId = Storage.Quest.U8_4.BloodBrothers.Mission06,
 					missionId = 10468,
 					startValue = 1,
