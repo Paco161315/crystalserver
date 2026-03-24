@@ -50,7 +50,6 @@ npcType.onCloseChannel = function(npc, creature)
 	npcHandler:onCloseChannel(npc, creature)
 end
 
-
 local function greetCallback(npc, creature)
 	local player = Player(creature)
 	if player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.QuestLine) < 0 then
@@ -74,7 +73,6 @@ local function creatureSayCallback(npc, creature, type, message)
 		if player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.QuestLine) < 0 then
 			npcHandler:say("Our nightly blood-sucking visitors put the inhabitants of Yalahar in constant danger. The worst thing is that anyone in this city could be a vampire. Maybe an outsider like you could help us. Would you try?", npc, creature)
 			npcHandler:setTopic(playerId, 1)
-
 		elseif player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.Mission01) == 1 then
 			local neckItem = player:getSlotItem(CONST_SLOT_NECKLACE)
 			if neckItem and neckItem.itemid == 3083 then
@@ -84,7 +82,6 @@ local function creatureSayCallback(npc, creature, type, message)
 			else
 				npcHandler:say("I fear that will not do. Sorry.", npc, creature)
 			end
-
 		elseif player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.Mission01) == 3 then
 			if player:getItemCount(8194) >= 1 then
 				npcHandler:say("Let me check - yes indeed, there's garlic in it. Now eat one, in front of my eyes. Right now! Say '{aaah}' when you've chewed it all down so that I can see you're not hiding it!", npc, creature)
@@ -92,7 +89,6 @@ local function creatureSayCallback(npc, creature, type, message)
 			else
 				npcHandler:say("You don't have the garlic bread with you. Come back once you have baked it.", npc, creature)
 			end
-
 		elseif player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.Mission01) == 4 and player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.Mission02) < 0 then
 			npcHandler:say("So, are you ready for your first real task?", npc, creature)
 			npcHandler:setTopic(playerId, 5)
@@ -101,7 +97,6 @@ local function creatureSayCallback(npc, creature, type, message)
 		elseif player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.Mission02) == 1 then
 			npcHandler:say("Are you back with confirmed names of possible vampires?", npc, creature)
 			npcHandler:setTopic(playerId, 7)
-
 		elseif player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.Mission02) == 2 and player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.Mission03) < 0 then
 			npcHandler:say({
 				"Listen, I thought of something. If we could somehow figure out who among those five is their leader and manage to defeat him, the others might give up too. ...",
@@ -113,7 +108,6 @@ local function creatureSayCallback(npc, creature, type, message)
 		elseif player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.Mission03) == 2 then
 			npcHandler:say("Oh! You look horrible - I mean, rather weary. What happened? Who is the master vampire?", npc, creature)
 			npcHandler:setTopic(playerId, 11)
-
 		elseif player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.Mission03) == 3 and player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.Mission04) < 0 then
 			npcHandler:say({
 				"You know, I came to think that the spell didn't work because there is another, greater power behind all of this. I fear that if we don't find the source of the vampire threat we can't defeat them. ...",
@@ -127,7 +121,6 @@ local function creatureSayCallback(npc, creature, type, message)
 		elseif player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.Mission04) == 1 then
 			npcHandler:say("Are you back with a useful map of Vengoth?", npc, creature)
 			npcHandler:setTopic(playerId, 13)
-
 		elseif player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.Mission04) == 2 and player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.Mission05) < 0 then
 			npcHandler:say({
 				"The spots you found on Vengoth are really interesting, especially the castle. There's something dark and spooky surrounding all of these places. ...",
@@ -139,11 +132,9 @@ local function creatureSayCallback(npc, creature, type, message)
 		elseif player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.Mission05) == 1 then
 			npcHandler:say("As I said, I don't know where you might get a blood crystal - but did you find one?", npc, creature)
 			npcHandler:setTopic(playerId, 21)
-
 		elseif player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.Mission05) == 2 then
 			npcHandler:say("Ah! I can see in your eyes that you found someone! Do you have that charged crystal?", npc, creature)
 			npcHandler:setTopic(playerId, 23)
-
 		elseif player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.Mission05) == 3 then
 			npcHandler:say("Ah! Welcome back! So you have been inside the castle? Was it as spooky as in the stories told by people?", npc, creature)
 			npcHandler:setTopic(playerId, 26)
@@ -152,7 +143,6 @@ local function creatureSayCallback(npc, creature, type, message)
 		elseif player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.Mission05) == 4 then
 			npcHandler:say("Did you find anything of interest inside the castle?", npc, creature)
 			npcHandler:setTopic(playerId, 28)
-
 		elseif player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.Mission06) == 1 then
 			npcHandler:say("Impressive. A plant-crazy vampire... didn't think something like that existed. Have you got proof of his death?", npc, creature)
 			npcHandler:setTopic(playerId, 30)
@@ -172,17 +162,14 @@ local function creatureSayCallback(npc, creature, type, message)
 			npcHandler:say("You are back! You truly are a hero and a fierce vampire slayer! Have you got proof of Arthei's death?", npc, creature)
 			npcHandler:setTopic(playerId, 33)
 		end
-
 	elseif MsgContains(message, "diary") then
 		npcHandler:say("Have you brought a missing page from Marziel's diary?", npc, creature)
 		npcHandler:setTopic(playerId, 34)
-
 	elseif MsgContains(message, "garlic bread") then
 		if npcHandler:getTopic(playerId) == 2 then
 			npcHandler:say("Well, you need to mix flour with holy water and use that dough on garlic to create a special dough. Bake it like normal bread, but I guarantee that no vampire can eat that. Are you following me?", npc, creature)
 			npcHandler:setTopic(playerId, 3)
 		end
-
 	elseif MsgContains(message, "aaah") then
 		if npcHandler:getTopic(playerId) == 4 then
 			if player:removeItem(8194, 1) then
@@ -193,14 +180,12 @@ local function creatureSayCallback(npc, creature, type, message)
 				npcHandler:say("No, no, you didn't eat it! Vampire Brood! Say '{aaah}' once you have eaten the bread or get out of here instantly!", npc, creature)
 			end
 		end
-
 	elseif message:lower() == "alori mort" then
 		if npcHandler:getTopic(playerId) == 10 then
 			npcHandler:say("Good. Don't play around with the spell, only use it when standing in front of those vampires. Come back and report to me about your progress later.", npc, creature)
 			player:setStorageValue(Storage.Quest.U8_4.BloodBrothers.Mission03, 1)
 			npcHandler:setTopic(playerId, 0)
 		end
-
 	elseif MsgContains(message, "armenius") then
 		if npcHandler:getTopic(playerId) == 11 then
 			npcHandler:say("I see... so Armenius is the master, and the spell didn't even cause a scratch on him... Well, that went worse than expected. Let me think for a moment and then ask me about a mission again.", npc, creature)
@@ -216,7 +201,6 @@ local function creatureSayCallback(npc, creature, type, message)
 				npcHandler:say("Hm. You don't look so sure about that one. You should not report suspects that you did not confirm yourself! Any others?", npc, creature)
 			end
 		end
-
 	elseif MsgContains(message, "maris") then
 		if npcHandler:getTopic(playerId) == 8 then
 			if player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.Cookies.Maris) == 1 then
@@ -228,7 +212,6 @@ local function creatureSayCallback(npc, creature, type, message)
 				npcHandler:say("Hm. You don't look so sure about that one. You should not report suspects that you did not confirm yourself! Any others?", npc, creature)
 			end
 		end
-
 	elseif MsgContains(message, "ortheus") then
 		if npcHandler:getTopic(playerId) == 8 then
 			if player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.Cookies.Ortheus) == 1 then
@@ -240,7 +223,6 @@ local function creatureSayCallback(npc, creature, type, message)
 				npcHandler:say("Hm. You don't look so sure about that one. You should not report suspects that you did not confirm yourself! Any others?", npc, creature)
 			end
 		end
-
 	elseif MsgContains(message, "serafin") then
 		if npcHandler:getTopic(playerId) == 8 then
 			if player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.Cookies.Serafin) == 1 then
@@ -252,7 +234,6 @@ local function creatureSayCallback(npc, creature, type, message)
 				npcHandler:say("Hm. You don't look so sure about that one. You should not report suspects that you did not confirm yourself! Any others?", npc, creature)
 			end
 		end
-
 	elseif MsgContains(message, "lisander") then
 		if npcHandler:getTopic(playerId) == 8 then
 			if player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.Cookies.Lisander) == 1 then
@@ -264,19 +245,16 @@ local function creatureSayCallback(npc, creature, type, message)
 				npcHandler:say("Hm. You don't look so sure about that one. You should not report suspects that you did not confirm yourself! Any others?", npc, creature)
 			end
 		end
-
 	elseif MsgContains(message, "yes") then
 		if npcHandler:getTopic(playerId) == 1 then
 			npcHandler:say("Well, there's one problem. How would I know I can trust you? You might be one of them... hm. Can you think of something really unlikely for a vampire? If you know a way to prove it to me, ask me about your {mission}.", npc, creature)
 			player:setStorageValue(Storage.Quest.U8_4.BloodBrothers.QuestLine, 1)
 			player:setStorageValue(Storage.Quest.U8_4.BloodBrothers.Mission01, 1)
 			npcHandler:setTopic(playerId, 0)
-
 		elseif npcHandler:getTopic(playerId) == 3 then
 			npcHandler:say("Fine then. Talk to me again about your mission once you have the garlic bread. You can get holy water from a member of the inquisition.", npc, creature)
 			player:setStorageValue(Storage.Quest.U8_4.BloodBrothers.Mission01, 3)
 			npcHandler:setTopic(playerId, 0)
-
 		elseif npcHandler:getTopic(playerId) == 5 then
 			npcHandler:say({
 				"As I already told you, anyone in this city could really be a vampire, even the most unsuspicious citizen. I want you to find that brood. ...",
@@ -285,16 +263,13 @@ local function creatureSayCallback(npc, creature, type, message)
 				"Watch their reaction! If it's suspicious, write down the name and let me know. Then we'll work something out against them. Agreed?",
 			}, npc, creature)
 			npcHandler:setTopic(playerId, 6)
-
 		elseif npcHandler:getTopic(playerId) == 6 then
 			npcHandler:say("Fine. Good luck! Talk to me again about your mission once you have confirmed the names of five suspects.", npc, creature)
 			player:setStorageValue(Storage.Quest.U8_4.BloodBrothers.Mission02, 1)
 			npcHandler:setTopic(playerId, 0)
-
 		elseif npcHandler:getTopic(playerId) == 7 then
 			npcHandler:say("Alright, wait a moment. Tell me one name at a time so I can note them down carefully. Who is a suspect?", npc, creature)
 			npcHandler:setTopic(playerId, 8)
-
 		elseif npcHandler:getTopic(playerId) == 9 then
 			npcHandler:say({
 				"Great, now here's my plan. As I said, my strength lies not on the battlefield, but it's theory and knowledge. While you were distributing cookies I developed a spell. ...",
@@ -302,7 +277,6 @@ local function creatureSayCallback(npc, creature, type, message)
 				"I want you to go to the five vampires you detected and try out the magic formula on them. One of them - the oldest and most powerful - will react to it, I'm sure of it. The words are: '{Alori Mort}'. Please repeat them.",
 			}, npc, creature)
 			npcHandler:setTopic(playerId, 10)
-
 		elseif npcHandler:getTopic(playerId) == 12 then
 			npcHandler:say({
 				"Here is the map. When you are standing near a remarkable spot, use it to mark that spot on the map. Don't forget, come back with at least five marks! ...",
@@ -312,14 +286,17 @@ local function creatureSayCallback(npc, creature, type, message)
 			player:setStorageValue(Storage.Quest.U8_4.BloodBrothers.Mission04, 1)
 			player:setStorageValue(Storage.Quest.U8_4.BloodBrothers.VengothAccess, 1)
 			npcHandler:setTopic(playerId, 0)
-
 		elseif npcHandler:getTopic(playerId) == 13 then
 			if player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.MapMarks_CastleEntrance) == 1 then
 				local marks = player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.MapMarks) or 0
 				local text = "five"
-				if marks == 6 then text = "six"
-				elseif marks == 7 then text = "seven"
-				elseif marks == 8 then text = "eight" end
+				if marks == 6 then
+					text = "six"
+				elseif marks == 7 then
+					text = "seven"
+				elseif marks == 8 then
+					text = "eight"
+				end
 				npcHandler:say("Well done, you even marked " .. text .. " places! I'll grant you a little bonus for that. Come back later and ask me about your next mission. I have to think.", npc, creature)
 				player:setStorageValue(Storage.Quest.U8_4.BloodBrothers.Mission04, 2)
 				npcHandler:setTopic(playerId, 0)
@@ -327,7 +304,6 @@ local function creatureSayCallback(npc, creature, type, message)
 				npcHandler:say("You haven't mapped enough places yet. Come back once you have found at least five remarkable places, including the castle.", npc, creature)
 				npcHandler:setTopic(playerId, 0)
 			end
-
 		elseif npcHandler:getTopic(playerId) == 19 then
 			npcHandler:say({
 				"Good, now listen to what I've thought of. From what I've heard, there's a strong magic barrier blocking the entrance to the castle. ...",
@@ -337,12 +313,10 @@ local function creatureSayCallback(npc, creature, type, message)
 			}, npc, creature)
 			player:setStorageValue(Storage.Quest.U8_4.BloodBrothers.Mission05, 1)
 			npcHandler:setTopic(playerId, 20)
-
 		elseif npcHandler:getTopic(playerId) == 20 then
 			npcHandler:say("Fine then. Good luck!", npc, creature)
 			player:setStorageValue(Storage.Quest.U8_4.BloodBrothers.BloodCrystalDoor, 1)
 			npcHandler:setTopic(playerId, 0)
-
 		elseif npcHandler:getTopic(playerId) == 21 then
 			if player:getItemCount(8453) >= 1 then
 				npcHandler:say({
@@ -356,18 +330,15 @@ local function creatureSayCallback(npc, creature, type, message)
 				npcHandler:say("You haven't found a blood crystal yet. Keep looking around Yalahar.", npc, creature)
 				npcHandler:setTopic(playerId, 0)
 			end
-
 		elseif npcHandler:getTopic(playerId) == 22 then
 			npcHandler:say("Once you have a charged crystal, hurry back to me. I don't know how long that power will last. Good luck!", npc, creature)
 			npcHandler:setTopic(playerId, 0)
-
 		elseif npcHandler:getTopic(playerId) == 23 then
 			npcHandler:say({
 				"Very good, now don't lose that precious crystal! I doubt you'll be able to get another one. While you've been on the road, I wasn't lazy either. ...",
 				"I have good news and bad news. Which do you want to hear first?",
 			}, npc, creature)
 			npcHandler:setTopic(playerId, 24)
-
 		elseif npcHandler:getTopic(playerId) == 24 then
 			npcHandler:say({
 				"Well, in that case I'll tell you the good news first. I figured out how you can get into the castle using that blood crystal, quite easy actually. ...",
@@ -377,12 +348,10 @@ local function creatureSayCallback(npc, creature, type, message)
 				"I don't know what will happen, but afterwards you should be able to pass the castle gate, if I'm not mistaken. Do you think you can do that?",
 			}, npc, creature)
 			npcHandler:setTopic(playerId, 25)
-
 		elseif npcHandler:getTopic(playerId) == 25 then
 			npcHandler:say("Great. You are impressing me more and more. Once you have been to the castle, come back and we will discuss further missions.", npc, creature)
 			player:setStorageValue(Storage.Quest.U8_4.BloodBrothers.Mission05, 3)
 			npcHandler:setTopic(playerId, 0)
-
 		elseif npcHandler:getTopic(playerId) == 26 then
 			if player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.CastleEntranceSTG) == 1 then
 				npcHandler:say({
@@ -396,12 +365,10 @@ local function creatureSayCallback(npc, creature, type, message)
 				npcHandler:say("Have you been inside the castle yet?", npc, creature)
 				npcHandler:setTopic(playerId, 0)
 			end
-
 		elseif npcHandler:getTopic(playerId) == 27 then
 			npcHandler:say("Fine. You know, those old castles sometimes have hidden passages and stuff like that. That's at least what they say in fairytales. Good luck!", npc, creature)
 			player:setStorageValue(Storage.Quest.U8_4.BloodBrothers.CastleHiddenEntrance, 1)
 			npcHandler:setTopic(playerId, 0)
-
 		elseif npcHandler:getTopic(playerId) == 28 then
 			if player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.CastleBook) == 1 and player:getItemCount(28483) >= 1 then
 				player:removeItem(641, 1)
@@ -416,13 +383,11 @@ local function creatureSayCallback(npc, creature, type, message)
 				npcHandler:say("You haven't found anything useful yet. Keep exploring the castle.", npc, creature)
 				npcHandler:setTopic(playerId, 0)
 			end
-
 		elseif npcHandler:getTopic(playerId) == 29 then
 			npcHandler:say("Good luck. I mean it.", npc, creature)
 			player:setStorageValue(Storage.Quest.U8_4.BloodBrothers.Mission06, 1)
 			player:setStorageValue(Storage.Quest.U8_4.BloodBrothers.BorethDoor, 1)
 			npcHandler:setTopic(playerId, 0)
-
 		elseif npcHandler:getTopic(playerId) == 30 then
 			if player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.BorethDead) == 2 and player:getItemCount(9633) >= 1 then
 				player:removeItem(9633, 1)
@@ -439,7 +404,6 @@ local function creatureSayCallback(npc, creature, type, message)
 				npcHandler:say("Have you defeated Boreth? Bring me proof of his death.", npc, creature)
 				npcHandler:setTopic(playerId, 0)
 			end
-
 		elseif npcHandler:getTopic(playerId) == 31 then
 			if player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.LersatioDead) == 2 and player:getItemCount(9634) >= 1 then
 				player:removeItem(9634, 1)
@@ -456,7 +420,6 @@ local function creatureSayCallback(npc, creature, type, message)
 				npcHandler:say("Have you defeated Lersatio? Bring me proof of his death.", npc, creature)
 				npcHandler:setTopic(playerId, 0)
 			end
-
 		elseif npcHandler:getTopic(playerId) == 32 then
 			if player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.MarzielDead) == 2 and player:getItemCount(9635) >= 1 then
 				player:removeItem(9635, 1)
@@ -472,7 +435,6 @@ local function creatureSayCallback(npc, creature, type, message)
 				npcHandler:say("Have you defeated Marziel? Bring me proof of his death.", npc, creature)
 				npcHandler:setTopic(playerId, 0)
 			end
-
 		elseif npcHandler:getTopic(playerId) == 33 then
 			if player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.ArtheiDead) == 2 and player:getItemCount(9636) >= 1 then
 				player:removeItem(9636, 1)
@@ -488,7 +450,6 @@ local function creatureSayCallback(npc, creature, type, message)
 				npcHandler:say("Have you defeated Arthei? Bring me proof of his death.", npc, creature)
 				npcHandler:setTopic(playerId, 0)
 			end
-
 		elseif npcHandler:getTopic(playerId) == 34 then
 			local diaryStg = player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.DiarySTG)
 			local paperItems = { 9185, 9186, 9187, 9188, 9189, 9190 }
@@ -514,7 +475,6 @@ local function creatureSayCallback(npc, creature, type, message)
 			end
 			npcHandler:setTopic(playerId, 0)
 		end
-
 	elseif message:lower() == "no" then
 		if npcHandler:getTopic(playerId) == 8 then
 			if
