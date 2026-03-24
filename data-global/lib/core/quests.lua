@@ -6358,9 +6358,10 @@ if not Quests then
 					storageId = Storage.Quest.U8_4.BloodBrothers.Mission06,
 					missionId = 10468,
 					startValue = 1,
-					endValue = 1,
+					endValue = 2,
 					states = {
 						[1] = "Explore the castle further. Look for hidden passages and find the first of the four vampire brothers: Boreth.",
+						[2] = "You defeated Boreth the first of the four vampire brothers.",
 					},
 				},
 				[7] = {

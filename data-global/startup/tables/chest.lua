@@ -2981,6 +2981,11 @@ ChestUnique = {
 		itemId = 2473,
 		itemPos = { x = 32099, y = 32198, z = 9 },
 	},
+	-- Blood Brothers Quest
+	[14043] = {
+		itemId = 2435,
+		itemPos = { x = 32961, y = 31471, z = 6 },
+	},
 	-- The Outlaw Camp Quest (Bright Sword Quest)
 	[14091] = {
 		itemId = 2472,
