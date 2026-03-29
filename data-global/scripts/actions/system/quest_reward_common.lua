@@ -37,7 +37,7 @@ They are fighting about power and influence but unity is the key to success. Our
 All our rituals and procedures rooted on unity and sharing, they can't neglect that.
 ]],
 	},
-	[6183] = {
+	[6179] = {
 		text = [[
 Looks like the fox is out!
 More luck next time!
