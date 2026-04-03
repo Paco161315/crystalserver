@@ -1,10 +1,9 @@
 local toolGear = Action()
 
 function toolGear.onUse(player, item, fromPosition, target, toPosition, isHotkey)
-
-    if not target or not target.itemid or target.itemid == 0 then
-        return false
-    end
+	if not target or not target.itemid or target.itemid == 0 then
+		return false
+	end
 
 	if math.random(1000) > 10 then
 		if onUseKitchenKnife(player, item, fromPosition, target, toPosition, isHotkey) then
