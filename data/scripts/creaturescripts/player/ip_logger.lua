@@ -1,10 +1,9 @@
 local playerIpLogger = CreatureEvent("PlayerIpLogger")
 
 function playerIpLogger.onLogin(player)
-
-    if not configManager.getBoolean(configKeys.LOG_PLAYER_IP) then
-        return true
-    end
+	if not configManager.getBoolean(configKeys.LOG_PLAYER_IP) then
+		return true
+	end
 
 	local function logIP()
 		local file = io.open("data/logs/iplog.txt", "a")
