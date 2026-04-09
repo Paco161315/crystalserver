@@ -13,7 +13,7 @@ coreDirectory = "data"
 -- NOTE: Debug and trace logs are only available if compiled in debug mode.
 -- NOTE: logPlayerIP will create a log file of characters and their IP, this can be useful to enforce your server rules.
 logLevel = "info"
-logPlayerIP = true
+logPlayerIP = false
 
 --- Toggles the server's maintenance mode.
 -- When enabled, it restricts user access and indicates maintenance operations.
