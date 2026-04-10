@@ -92,14 +92,15 @@ function othersFireBug.onUse(player, item, fromPosition, target, toPosition, isH
 			return true
 		elseif target.position == Position(32893, 32012, 6) then -- Secret Service Quest
 			if player:getStorageValue(Storage.Quest.U8_1.SecretService.TBIMission01) == 1 then
-			local fire = Game.createItem(2118, 1, Position(32893, 32012, 6))
-			player:setStorageValue(Storage.Quest.U8_1.SecretService.TBIMission01, 2)
-			addEvent(function()
-            if fire and item:isItem() then
-                item:remove()
-            end
-        end, 7 * 60 * 1000)
-    end
+				local fire = Game.createItem(2118, 1, Position(32893, 32012, 6))
+				player:setStorageValue(Storage.Quest.U8_1.SecretService.TBIMission01, 2)
+				addEvent(function()
+					if fire and item:isItem() then
+						item:remove()
+					end
+				end, 7 * 60 * 1000)
+			end
+		end
 		return true
 	elseif random == 2 then --it remove the fire bug 2% chance
 		item:remove(1)
