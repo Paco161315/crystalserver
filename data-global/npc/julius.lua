@@ -525,7 +525,7 @@ keywordHandler:addKeyword({ "map" }, function(npc, creature, type, message)
 
 		local marks = player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.MapMarks) or 0
 		local totalLocations = 8
-		
+
 		if marks >= totalLocations then
 			player:removeItem(8200, 1)
 			npcHandler:say("Well done, you even marked seven places! I'll grant you a little bonus for that.", npc, creature)
