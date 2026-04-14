@@ -121,10 +121,10 @@ function skinning.onUse(player, item, fromPosition, target, toPosition, isHotkey
 	-- Blood Brother Quest
 	if target.itemid == 8109 and item.itemid == 5942 then
 		local missionItems = {
-			[Storage.Quest.U8_4.BloodBrothers.Mission06] = {id = 8717, name = "Boreth"},
-			[Storage.Quest.U8_4.BloodBrothers.Mission07] = {id = 8718, name = "Lersatio"},
-			[Storage.Quest.U8_4.BloodBrothers.Mission08] = {id = 8719, name = "Marziel"},
-			[Storage.Quest.U8_4.BloodBrothers.Mission09] = {id = 8720, name = "Arthei"}
+			[Storage.Quest.U8_4.BloodBrothers.Mission06] = { id = 8717, name = "Boreth" },
+			[Storage.Quest.U8_4.BloodBrothers.Mission07] = { id = 8718, name = "Lersatio" },
+			[Storage.Quest.U8_4.BloodBrothers.Mission08] = { id = 8719, name = "Marziel" },
+			[Storage.Quest.U8_4.BloodBrothers.Mission09] = { id = 8720, name = "Arthei" },
 		}
 
 		for storage, info in pairs(missionItems) do

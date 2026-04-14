@@ -55,30 +55,30 @@ npcHandler:setMessage(MESSAGE_GREET, "Ohh...")
 local function creatureSayCallback(npc, creature, type, message)
 	local player = Player(creature)
 	local playerId = player:getId()
-	
+
 	if player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.Mission09) < 1 then
-        return false
-    end
+		return false
+	end
 
 	if message == "kala" then
 		npcHandler:say("... yes! That's my name... how come you know that?", npc, creature)
-        npcHandler:setTopic(playerId, 1)
-        return true
-    end
+		npcHandler:setTopic(playerId, 1)
+		return true
+	end
 	if message == "diary" and npcHandler:getTopic(playerId) == 1 then
 		npcHandler:say("... you... read Marziel's diary and know our story...?", npc, creature)
 		npcHandler:setTopic(playerId, 2)
 		return true
 	end
 	if message == "yes" and npcHandler:getTopic(playerId) == 2 then
-        npcHandler:say("... then... tell me... I'm so sad... was it my fault? Why did he leave me... Arthei..?", npc, creature)
-			npcHandler:setTopic(playerId, 3)
-			return true
+		npcHandler:say("... then... tell me... I'm so sad... was it my fault? Why did he leave me... Arthei..?", npc, creature)
+		npcHandler:setTopic(playerId, 3)
+		return true
 	end
 	if message == "vampire" and npcHandler:getTopic(playerId) == 3 then
 		npcHandler:say("... so there is nothing I could have done...? He's a vampire now... what can we do...", npc, creature)
-			npcHandler:setTopic(playerId, 4)
-			return true
+		npcHandler:setTopic(playerId, 4)
+		return true
 	end
 	if message == "free soul" and npcHandler:getTopic(playerId) == 4 then
 		npcHandler:say("... he can't be freed from his curse that easily... he must be awaken first...", npc, creature)

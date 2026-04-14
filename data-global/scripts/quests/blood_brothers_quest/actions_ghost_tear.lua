@@ -1,7 +1,6 @@
 local ghostTear = Action()
 
 function ghostTear.onUse(player, item, fromPosition, target, toPosition, isHotkey)
-
 	if player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.Mission10) < 2 then
 		return false
 	end
@@ -23,9 +22,7 @@ function ghostTear.onUse(player, item, fromPosition, target, toPosition, isHotke
 	local toPos = Position(32957, 31447, 2)
 	local teleportDestination = Position(32953, 31444, 1)
 
-	local spectators = Game.getSpectators(fromPos, false, false, 
-		toPos.x - fromPos.x, toPos.x - fromPos.x,
-		toPos.y - fromPos.y, toPos.y - fromPos.y)
+	local spectators = Game.getSpectators(fromPos, false, false, toPos.x - fromPos.x, toPos.x - fromPos.x, toPos.y - fromPos.y, toPos.y - fromPos.y)
 
 	for _, spectator in ipairs(spectators) do
 		if spectator:isPlayer() then
@@ -36,7 +33,7 @@ function ghostTear.onUse(player, item, fromPosition, target, toPosition, isHotke
 
 	Game.createMonster("Arthei", Position(32953, 31441, 1))
 	Game.createMonster("Vampire", Position(32952, 31441, 1))
-	Game.createMonster("Vampire", Position(32954, 31441, 1))	
+	Game.createMonster("Vampire", Position(32954, 31441, 1))
 	return true
 end
 
