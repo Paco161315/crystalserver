@@ -3010,6 +3010,10 @@ ChestUnique = {
 		itemId = 1983,
 		itemPos = { x = 32953, y = 31440, z = 3 },
 	},
+	[14052] = {
+		itemId = 4285,
+		itemPos = { x = 32953, y = 31473, z = 4 },
+	},
 	-- The Outlaw Camp Quest (Bright Sword Quest)
 	[14091] = {
 		itemId = 2472,

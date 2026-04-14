@@ -389,8 +389,8 @@ local function creatureSayCallback(npc, creature, type, message)
 			player:setStorageValue(Storage.Quest.U8_4.BloodBrothers.BorethDoor, 1)
 			npcHandler:setTopic(playerId, 0)
 		elseif npcHandler:getTopic(playerId) == 30 then
-			if player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.BorethDead) == 2 and player:getItemCount(9633) >= 1 then
-				player:removeItem(9633, 1)
+			if player:getItemCount(8717) >= 1 then
+				player:removeItem(8717, 1)
 				npcHandler:say({
 					"That's what I was hoping for! I will start investigating that dust. Maybe we can gain valuable information on how we can defeat the vampire plague once and for all. ...",
 					"Listen, brave vampire slayer, I don't think that your task in this castle is done yet. According to the diary you found, there are three other brothers called Lersatio, Marziel and Arthei. ...",
@@ -405,8 +405,8 @@ local function creatureSayCallback(npc, creature, type, message)
 				npcHandler:setTopic(playerId, 0)
 			end
 		elseif npcHandler:getTopic(playerId) == 31 then
-			if player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.LersatioDead) == 2 and player:getItemCount(9634) >= 1 then
-				player:removeItem(9634, 1)
+			if player:getItemCount(8718) >= 1 then
+				player:removeItem(8718, 1)
 				npcHandler:say({
 					"You are definitely one of the bravest and craziest adventurers I ever met. Each time you prove to me that there is no task too dangerous for you. ...",
 					"There are only two brothers left now, and I can feel that their grasp on Yalahar is getting weaker. We cannot stop now but have to finish what we started. ...",
@@ -421,8 +421,8 @@ local function creatureSayCallback(npc, creature, type, message)
 				npcHandler:setTopic(playerId, 0)
 			end
 		elseif npcHandler:getTopic(playerId) == 32 then
-			if player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.MarzielDead) == 2 and player:getItemCount(9635) >= 1 then
-				player:removeItem(9635, 1)
+			if player:getItemCount(8719) >= 1 then
+				player:removeItem(8719, 1)
 				npcHandler:say({
 					"Well, let's see it this way - I guess he is relieved of his burden now - and so are his victims. Strange that a once such nice person turned out to be almost the cruelest of the brothers. ...",
 					"I don't know what is awaiting you when you face Arthei. I hope that you can find a way to break his evil power and shatter his black soul... if a vampire still has a soul. ...",
@@ -436,13 +436,13 @@ local function creatureSayCallback(npc, creature, type, message)
 				npcHandler:setTopic(playerId, 0)
 			end
 		elseif npcHandler:getTopic(playerId) == 33 then
-			if player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.ArtheiDead) == 2 and player:getItemCount(9636) >= 1 then
-				player:removeItem(9636, 1)
+			if player:getItemCount(8720) >= 1 then
+				player:removeItem(8720, 1)
 				npcHandler:say({
 					"So you really managed to defeat all four of the brothers. Unbelievable. As reward for your deeds, I'll grant you a special crest. ...",
 					"I won't reveal what it does, but I'm sure you'll find out for yourself. Thank you very much for your help, I think the city is much safer now.",
 				}, npc, creature)
-				player:addItem(9955, 1)
+				player:addItem(9041, 1)
 				player:setStorageValue(Storage.Quest.U8_4.BloodBrothers.Mission10, 1)
 				player:setStorageValue(Storage.Quest.U8_4.BloodBrothers.QuestLine, 18)
 				npcHandler:setTopic(playerId, 0)
