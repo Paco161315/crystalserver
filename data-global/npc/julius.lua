@@ -370,7 +370,7 @@ local function creatureSayCallback(npc, creature, type, message)
 			player:setStorageValue(Storage.Quest.U8_4.BloodBrothers.CastleHiddenEntrance, 1)
 			npcHandler:setTopic(playerId, 0)
 		elseif npcHandler:getTopic(playerId) == 28 then
-			if player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.CastleBook) == 1 and player:getItemCount(28483) >= 1 then
+			if player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.CastleBook) == 1 and player:getItemCount(641) >= 1 then
 				player:removeItem(641, 1)
 				npcHandler:say({
 					"Thank you so much, I'll grant you a small bonus for that. Let me take a closer look, hmm. There are a lot of pages missing... but that last page is kind of disturbing. ...",
@@ -452,7 +452,7 @@ local function creatureSayCallback(npc, creature, type, message)
 			end
 		elseif npcHandler:getTopic(playerId) == 34 then
 			local diaryStg = player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.DiarySTG)
-			local paperItems = { 9185, 9186, 9187, 9188, 9189, 9190 }
+			local paperItems = { 641, 641, 641, 641, 641, 641 }
 			local diaryResponses = {
 				"Aha! That's the most interesting bit. They blamed Arthei for the curse and tried to get rid of his vampire self, and it's blatantly obvious that they couldn't defeat him. So, I suppose he turned his brothers into vampires, and actually they were quite happy about that due to their new superiority. What a story... however, some pieces are still missing...",
 				"Let me see... that's very interesting. So Arthei was basically almost dead after the incident. I wonder what happened next?",
@@ -504,6 +504,40 @@ keywordHandler:addKeyword({ "storkus" }, StdModule.say, { npcHandler = npcHandle
 keywordHandler:addKeyword({ "time" }, StdModule.say, { npcHandler = npcHandler, text = "It's about time you showed the vampires that they should never bother the citizens again." })
 keywordHandler:addKeyword({ "news" }, StdModule.say, { npcHandler = npcHandler, text = "Another vampire raid last night. But then again, that's nothing new." })
 keywordHandler:addKeyword({ "thank" }, StdModule.say, { npcHandler = npcHandler, text = "Well, I should be the one to thank you I guess." })
+
+keywordHandler:addKeyword({ "map" }, function(npc, creature, type, message)
+	local player = creature
+	local playerId = player:getId()
+
+	if player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.MapCompleted) == 1 then
+		return true
+	end
+
+	if player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.Mission04) >= 1 then
+		local hasMap = player:getItemCount(8200) >= 1
+
+		if not hasMap then
+			player:addItem(8200, 1)
+			npcHandler:say("Please map the area for me and pay special attention to unusual spots in Vengoth. When you are standing near a remarkable spot, use it to mark that spot on the map.", npc, creature)
+			npcHandler:setTopic(playerId, 0)
+			return true
+		end
+
+		local marks = player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.MapMarks) or 0
+		local totalLocations = 8
+		
+		if marks >= totalLocations then
+			player:removeItem(8200, 1)
+			npcHandler:say("Well done, you even marked seven places! I'll grant you a little bonus for that.", npc, creature)
+			player:setStorageValue(Storage.Quest.U8_4.BloodBrothers.MapCompleted, 1)
+			player:addExperience(7500)
+		else
+			player:removeItem(8200, 1)
+			npcHandler:say("Are you back with a useful map of Vengoth? Alright, thanks. Let me know if you want to look for more unusual spots.", npc, creature)
+		end
+		npcHandler:setTopic(playerId, 0)
+	end
+end, { npcHandler = npcHandler })
 
 npcHandler:setMessage(MESSAGE_FAREWELL, "Good bye, |PLAYERNAME|. Never trust anyone.")
 npcHandler:setMessage(MESSAGE_SENDTRADE, "I'll reward you for every pair of vampire teeth you bring me.")
