@@ -2,6 +2,8 @@ local internalNpcName = "A Fading Memory"
 local npcType = Game.createNpcType(internalNpcName)
 local npcConfig = {}
 
+local KALA_COOLDOWN_STORAGE = 154226
+
 npcConfig.name = internalNpcName
 npcConfig.description = internalNpcName
 
@@ -52,6 +54,24 @@ end
 
 npcHandler:setMessage(MESSAGE_GREET, "Ohh...")
 
+local function hasCooldown(npc, player)
+	local lastUse = player:getStorageValue(KALA_COOLDOWN_STORAGE)
+	if lastUse <= 0 then
+		return false
+	end
+
+	local currentTime = os.time()
+	local hoursPassed = (currentTime - lastUse) / 3600
+
+	if hoursPassed >= 20 then
+		player:setStorageValue(KALA_COOLDOWN_STORAGE, 0)
+		return false
+	end
+
+	npcHandler:say("... I'm sorry... my tears are not ready yet... my soul needs time to grieve...", npc, player)
+	return true
+end
+
 local function creatureSayCallback(npc, creature, type, message)
 	local player = Player(creature)
 	local playerId = player:getId()
@@ -86,8 +106,14 @@ local function creatureSayCallback(npc, creature, type, message)
 		return true
 	end
 	if message == "awaken" and npcHandler:getTopic(playerId) == 5 then
+		if hasCooldown(npc, player) then
+			npcHandler:setTopic(playerId, 0)
+			return true
+		end
+
 		npcHandler:say("... to awake him... I don't know but... he once truly loved me... maybe there is still something left... somewhere... here... take this from me....and thank you for listening...", npc, creature)
 		player:addItem(8746, 1)
+		player:setStorageValue(KALA_COOLDOWN_STORAGE, os.time())
 		npcHandler:setTopic(playerId, 0)
 		return true
 	end

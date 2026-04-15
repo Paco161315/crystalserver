@@ -1,21 +1,20 @@
 local ghostTear = Action()
 
 function ghostTear.onUse(player, item, fromPosition, target, toPosition, isHotkey)
-	if player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.Mission10) < 2 then
+	if player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.Mission10) == 1 then
+		return true
+	end
+
+	if not target or target:getId() ~= 8325 then
 		return false
 	end
 
-	if toPosition ~= Position(32953, 31440, 2) then
+	if target:getPosition() ~= Position(32953, 31440, 2) then
 		return false
 	end
 
-	local targetItem = Tile(toPosition):getItemById(8325)
-	if not targetItem then
-		return false
-	end
-
-	targetItem:transform(8326)
-	toPosition:sendMagicEffect(CONST_ME_HITBYFIRE)
+	target:transform(8326)
+	target:getPosition():sendMagicEffect(CONST_ME_HITBYFIRE)
 	player:say("YES... THAT FEELING... IS... HUNGER!!", TALKTYPE_MONSTER_SAY)
 
 	local fromPos = Position(32949, 31439, 2)
@@ -34,6 +33,9 @@ function ghostTear.onUse(player, item, fromPosition, target, toPosition, isHotke
 	Game.createMonster("Arthei", Position(32953, 31441, 1))
 	Game.createMonster("Vampire", Position(32952, 31441, 1))
 	Game.createMonster("Vampire", Position(32954, 31441, 1))
+
+	item:remove(1)
+
 	return true
 end
 
