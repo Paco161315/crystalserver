@@ -31,9 +31,9 @@ local function checkAndTeleport(areaFromPos, areaToPos, teleportDest, spawnPos)
 	end
 end
 
-local bloodBridesDeath = CreatureEvent("BloodBridesDeath")
+local VampireBrideDeath = CreatureEvent("VampireBrideDeath")
 
-function bloodBridesDeath.onDeath(creature, corpse, killer, mostDamage, unjustified, mostDamageKiller)
+function VampireBrideDeath.onDeath(creature, corpse, killer, mostDamage, unjustified, mostDamageKiller)
 	local pos = creature:getPosition()
 	local areaFromPos = Position(32936, 31456, 2)
 	local areaToPos = Position(32944, 31464, 2)
@@ -52,4 +52,4 @@ function bloodBridesDeath.onDeath(creature, corpse, killer, mostDamage, unjustif
 	return true
 end
 
-bloodBridesDeath:register()
+VampireBrideDeath:register()
