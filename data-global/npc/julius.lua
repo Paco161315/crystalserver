@@ -104,6 +104,9 @@ local function getMissionStage(player)
 	if player:getStorageValue(BB.Mission01) == 3 then
 		return 13
 	end -- baking bread
+	if player:getStorageValue(BB.Mission01) == 2 then
+		return 12
+	end -- confirmed knows how
 	if player:getStorageValue(BB.Mission01) == 1 then
 		return 11
 	end -- proving trust
@@ -149,6 +152,9 @@ local function creatureSayCallback(npc, creature, type, message)
 			else
 				npcHandler:say("I fear that will not do. Sorry.", npc, creature)
 			end
+		elseif stage == 12 then
+			npcHandler:say("Have you baked the garlic bread yet? Remember, mix flour with holy water, use that dough on garlic, and bake it. Can you do that?", npc, creature)
+			npcHandler:setTopic(playerId, 3)
 		elseif stage == 13 then
 			if player:getItemCount(8194) >= 1 then
 				npcHandler:say("Let me check - yes indeed, there's garlic in it. Now eat one, in front of my eyes. Right now! Say '{aaah}' when you've chewed it all down so that I can see you're not hiding it!", npc, creature)
