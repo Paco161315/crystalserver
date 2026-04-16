@@ -363,8 +363,8 @@ local function creatureSayCallback(npc, creature, type, message)
 				end
 				npcHandler:say("Well done, you even marked " .. text .. " places! I'll grant you a little bonus for that. Come back later and ask me about your next mission. I have to think.", npc, creature)
 				player:setStorageValue(BB.Mission04, 2)
-				npcHandler:setTopic(playerId, 0)
 				player:removeItem(8200, 1)
+				npcHandler:setTopic(playerId, 0)
 			else
 				npcHandler:say("You haven't mapped enough places yet. Come back once you have found at least five remarkable places, including the castle.", npc, creature)
 				npcHandler:setTopic(playerId, 0)
@@ -443,6 +443,7 @@ local function creatureSayCallback(npc, creature, type, message)
 					"There are a lot of missing pages... I wonder what happened after March 30th? Listen, should you stumble across any more pages, please bring them to me for a small reward. I'd really like to figure this out. ...",
 					"Apart from that, I guess to meet the brothers, you have to explore the castle even more. Maybe you can find another open door somewhere and look where - or who - it leads to?",
 				}, npc, creature)
+				player:setStorageValue(BB.Mission06, 3)
 				npcHandler:setTopic(playerId, 29)
 			else
 				npcHandler:say("You haven't found anything useful yet. Keep exploring the castle.", npc, creature)
@@ -450,7 +451,6 @@ local function creatureSayCallback(npc, creature, type, message)
 			end
 		elseif npcHandler:getTopic(playerId) == 29 then
 			npcHandler:say("Good luck. I mean it.", npc, creature)
-			player:setStorageValue(BB.Mission06, 1)
 			player:setStorageValue(BB.BorethDoor, 1)
 			npcHandler:setTopic(playerId, 0)
 		elseif npcHandler:getTopic(playerId) == 30 then
@@ -463,6 +463,7 @@ local function creatureSayCallback(npc, creature, type, message)
 					"That is your chance to find the second brother and awaken him. Good luck - again.",
 				}, npc, creature)
 				player:setStorageValue(BB.Mission07, 1)
+				player:setStorageValue(BB.Mission06, 4)
 				player:setStorageValue(BB.LersatioDoor, 1)
 				npcHandler:setTopic(playerId, 0)
 			else
@@ -478,6 +479,7 @@ local function creatureSayCallback(npc, creature, type, message)
 					"See if you can slip into another tower of the castle and climb up to the room of the third brother. Since Arthei is their master, I guess Marziel is who we are going for now. ...",
 					"The author of that diary... writing down the cursed story of his life. I hope he will rest in peace. Good luck.",
 				}, npc, creature)
+				player:setStorageValue(BB.Mission07, 4)
 				player:setStorageValue(BB.Mission08, 1)
 				player:setStorageValue(BB.Arthei_Marziel_Door, 1)
 				npcHandler:setTopic(playerId, 0)
@@ -493,6 +495,7 @@ local function creatureSayCallback(npc, creature, type, message)
 					"I don't know what is awaiting you when you face Arthei. I hope that you can find a way to break his evil power and shatter his black soul... if a vampire still has a soul. ...",
 					"I promise that when you come back with his ashes, your task for me is done and you will be generously rewarded. Don't let me down now.",
 				}, npc, creature)
+				player:setStorageValue(BB.Mission08, 2)
 				player:setStorageValue(BB.Mission09, 1)
 				player:setStorageValue(BB.ArtheiDoor, 1)
 				npcHandler:setTopic(playerId, 0)
@@ -508,6 +511,7 @@ local function creatureSayCallback(npc, creature, type, message)
 					"I won't reveal what it does, but I'm sure you'll find out for yourself. Thank you very much for your help, I think the city is much safer now.",
 				}, npc, creature)
 				player:addItem(9041, 1)
+				player:setStorageValue(BB.Mission09, 2)
 				player:setStorageValue(BB.Mission10, 1)
 				player:setStorageValue(BB.QuestLine, 18)
 				npcHandler:setTopic(playerId, 0)
