@@ -6290,7 +6290,7 @@ if not Quests then
 		},
 		[46] = {
 			name = "Blood Brothers",
-			startStorageId = Storage.Quest.U8_4.BloodBrothers.QuestLine,
+			startStorageId = Storage.Quest.U8_4.BloodBrothers.Trust,
 			startStorageValue = 1,
 			missions = {
 				[1] = {

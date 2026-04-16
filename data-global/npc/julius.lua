@@ -110,7 +110,7 @@ local function getMissionStage(player)
 	if player:getStorageValue(BB.Mission01) == 1 then
 		return 11
 	end -- proving trust
-	if player:getStorageValue(BB.QuestLine) == 1 then
+	if player:getStorageValue(BB.Trust) == 1 then
 		return 1
 	end
 	return 0
@@ -118,9 +118,9 @@ end
 
 local function greetCallback(npc, creature)
 	local player = Player(creature)
-	if player:getStorageValue(BB.QuestLine) < 0 then
+	if player:getStorageValue(BB.Trust) < 0 then
 		npcHandler:setMessage(MESSAGE_GREET, "Be greeted, adventurer |PLAYERNAME|. I assume you have read the {note} about the {vampire} threat in this city.")
-	elseif player:getStorageValue(BB.QuestLine) == 1 then
+	elseif player:getStorageValue(BB.Trust) == 1 then
 		npcHandler:setMessage(MESSAGE_GREET, "Be greeted, adventurer |PLAYERNAME|. Please excuse me if I appear {distracted}!")
 	else
 		npcHandler:setMessage(MESSAGE_GREET, "Welcome back, |PLAYERNAME|.")
@@ -312,7 +312,7 @@ local function creatureSayCallback(npc, creature, type, message)
 	elseif MsgContains(message, "yes") then
 		if npcHandler:getTopic(playerId) == 1 then
 			npcHandler:say("Well, there's one problem. How would I know I can trust you? You might be one of them... hm. Can you think of something really unlikely for a vampire? If you know a way to prove it to me, ask me about your {mission}.", npc, creature)
-			player:setStorageValue(BB.QuestLine, 1)
+			player:setStorageValue(BB.Trust, 1)
 			player:setStorageValue(BB.Mission01, 1)
 			npcHandler:setTopic(playerId, 0)
 		elseif npcHandler:getTopic(playerId) == 3 then
@@ -513,7 +513,6 @@ local function creatureSayCallback(npc, creature, type, message)
 				player:addItem(9041, 1)
 				player:setStorageValue(BB.Mission09, 2)
 				player:setStorageValue(BB.Mission10, 1)
-				player:setStorageValue(BB.QuestLine, 18)
 				npcHandler:setTopic(playerId, 0)
 			else
 				npcHandler:say("Have you defeated Arthei? Bring me proof of his death.", npc, creature)

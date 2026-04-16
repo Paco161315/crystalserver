@@ -1177,7 +1177,7 @@ Storage = {
 		},
 		U8_4 = { -- update 8.4 - Reserved Storages 41901 - 42145
 			BloodBrothers = {
-				QuestLine = 41901,
+				Trust = 41901,
 				Mission01 = 41902,
 				-- unused GarlicBread = 41903,
 				Mission02 = 41904,
