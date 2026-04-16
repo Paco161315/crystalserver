@@ -13,6 +13,10 @@ monster.outfit = {
 	lookMount = 0,
 }
 
+monster.events = {
+	"BorethDeath",
+}
+
 monster.bosstiary = {
 	bossRaceId = 479,
 	bossRace = RARITY_BANE,
@@ -119,28 +123,5 @@ monster.immunities = {
 	{ type = "invisible", condition = true },
 	{ type = "bleed", condition = false },
 }
-
-function monster.onDeath(creature, corpse, killer, mostDamage, unjustified, mostDamageKiller)
-	local borethPos = creature:getPosition()
-	local fromPos = Position(32936, 31474, 1)
-	local toPos = Position(32944, 31482, 1)
-
-	for x = fromPos.x, toPos.x do
-		for y = fromPos.y, toPos.y do
-			local pos = Position(x, y, 1)
-			local tile = Tile(pos)
-			if tile then
-				local spectators = tile:getCreatures()
-				for _, spectator in ipairs(spectators) do
-					if spectator:isMonster() and spectator:getName():lower() == "Plaguethrower" then
-						spectator:remove()
-					end
-				end
-			end
-		end
-	end
-
-	return true
-end
 
 mType:register(monster)

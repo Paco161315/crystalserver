@@ -364,6 +364,7 @@ local function creatureSayCallback(npc, creature, type, message)
 				npcHandler:say("Well done, you even marked " .. text .. " places! I'll grant you a little bonus for that. Come back later and ask me about your next mission. I have to think.", npc, creature)
 				player:setStorageValue(BB.Mission04, 2)
 				npcHandler:setTopic(playerId, 0)
+				player:removeItem(8200, 1)
 			else
 				npcHandler:say("You haven't mapped enough places yet. Come back once you have found at least five remarkable places, including the castle.", npc, creature)
 				npcHandler:setTopic(playerId, 0)
