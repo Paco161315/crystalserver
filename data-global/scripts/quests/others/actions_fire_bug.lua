@@ -29,7 +29,7 @@ local positions = {
 local othersFireBug = Action()
 function othersFireBug.onUse(player, item, fromPosition, target, toPosition, isHotkey)
 	-- Blood Brothers Mission - Boreth
-	if player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.Mission06) == 3 then
+	if player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.Mission07) == 1 then
 		if toPosition == Position(32939, 31476, 2) then
 			if player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.Plant1) ~= 1 then
 				player:setStorageValue(Storage.Quest.U8_4.BloodBrothers.Plant1, 1)

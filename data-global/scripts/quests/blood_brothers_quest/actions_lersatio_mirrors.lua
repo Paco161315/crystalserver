@@ -8,7 +8,7 @@ local function revertMirror(position)
 end
 
 function lersatio.onUse(player, item, fromPosition, target, toPosition, isHotkey)
-	if player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.Mission07) == 1 then
+	if player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.Mission08) >= 2 then
 		return false
 	end
 

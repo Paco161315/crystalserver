@@ -76,7 +76,7 @@ local function creatureSayCallback(npc, creature, type, message)
 	local player = Player(creature)
 	local playerId = player:getId()
 
-	if player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.Mission09) < 1 then
+	if player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.Mission10) >= 2 then
 		return false
 	end
 
