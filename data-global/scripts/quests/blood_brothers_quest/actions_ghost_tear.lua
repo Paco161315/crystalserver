@@ -1,7 +1,7 @@
 local ghostTear = Action()
 
 function ghostTear.onUse(player, item, fromPosition, target, toPosition, isHotkey)
-	if player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.Mission10) == 1 then
+	if player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.Mission09) == 1 then
 		return true
 	end
 

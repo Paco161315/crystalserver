@@ -7,7 +7,7 @@ function marzielBlood.onStepIn(creature, item, position, fromPosition)
 
 	local player = creature
 
-	if player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.Mission08) < 1 then
+	if player:getStorageValue(Storage.Quest.U8_4.BloodBrothers.Mission08) == 1 then
 		return false
 	end
 
