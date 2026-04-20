@@ -26,6 +26,7 @@
 #include "map/map.hpp"
 #include "modal_window/modal_window.hpp"
 #include "movement/position.hpp"
+#include "creatures/creatures_definitions.hpp"
 
 // Forward declaration for protobuf class
 namespace Crystal {
@@ -598,6 +599,7 @@ public:
 	}
 
 	void sendOfflineTrainingDialog(const std::shared_ptr<Player> &player);
+	void playerStartOfflineTraining(uint32_t playerId, skills_t skill);
 
 	const std::map<uint16_t, std::map<uint8_t, uint64_t>> &getItemsPrice() const {
 		return itemsPriceMap;
@@ -934,8 +936,6 @@ private:
 	std::map<uint32_t, std::shared_ptr<BedItem>> bedSleepersMap;
 
 	std::unordered_set<std::shared_ptr<Tile>> tilesToClean;
-
-	ModalWindow offlineTrainingWindow { std::numeric_limits<uint32_t>::max(), "Choose a Skill", "Please choose a skill:" };
 
 	static constexpr int32_t DAY_LENGTH_SECONDS = 3600;
 	static constexpr int32_t LIGHT_DAY_LENGTH = 1440;

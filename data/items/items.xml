@@ -87306,4 +87306,7 @@
 	<item id="52874" article="a" name="jade dragon head">
 		<attribute key="description" value="A talisman, imbued with ancient magic, now in full power."/>
 	</item>
+	<item id="52963" article="a" name="skill trainer">
+		<attribute key="description" value="Use this statue to train your shielding skill and your melee or distance fighting or your magic level offline." />
+	</item>
 </items>

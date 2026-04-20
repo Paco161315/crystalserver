@@ -222,18 +222,6 @@ namespace InternalGame {
 } // Namespace InternalGame
 
 Game::Game() {
-	offlineTrainingWindow.choices.emplace_back("Sword Fighting and Shielding", SKILL_SWORD);
-	offlineTrainingWindow.choices.emplace_back("Axe Fighting and Shielding", SKILL_AXE);
-	offlineTrainingWindow.choices.emplace_back("Club Fighting and Shielding", SKILL_CLUB);
-	offlineTrainingWindow.choices.emplace_back("Distance Fighting and Shielding", SKILL_DISTANCE);
-	offlineTrainingWindow.choices.emplace_back("Magic Level and Shielding", SKILL_MAGLEVEL);
-	offlineTrainingWindow.choices.emplace_back("Fist Fighting and Shielding", SKILL_FIST);
-	offlineTrainingWindow.buttons.emplace_back("Okay", 1);
-	offlineTrainingWindow.buttons.emplace_back("Cancel", 0);
-	offlineTrainingWindow.defaultEscapeButton = 1;
-	offlineTrainingWindow.defaultEnterButton = 0;
-	offlineTrainingWindow.priority = true;
-
 	// Create instance of IOWheel to Game class
 	m_IOWheel = std::make_unique<IOWheel>();
 	m_attachedEffects = std::make_unique<AttachedEffects>();
@@ -10404,8 +10392,40 @@ void Game::sendOfflineTrainingDialog(const std::shared_ptr<Player> &player) {
 		return;
 	}
 
-	if (!player->hasModalWindowOpen(offlineTrainingWindow.id)) {
-		player->sendModalWindow(offlineTrainingWindow);
+	player->sendMultiOfflineTrainingDialog();
+}
+
+void Game::playerStartOfflineTraining(uint32_t playerId, skills_t skill) {
+	const auto &player = getPlayerByID(playerId);
+	if (!player) {
+		return;
+	}
+
+	if (skill != SKILL_SWORD && skill != SKILL_AXE && skill != SKILL_CLUB && skill != SKILL_DISTANCE && skill != SKILL_MAGLEVEL && skill != SKILL_FIST) {
+		return;
+	}
+
+	const auto &bedItem = player->getBedItem();
+	if (bedItem) {
+		if (bedItem->sleep(player)) {
+			player->setOfflineTrainingSkill(static_cast<int8_t>(skill));
+			return;
+		}
+		player->sendTextMessage(MESSAGE_EVENT_ADVANCE, "Offline training aborted.");
+		player->setBedItem(nullptr);
+		return;
+	}
+
+	if (player->isPzLocked()) {
+		player->sendTextMessage(MESSAGE_EVENT_ADVANCE, "You can not start offline training while in a fight.");
+		return;
+	}
+
+	player->setOfflineTrainingSkill(static_cast<int8_t>(skill));
+	if (player->client) {
+		player->client->logout(false, false);
+	} else {
+		removeCreature(player);
 	}
 }
 
@@ -10421,25 +10441,8 @@ void Game::playerAnswerModalWindow(uint32_t playerId, uint32_t modalWindowId, ui
 
 	player->onModalWindowHandled(modalWindowId);
 
-	// offline training, hardcoded
-	if (modalWindowId == std::numeric_limits<uint32_t>::max()) {
-		if (button == 1) {
-			if (choice == SKILL_SWORD || choice == SKILL_AXE || choice == SKILL_CLUB || choice == SKILL_DISTANCE || choice == SKILL_MAGLEVEL || choice == SKILL_FIST) {
-				auto bedItem = player->getBedItem();
-				if (bedItem && bedItem->sleep(player)) {
-					player->setOfflineTrainingSkill(static_cast<int8_t>(choice));
-					return;
-				}
-			}
-		} else {
-			player->sendTextMessage(MESSAGE_EVENT_ADVANCE, "Offline training aborted.");
-		}
-
-		player->setBedItem(nullptr);
-	} else {
-		for (const auto &creatureEvent : player->getCreatureEvents(CREATURE_EVENT_MODALWINDOW)) {
-			creatureEvent->executeModalWindow(player, modalWindowId, button, choice);
-		}
+	for (const auto &creatureEvent : player->getCreatureEvents(CREATURE_EVENT_MODALWINDOW)) {
+		creatureEvent->executeModalWindow(player, modalWindowId, button, choice);
 	}
 }
 
