@@ -120,7 +120,7 @@ function toolGear.onUse(player, item, fromPosition, target, toPosition, isHotkey
 		end
 	else
 		player:say("Oh no! Your tool is jammed and can't be used for a minute.", TALKTYPE_MONSTER_SAY)
-		if not player:hasAchievement("Bad Timing")
+		if not player:hasAchievement("Bad Timing") then
 		player:addAchievementProgress("Bad Timing")
 		end
 		item:transform(item.itemid + 1)
