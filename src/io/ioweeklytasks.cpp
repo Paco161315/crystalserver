@@ -25,7 +25,7 @@
 #include "creatures/players/wheel/player_wheel.hpp"
 #include "game/game.hpp"
 #include "items/containers/depot/depotchest.hpp"
-#include "items/cylinder.hpp"
+#include "items/containers/inbox/inbox.hpp"
 #include "items/item.hpp"
 #include "lib/di/container.hpp"
 #include "lua/scripts/lua_environment.hpp"
