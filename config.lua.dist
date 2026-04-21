@@ -157,13 +157,15 @@ taskHuntingBonusRerollPrice = 1
 taskHuntingFreeRerollTime = 20 * 60 * 60
 
 -- Bounty Tasks system
+-- NOTE: bountyTasksFreeRerollTime: Time in seconds that players will have to wait to get a free bounty tasks reroll.
 bountyTasksEnabled = true
 bountyTasksExpMultiplier = 1
-bountyTasksFreeRerollTime = 72000
 bountyTasksPointsMultiplier = 1
 bountyTasksRerollMultiplier = 1
+bountyTasksFreeRerollTime = 20 * 60 * 60
 
 -- Wweekly Tasks system
+-- Day of week for weekly tasks reset (monday, tuesday, wednesday, thursday, friday, saturday, sunday)
 weeklyTasksEnabled = true
 weeklyTasksResetDay = "monday"
 
