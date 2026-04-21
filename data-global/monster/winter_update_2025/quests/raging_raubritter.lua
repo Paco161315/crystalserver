@@ -58,7 +58,7 @@ monster.light = {
 monster.voices = {
 	interval = 5000,
 	chance = 10,
-	{ text = "IT BURNS... MASTER.", yell = false }
+	{ text = "IT BURNS... MASTER.", yell = false },
 }
 
 monster.loot = {}

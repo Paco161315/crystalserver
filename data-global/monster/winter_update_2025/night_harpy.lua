@@ -95,8 +95,8 @@ monster.attacks = {
 	{ name = "combat", interval = 2000, chance = 1000, type = COMBAT_DEATHDAMAGE, minDamage = -0, maxDamage = -350, range = 5, effect = CONST_ME_MORTAREA, target = true },
 	{ name = "combat", interval = 2200, chance = 25, type = COMBAT_ENERGYDAMAGE, minDamage = -850, maxDamage = -930, radius = 3, effect = CONST_ME_ENERGYHIT, target = false },
 	{ name = "deathcircle", interval = 2500, chance = 25 },
-	{ name = "night harpy shielding ball", interval = 5000, chance = 25},
-	{ name = "night harpy cone wave", interval = 2000, chance = 23, minDamage = -570, maxDamage = -870,},
+	{ name = "night harpy shielding ball", interval = 5000, chance = 25 },
+	{ name = "night harpy cone wave", interval = 2000, chance = 23, minDamage = -570, maxDamage = -870 },
 	{ name = "combat", interval = 2000, chance = 27, type = COMBAT_DEATHDAMAGE, minDamage = -610, maxDamage = -810, range = 5, shootEffect = CONST_ANI_SUDDENDEATH, effect = CONST_ME_MORTAREA, target = true },
 	{ name = "night harpy scratch", interval = 2000, chance = 25, minDamage = -700, maxDamage = -890 },
 }

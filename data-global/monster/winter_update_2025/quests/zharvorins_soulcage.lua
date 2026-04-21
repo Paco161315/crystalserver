@@ -44,7 +44,7 @@ monster.flags = {
 }
 
 monster.light = {
-	level = 0, 
+	level = 0,
 	color = 0,
 }
 
