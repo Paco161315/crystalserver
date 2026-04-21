@@ -601,12 +601,6 @@ rateSoulRegenSpeed = 1.0
 
 rateSpellCooldown = 1.0
 
--- Player regeneration intervals (ms); food* used while foodTicks > 0 on CONDITION_REGENERATION
-baseHealthRegenInterval = 4000
-baseManaRegenInterval = 6000
-foodHealthRegenInterval = 3000
-foodManaRegenInterval = 5000
-
 rateAttackSpeed = 1.0
 rateOfflineTrainingSpeed = rateAttackSpeed
 rateExerciseTrainingSpeed = rateAttackSpeed
