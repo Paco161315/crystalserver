@@ -97,10 +97,9 @@ end
 local toolGear = Action()
 
 function toolGear.onUse(player, item, fromPosition, target, toPosition, isHotkey)
-
-    if not target or not target.itemid or target.itemid == 0 then
-        return false
-    end
+	if not target or not target.itemid or target.itemid == 0 then
+		return false
+	end
 
 	if math.random(1000) > 10 then
 		if onUseCrowbar(player, item, fromPosition, target, toPosition, isHotkey) then
@@ -121,7 +120,7 @@ function toolGear.onUse(player, item, fromPosition, target, toPosition, isHotkey
 	else
 		player:say("Oh no! Your tool is jammed and can't be used for a minute.", TALKTYPE_MONSTER_SAY)
 		if not player:hasAchievement("Bad Timing") then
-		player:addAchievementProgress("Bad Timing", 10)
+			player:addAchievementProgress("Bad Timing", 10)
 		end
 		item:transform(item.itemid + 1)
 		item:decay()
