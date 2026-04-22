@@ -94,9 +94,23 @@ keywordHandler:addKeyword({ "island" }, StdModule.say, { npcHandler = npcHandler
 keywordHandler:addKeyword({ "king", "tibianus" }, StdModule.say, { npcHandler = npcHandler, text = "Our dearest King Tibianus, maybe someday I will be able to meet his highness. He resides at his castle in Thais." })
 keywordHandler:addKeyword({ "mines" }, StdModule.say, { npcHandler = npcHandler, text = "Ever since the mining industry left our beautiful village, the mines have been haunted. I'd rather stay away from any kind of danger. But I heard Viola could need your help, adventurer." })
 keywordHandler:addKeyword({ "bank" }, StdModule.say, { npcHandler = npcHandler, text = "You can deposit and withdraw money from your bank account here. I can also change money for you." })
-keywordHandler:addKeyword({ "functions" }, StdModule.say, { npcHandler = npcHandler, text = "Every Tibian has a global bank account. This means you can deposit your gold in one bank, and withdraw it from the same or any other Tibian bank in any city. ... Here on Newhaven, I run the bank. I keep any gold you deposit safe, so you can't lose it when you're out fighting or dying, heh. Ask me for your {balance} to learn how much money you've already saved. ... There are also {advanced} functions, but those are only available to you once you have reached the Tibian mainland." })
+keywordHandler:addKeyword(
+	{ "functions" },
+	StdModule.say,
+	{
+		npcHandler = npcHandler,
+		text = "Every Tibian has a global bank account. This means you can deposit your gold in one bank, and withdraw it from the same or any other Tibian bank in any city. ... Here on Newhaven, I run the bank. I keep any gold you deposit safe, so you can't lose it when you're out fighting or dying, heh. Ask me for your {balance} to learn how much money you've already saved. ... There are also {advanced} functions, but those are only available to you once you have reached the Tibian mainland.",
+	}
+)
 keywordHandler:addKeyword({ "advanced" }, StdModule.say, { npcHandler = npcHandler, text = "Your bank account will be used automatically when you want to rent a house or place an offer on an item on the market. Let me know if you want to know about how either one works." })
-keywordHandler:addKeyword({ "rent" }, StdModule.say, { npcHandler = npcHandler, text = "Renting a house has never been this easy. Simply make a bid for an auction on the house section of the official Tibia website. We will check immediately if you have enough money ... Please keep in mind that the sum you have used to bid will be unavailable unless somebody places a higher bid. Once you have acquired a house the rent will be charged automatically from your bank account every month." })
+keywordHandler:addKeyword(
+	{ "rent" },
+	StdModule.say,
+	{
+		npcHandler = npcHandler,
+		text = "Renting a house has never been this easy. Simply make a bid for an auction on the house section of the official Tibia website. We will check immediately if you have enough money ... Please keep in mind that the sum you have used to bid will be unavailable unless somebody places a higher bid. Once you have acquired a house the rent will be charged automatically from your bank account every month.",
+	}
+)
 keywordHandler:addKeyword({ "market" }, StdModule.say, { npcHandler = npcHandler, text = "If you buy an item from the market, the required gold will be deducted from your bank account automatically. On the other hand, money you earn for selling items via the market will be added to your account. It's easy!" })
 
 npcHandler:setMessage(MESSAGE_GREET, "Welcome to the Tibian bank, young adventurer! Deposit your gold or withdraw your money from your bank account. Remember to deposit all of your gold before you leave here. I can also explain the {functions} of your bank account to you.")

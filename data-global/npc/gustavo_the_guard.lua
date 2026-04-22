@@ -116,7 +116,11 @@ keywordHandler:addKeyword({ "flavius" }, StdModule.say, { npcHandler = npcHandle
 keywordHandler:addKeyword({ "tim" }, StdModule.say, { npcHandler = npcHandler, text = "Tim is a good friend of mine. He works as a guard in the city of Thais." })
 keywordHandler:addKeyword({ "ben" }, StdModule.say, { npcHandler = npcHandler, text = "You're talking about the bear, aren't you? Yes, it's a long story. And one that I don't necessarily want to share with everyone. It's personal, you could say." })
 keywordHandler:addKeyword({ "banor" }, StdModule.say, { npcHandler = npcHandler, text = "Praise Banor! May the great warrior be with us!" })
-keywordHandler:addKeyword({ "crunor" }, StdModule.say, { npcHandler = npcHandler, text = "Crunor is the god of nature, trees, plants and fertility. He created all plants of Tibia after his own image. He is also called the Lord of The Trees and the Great Tree. ... Crunor also created the wolves in order to protect his forests against the orcs. There is a small shrine in his honour in the woods south of the village." })
+keywordHandler:addKeyword(
+	{ "crunor" },
+	StdModule.say,
+	{ npcHandler = npcHandler, text = "Crunor is the god of nature, trees, plants and fertility. He created all plants of Tibia after his own image. He is also called the Lord of The Trees and the Great Tree. ... Crunor also created the wolves in order to protect his forests against the orcs. There is a small shrine in his honour in the woods south of the village." }
+)
 keywordHandler:addKeyword({ "spells" }, StdModule.say, { npcHandler = npcHandler, text = "If you want to learn some spells, talk to Viola. She lives in the house south of the bank." })
 keywordHandler:addKeyword({ "bank" }, StdModule.say, { npcHandler = npcHandler, text = "You can find the bank right over there." })
 keywordHandler:addKeyword({ "shop" }, StdModule.say, { npcHandler = npcHandler, text = "Visit Avriel's shop to buy or sell wares. You can find him south of here." })

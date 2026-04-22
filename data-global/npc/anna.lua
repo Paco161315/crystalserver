@@ -81,7 +81,6 @@ local function creatureSayCallback(npc, creature, type, message)
 	local playerId = player:getId()
 
 	if MsgContains(message, "passage") then
-
 		if player:getLevel() < MIN_LEVEL_TO_TRAVEL then
 			npcHandler:say("You need to be at least level " .. MIN_LEVEL_TO_TRAVEL .. " to travel to the mainland. Keep training!", npc, creature)
 			return true
@@ -119,7 +118,6 @@ local function creatureSayCallback(npc, creature, type, message)
 
 		local town = Town(TOWNS_LIST.THAIS)
 		player:setTown(town)
-
 	elseif MsgContains(message, "no") then
 		if npcHandler:getTopic(playerId) >= 1 then
 			npcHandler:say("No problem. Come back when you're ready to explore the mainland!", npc, creature)

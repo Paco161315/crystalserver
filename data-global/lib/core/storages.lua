@@ -2936,7 +2936,7 @@ Storage = {
 			newhavenMuglexKillCount = 48036,
 			newhavenViolaBookQuestStart = 48037,
 			newhavenViolaBookQuestDone = 48038,
-		}
+		},
 	},
 
 	-- Reserved storage from 63951 - 63999
