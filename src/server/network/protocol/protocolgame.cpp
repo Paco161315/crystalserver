@@ -10525,7 +10525,6 @@ void ProtocolGame::sendDoubleSoundEffect(
 	writeToOutputBuffer(msg);
 }
 
-
 void ProtocolGame::sendAmbientSoundEffect(const SoundAmbientEffect_t id) {
 	if (oldProtocol) {
 		return;
@@ -10625,7 +10624,6 @@ void ProtocolGame::sendScreenshotAndBannerUnlockedAchievement(const uint16_t ach
 	msg.addString(achievement.name);
 	writeToOutputBuffer(msg);
 }
-
 
 void ProtocolGame::sendScreenshotAndBannerUnlockedTitle(const uint8_t titleId) {
 	if (oldProtocol) {
@@ -10752,7 +10750,6 @@ void ProtocolGame::sendScreenshotAndBannerProficiencyProgress(uint16_t itemId, c
 	msg.addString(message);
 	writeToOutputBuffer(msg);
 }
-
 
 void ProtocolGame::sendOutfitWindowCustomOTCR(NetworkMessage &msg) {
 	if (!isOTCR) {

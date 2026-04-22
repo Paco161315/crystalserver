@@ -157,13 +157,15 @@ taskHuntingBonusRerollPrice = 1
 taskHuntingFreeRerollTime = 20 * 60 * 60
 
 -- Bounty Tasks system
+-- NOTE: bountyTasksFreeRerollTime: Time in seconds that players will have to wait to get a free bounty tasks reroll.
 bountyTasksEnabled = true
 bountyTasksExpMultiplier = 1
-bountyTasksFreeRerollTime = 72000
 bountyTasksPointsMultiplier = 1
 bountyTasksRerollMultiplier = 1
+bountyTasksFreeRerollTime = 20 * 60 * 60
 
 -- Wweekly Tasks system
+-- Day of week for weekly tasks reset (monday, tuesday, wednesday, thursday, friday, saturday, sunday)
 weeklyTasksEnabled = true
 weeklyTasksResetDay = "monday"
 
@@ -598,12 +600,6 @@ rateSoulRegen = 1.0
 rateSoulRegenSpeed = 1.0
 
 rateSpellCooldown = 1.0
-
--- Player regeneration intervals (ms); food* used while foodTicks > 0 on CONDITION_REGENERATION
-baseHealthRegenInterval = 4000
-baseManaRegenInterval = 6000
-foodHealthRegenInterval = 3000
-foodManaRegenInterval = 5000
 
 rateAttackSpeed = 1.0
 rateOfflineTrainingSpeed = rateAttackSpeed
