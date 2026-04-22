@@ -372,6 +372,9 @@
 	<npc centerx="32422" centery="32481" centerz="5" radius="1">
 		<npc name="Wes the Blacksmith" x="0" y="0" z="5" spawntime="60" />
 	</npc>
+	<npc centerx="32411" centery="32486" centerz="7" radius="1">
+		<npc name="Fitzmaurice" x="0" y="0" z="7" spawntime="60" />
+	</npc>
 	<npc centerx="32435" centery="32492" centerz="5" radius="1">
 		<npc name="Dal the Huntress" x="0" y="0" z="5" spawntime="60" />
 	</npc>
@@ -3102,5 +3105,16 @@
 	</npc>
 	<npc centerx="33587" centery="32966" centerz="15" radius="1">
 		<npc name="Gnomish Operative (Raiders)" x="0" y="0" z="15" spawntime="60" />
+	</npc>
+	<npc centerx="32559" centery="32490" centerz="7" radius="7">
+		<npc name="Gustavo, The Guard" x="1" y="-2" z="7" spawntime="60" />
+		<npc name="Flavius" x="7" y="-1" z="7" spawntime="60" direction="2" />
+		<npc name="Anna" x="-7" y="7" z="7" spawntime="60" direction="2" />
+	</npc>
+	<npc centerx="32554" centery="32505" centerz="7" radius="1">
+		<npc name="Avriel" x="0" y="0" z="7" spawntime="60" direction="2" />
+	</npc>
+	<npc centerx="32571" centery="32507" centerz="7" radius="1">
+		<npc name="Viola" x="0" y="0" z="7" spawntime="60" direction="2" />
 	</npc>
 </npcs>
