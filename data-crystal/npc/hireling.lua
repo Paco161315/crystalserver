@@ -2432,11 +2432,11 @@ function createHirelingType(HirelingName)
 	npcHandler:addModule(FocusModule:new(), npcConfig.name, true, true, true)
 
 	-- npcType registering the npcConfig table
-	
--- Dialog options (interactive icons in the NPC conversation window)
-npcType:addDialogOptions("deposit all", "withdraw", "balance", "bye")
 
-npcType:register(npcConfig)
+	-- Dialog options (interactive icons in the NPC conversation window)
+	npcType:addDialogOptions("deposit all", "withdraw", "balance", "bye")
+
+	npcType:register(npcConfig)
 end
 
 createHirelingType("Hireling")

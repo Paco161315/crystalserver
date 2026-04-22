@@ -173,7 +173,6 @@ npcHandler:setMessage(MESSAGE_GREET, {
 
 npcHandler:addModule(FocusModule:new(), npcConfig.name, true, true, true)
 
-
 -- Dialog options (interactive icons in the NPC conversation window)
 npcType:addDialogOptions("trade", "bye")
 

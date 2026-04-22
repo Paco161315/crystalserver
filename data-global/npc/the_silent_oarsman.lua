@@ -70,7 +70,6 @@ npcHandler:setMessage(MESSAGE_WALKAWAY, "...")
 
 npcHandler:addModule(FocusModule:new(), npcConfig.name, true, true, true)
 
-
 -- Dialog options (interactive icons in the NPC conversation window)
 npcType:addDialogOptions("passage", "bye")
 

@@ -106,7 +106,6 @@ end
 
 npcType.onCheckItem = function(npc, player, clientId, subType) end
 
-
 -- Dialog options (interactive icons in the NPC conversation window)
 npcType:addDialogOptions("trade", "bye")
 
