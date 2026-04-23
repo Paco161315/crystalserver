@@ -8792,6 +8792,14 @@ void Player::sendModalWindow(const ModalWindow &modalWindow) {
 	client->sendModalWindow(modalWindow);
 }
 
+void Player::sendMultiOfflineTrainingDialog() {
+	if (!client) {
+		return;
+	}
+
+	client->sendMultiOfflineTrainingDialog();
+}
+
 // container
 
 void Player::closeAllExternalContainers() {

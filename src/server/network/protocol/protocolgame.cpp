@@ -1279,6 +1279,9 @@ void ProtocolGame::parsePacketFromDispatcher(NetworkMessage &msg, uint8_t recvby
 		case 0x73:
 			parseTeleport(msg);
 			break;
+		case 0x74:
+			parseStartOfflineTraining(msg);
+			break;
 		case 0x77:
 			parseHotkeyEquip(msg);
 			break;
@@ -8775,6 +8778,46 @@ void ProtocolGame::sendModalWindow(const ModalWindow &modalWindow) {
 	msg.addByte(modalWindow.priority ? 0x01 : 0x00);
 
 	writeToOutputBuffer(msg);
+}
+
+void ProtocolGame::sendMultiOfflineTrainingDialog() {
+	if (!player) {
+		return;
+	}
+
+	NetworkMessage msg;
+	msg.addByte(0x1B);
+	writeToOutputBuffer(msg);
+}
+
+void ProtocolGame::parseStartOfflineTraining(NetworkMessage &msg) {
+	uint8_t skillType = msg.getByte();
+
+	skills_t skill;
+	switch (skillType) {
+		case 0:
+			skill = SKILL_FIST;
+			break;
+		case 1:
+			skill = SKILL_CLUB;
+			break;
+		case 2:
+			skill = SKILL_SWORD;
+			break;
+		case 3:
+			skill = SKILL_AXE;
+			break;
+		case 4:
+			skill = SKILL_DISTANCE;
+			break;
+		case 5:
+			skill = SKILL_MAGLEVEL;
+			break;
+		default:
+			return;
+	}
+
+	g_game().playerStartOfflineTraining(player->getID(), skill);
 }
 
 ////////////// Add common messages

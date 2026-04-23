@@ -143,6 +143,7 @@ class PlayerFunctions {
 
 	static int luaPlayerGetOfflineTrainingSkill(lua_State* L);
 	static int luaPlayerSetOfflineTrainingSkill(lua_State* L);
+	static int luaPlayerSendOfflineTrainingDialog(lua_State* L);
 
 	static int luaPlayerGetItemCount(lua_State* L);
 	static int luaPlayerGetStashItemCount(lua_State* L);
