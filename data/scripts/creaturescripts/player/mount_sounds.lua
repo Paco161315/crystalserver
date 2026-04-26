@@ -1168,14 +1168,14 @@ mounts = {
 		"FWOOOOSH!",
 	},
 	[1866] = { -- white gloom maw
-		"Shriiiek!",
-		"Shriiiiiek!",
-		"HISSSS!",
+		"Krrrrk!",
+		"<slobber>",
+		"<sniff><sniff>!",
 	},
 	[1867] = { -- gloom maw
-		"Shriiiek!",
-		"Shriiiiiek!",
-		"HISSSS!",
+		"Krrrrk!",
+		"<slobber>",
+		"<sniff><sniff>!",
 	},
 	[1873] = { -- battle werewolf
 		"Yoooohhuuuu!",
@@ -1190,6 +1190,10 @@ local INTERVAL_SECONDS = 8
 local mountSounds = GlobalEvent("MountSounds")
 
 function mountSounds.onThink(interval)
+	if not configManager.getBoolean(configKeys.MOUNT_SOUNDS) then
+		return true
+	end
+
 	for _, player in ipairs(Game.getPlayers()) do
 		local outfit = player:getOutfit()
 		local mountId = outfit.lookMount
