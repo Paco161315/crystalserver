@@ -12710,9 +12710,12 @@ void Player::removeEquippedWeaponProficiency(const uint16_t itemId) {
 }
 
 bool Player::canExiva(const std::string &spellParam) const {
-	if (g_game().getWorldType() != WORLDTYPE_OPTIONAL && !g_configManager().getBoolean(EXIVA_RESTRICTIONS_ONLY_OPTIONAL_WORLDS)) {
-		return true;
-	}
+    const bool restrictOnlyOptional = g_configManager().getBoolean(EXIVA_RESTRICTIONS_ONLY_OPTIONAL_WORLDS);
+    const bool isOptionalWorld = g_game().getWorldType() == WORLDTYPE_OPTIONAL;
+
+    if (restrictOnlyOptional && !isOptionalWorld) {
+        return true;
+    }
 
 	const auto &targetPlayer = g_game().getPlayerByName(spellParam);
 	if (!targetPlayer) {
