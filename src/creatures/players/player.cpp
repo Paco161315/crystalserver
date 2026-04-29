@@ -2958,6 +2958,13 @@ bool Player::closeShopWindow() {
 }
 
 void Player::onWalk(Direction &dir) {
+    if (hasCondition(CONDITION_PARALYZE)) {
+        uint32_t delay = g_configManager().getNumber(PARALYZE_DELAY_INTERVAL);
+        setNextAction(OTSYS_TIME() + delay);
+        lastWalking = OTSYS_TIME() + delay;
+        return;
+    }
+	
 	if (hasCondition(CONDITION_FEARED)) {
 		const Position pos = getNextPosition(dir, getPosition());
 
@@ -4176,8 +4183,13 @@ void Player::death(const std::shared_ptr<Creature> &lastHitCreature) {
 
 			const auto playerSkull = getSkull();
 			bool hasSkull = (playerSkull == Skulls_t::SKULL_RED || playerSkull == Skulls_t::SKULL_BLACK);
+			const auto &amulet = getInventoryItem(CONST_SLOT_NECKLACE);
+			const bool usingAol = amulet && amulet->getID() == ITEM_AMULETOFLOSS;
+			const bool twistProtectsAol = !hasSkull && pvpDeath && hasBlessing(1);
+			bool consumedBlessingProtection = false;
 			uint8_t maxBlessing = 8;
-			if (!hasSkull && pvpDeath && hasBlessing(1)) {
+			if (twistProtectsAol) {
+				consumedBlessingProtection = true;
 				auto storeCount = getBlessingCount(1, true);
 				if (storeCount > 0) {
 					auto currentStore = kv()->scoped("summary")->scoped("blessings")->scoped(fmt::format("{}", 1))->get("amount");
@@ -4192,15 +4204,21 @@ void Player::death(const std::shared_ptr<Creature> &lastHitCreature) {
 				for (int i = 2; i <= maxBlessing; i++) {
 					auto storeCount = getBlessingCount(i, true);
 					if (storeCount > 0) {
+						consumedBlessingProtection = true;
 						auto currentStore = kv()->scoped("summary")->scoped("blessings")->scoped(fmt::format("{}", i))->get("amount");
 						if (currentStore) {
 							auto newAmount = std::max(0, static_cast<int>(currentStore->getNumber()) - 1);
 							kv()->scoped("summary")->scoped("blessings")->scoped(fmt::format("{}", i))->set("amount", newAmount);
 						}
-					} else {
+					} else if (hasBlessing(i)) {
+						consumedBlessingProtection = true;
 						removeBlessing(i, 1);
 					}
 				}
+			}
+
+			if (usingAol && !consumedBlessingProtection) {
+				g_game().internalRemoveItem(amulet);
 			}
 		}
 		sendTextMessage(MESSAGE_EVENT_ADVANCE, blessOutput.str());
@@ -12435,6 +12453,7 @@ EquippedWeaponProficiencyBonuses &Player::getEquippedWeaponProficiency() {
 
 void Player::addWeaponProficiencyExperience(const std::shared_ptr<MonsterType> &mType, const ForgeClassifications_t classification, const bool bossSoulpit) {
 	uint32_t addProficiencyExperience = 0;
+	const auto weaponProficiencyRate = std::max(0.0f, g_configManager().getFloat(RATE_WEAPON_PROFICIENCY));
 	if (bossSoulpit) {
 		addProficiencyExperience = 1500;
 	} else {
@@ -12489,6 +12508,8 @@ void Player::addWeaponProficiencyExperience(const std::shared_ptr<MonsterType> &
 			}
 		}
 	}
+
+	addProficiencyExperience = static_cast<uint32_t>(std::round(addProficiencyExperience * weaponProficiencyRate));
 
 	const auto &weapon = getWeapon(true);
 	if (!weapon) {
@@ -12860,7 +12881,10 @@ void Player::removeEquippedWeaponProficiency(const uint16_t itemId) {
 }
 
 bool Player::canExiva(const std::string &spellParam) const {
-	if (g_game().getWorldType() != WORLDTYPE_OPTIONAL && !g_configManager().getBoolean(EXIVA_RESTRICTIONS_ONLY_OPTIONAL_WORLDS)) {
+	const bool restrictOnlyOptional = g_configManager().getBoolean(EXIVA_RESTRICTIONS_ONLY_OPTIONAL_WORLDS);
+	const bool isOptionalWorld = g_game().getWorldType() == WORLDTYPE_OPTIONAL;
+
+	if (restrictOnlyOptional && !isOptionalWorld) {
 		return true;
 	}
 

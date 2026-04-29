@@ -2793,9 +2793,17 @@ bool Game::removeMoney(const std::shared_ptr<Cylinder> &cylinder, uint64_t money
 		return false;
 	}
 
-	// Sort money items descending by worth to minimize item operations.
+	// Prefer lower denominations first so routine payments do not consume
+	// crystal/platinum coins when gold coins already cover the cost.
 	std::sort(moneyItems.begin(), moneyItems.end(), [](const auto &a, const auto &b) {
-		return a.first > b.first;
+		const uint32_t aCount = std::max<uint32_t>(1, a.second->getItemCount());
+		const uint32_t bCount = std::max<uint32_t>(1, b.second->getItemCount());
+		const uint32_t aUnitWorth = a.first / aCount;
+		const uint32_t bUnitWorth = b.first / bCount;
+		if (aUnitWorth == bUnitWorth) {
+			return a.first < b.first;
+		}
+		return aUnitWorth < bUnitWorth;
 	});
 
 	for (const auto &entry : moneyItems) {
@@ -3652,9 +3660,11 @@ void Game::playerEquipItem(uint32_t playerId, uint16_t itemId, bool hasTier /* =
 		return;
 	}
 	if (slot == CONST_SLOT_NECKLACE) {
-		player->setNextNecklaceAction(OTSYS_TIME() + g_configManager().getNumber(ACTIONS_DELAY_INTERVAL));
+		player->setNextNecklaceAction(OTSYS_TIME() + g_configManager().getNumber(NECKLACE_DELAY_INTERVAL));
+		player->sendCancelMessage("You cannot use objects that fast.");
 	} else if (slot == CONST_SLOT_RING) {
-		player->setNextRingAction(OTSYS_TIME() + g_configManager().getNumber(ACTIONS_DELAY_INTERVAL));
+		player->setNextRingAction(OTSYS_TIME() + g_configManager().getNumber(RING_DELAY_INTERVAL));
+		player->sendCancelMessage("You cannot use objects that fast.");
 	} else {
 		player->setNextAction(OTSYS_TIME() + g_configManager().getNumber(ACTIONS_DELAY_INTERVAL));
 	}
