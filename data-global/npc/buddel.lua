@@ -99,8 +99,6 @@ end, function(player)
 	return player:getItemCount(3097) > 0
 end, function(player)
 	return player:removeItem(3097, 1)
-end, function(player)
-	return player:getStorageValue(Storage.Quest.U8_0.TheIceIslands.Questline) < 30
 end)
 addTravelKeyword("tyrsung", "*HICKS* Big, big island east of here. Venorian hunters settled there ..... I could bring you north of their camp.", Position(32333, 31227, 7), function()
 	return randomDestination[math.random(#randomDestination)]
