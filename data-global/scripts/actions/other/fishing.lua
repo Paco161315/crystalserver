@@ -49,8 +49,8 @@ local dirtyWaterTransform = {
 	[12563] = 12560,
 }
 
-local SHIMMER_COOLDOWN_STORAGE = 50500
-local SHIMMER_COUNT_STORAGE = 50501
+local SHIMMER_COOLDOWN_STORAGE = 20526
+local SHIMMER_COUNT_STORAGE = 20527
 local SHIMMER_COOLDOWN_SECONDS = 20 * 60 * 60
 
 local transformToNonFishable = {
@@ -115,7 +115,7 @@ local function handleDirtyWaterFishing(player, target, toPosition)
 	local dirtyWaterRoll = math.random(100)
 
 	if dirtyWaterRoll <= 30 then
-		if math.random(1000) == 1 then
+		if math.random(100) == 100 then
 			local cooldownExpiry = player:getStorageValue(SHIMMER_COOLDOWN_STORAGE)
 			if cooldownExpiry ~= -1 and os.time() < cooldownExpiry then
 				player:addItem(3111, 1)
