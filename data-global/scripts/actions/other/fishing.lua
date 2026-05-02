@@ -136,7 +136,7 @@ local function handleDirtyWaterFishing(player, target, toPosition)
 				player:addAchievement("Biodegradable")
 			end
 
-			player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "A Shimmer Swimmer It is said that this creature only appears once each day in the murkiest of waters!")
+			player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "A Shimmer Swimmer! It is said that this creature only appears once each day in the murkiest of waters!")
 		else
 			player:addItem(3111, 1)
 		end
