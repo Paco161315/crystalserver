@@ -39,7 +39,7 @@ function talkaction.onSay(player, words, param)
 
 	target:setBossCooldown(bossName, 0)
 	player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "Reset boss cooldown [" .. bossName .. "] for player " .. target:getName())
-	target:sendTextMessage(MESSAGE_EVENT_ADVANCE, "Your cooldown for boss '" .. bossName .. "' has been reseted.")
+	target:sendTextMessage(MESSAGE_EVENT_ADVANCE, "Your cooldown for boss '" .. bossName .. "' has been reset.")
 
 	return true
 end
