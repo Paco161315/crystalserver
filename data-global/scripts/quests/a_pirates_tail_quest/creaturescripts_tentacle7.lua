@@ -24,7 +24,6 @@ local function getLinePositions()
 		for y = config.line.from.y, config.line.to.y, step do
 			table.insert(positions, Position(config.line.from.x, y, config.line.from.z))
 		end
-
 	elseif config.line.from.y == config.line.to.y then
 		local step = config.line.from.x <= config.line.to.x and 1 or -1
 		for x = config.line.from.x, config.line.to.x, step do
