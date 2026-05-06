@@ -556,7 +556,6 @@ function Player:onGainExperience(target, exp, rawExp)
 		end
 	end
 
-
 	-- Rotten Blood Taint System: Experience Bonus ONLY in Rotten Areas
 	local function isInRottenBloodArea(player)
 		local pos = player:getPosition()

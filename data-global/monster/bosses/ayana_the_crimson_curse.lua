@@ -70,12 +70,12 @@ monster.loot = {
 	{ name = "violet gem", chance = 6980 },
 	{ name = "demonrage sword", chance = 2330 },
 	{ name = "ornate crossbow", chance = 780 },
-	{ id = 3090, chance = 26360 },	-- red gem
-	{ id = 30059, chance = 14730 },	-- giant ruby
+	{ id = 3090, chance = 26360 }, -- red gem
+	{ id = 30059, chance = 14730 }, -- giant ruby
 	{ id = 43729, chance = 32560 }, -- werecrocodile tongue
-	{ id = 43734, chance = 30230 },	-- golden sun coin
-	{ id = 43737, chance = 14730 },	-- sun brooch
-	{ id = 43738, chance = 17830 },	-- closed pocket sundial
+	{ id = 43734, chance = 30230 }, -- golden sun coin
+	{ id = 43737, chance = 14730 }, -- sun brooch
+	{ id = 43738, chance = 17830 }, -- closed pocket sundial
 }
 
 monster.attacks = {
