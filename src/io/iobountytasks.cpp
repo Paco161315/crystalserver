@@ -467,9 +467,9 @@ void IOBountyTasks::unlockListSlot(const std::shared_ptr<Player> &player, uint8_
 	initializeListSlots(bountyData);
 
 	// Client always sends 0 - find the next locked slot to unlock
-	uint8_t slot = 0;
+	size_t slot = 0;
 	bool found = false;
-	for (uint8_t i = 0; i < bountyData.preferredLists.size(); ++i) {
+	for (size_t i = 0; i < bountyData.preferredLists.size(); ++i) {
 		if (bountyData.preferredLists[i].activedList == 0) {
 			slot = i;
 			found = true;
