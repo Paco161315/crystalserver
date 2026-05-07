@@ -85,7 +85,7 @@ void IOBountyTasks::generateCreatureList(const std::shared_ptr<Player> &player, 
 	auto maxIndex = static_cast<int32_t>(bestiaryList.size() - 1);
 
 	uint8_t creaturesGenerated = 0;
-	uint8_t tries = 0;
+	uint16_t tries = 0;
 	while (creaturesGenerated < BOUNTY_MAX_CREATURES && tries < 1000) {
 		uint16_t raceId = (*(std::next(bestiaryList.begin(), uniform_random(0, maxIndex)))).first;
 		tries++;
