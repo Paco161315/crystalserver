@@ -1989,12 +1989,24 @@ void Game::playerMoveItem(const std::shared_ptr<Player> &player, const Position 
 		player->stowItem(item, count, false);
 		return;
 	}
-	if (!item->isPushable() || item->hasAttribute(ItemAttribute_t::UNIQUEID)) {
+
+	const auto fromContainer = fromCylinder->getContainer();
+	const auto toContainer = toCylinder->getContainer();
+	const bool fromStoreInbox = fromContainer && fromContainer->getRootContainer() && fromContainer->getRootContainer()->isStoreInbox();
+	const bool toStoreInbox = toContainer && toContainer->getRootContainer() && toContainer->getRootContainer()->isStoreInbox();
+	const bool isGoldPouchStoreInboxReorder = item->getID() == ITEM_GOLD_POUCH && fromStoreInbox && toStoreInbox;
+
+	uint32_t moveFlags = 0;
+	if (isGoldPouchStoreInboxReorder) {
+		moveFlags |= FLAG_IGNORENOTMOVABLE;
+	}
+
+	if ((!item->isPushable() && !isGoldPouchStoreInboxReorder) || item->hasAttribute(ItemAttribute_t::UNIQUEID)) {
 		player->sendCancelMessage(RETURNVALUE_NOTMOVABLE);
 		return;
 	}
 
-	const auto ret = internalMoveItem(fromCylinder, toCylinder, toIndex, item, count, nullptr, 0, player);
+	const auto ret = internalMoveItem(fromCylinder, toCylinder, toIndex, item, count, nullptr, moveFlags, player);
 	if (ret != RETURNVALUE_NOERROR) {
 		player->sendCancelMessage(ret);
 	} else if (toCylinder->getContainer() && fromCylinder->getContainer() && fromCylinder->getContainer()->countsToLootAnalyzerBalance() && toCylinder->getContainer()->getTopParent() == player) {
@@ -2018,8 +2030,13 @@ ReturnValue Game::checkMoveItemToCylinder(const std::shared_ptr<Player> &player,
 		return RETURNVALUE_NOTPOSSIBLE;
 	}
 
+	const auto fromContainer = fromCylinder->getContainer();
+	const bool fromStoreInbox = fromContainer && fromContainer->getRootContainer() && fromContainer->getRootContainer()->isStoreInbox();
+
 	if (std::shared_ptr<Container> toCylinderContainer = toCylinder->getContainer()) {
 		auto containerID = toCylinderContainer->getID();
+		const auto rootToContainer = toCylinderContainer->getRootContainer();
+		const bool toStoreInbox = rootToContainer && rootToContainer->isStoreInbox();
 
 		// check the store inbox index if gold pouch forces it as containerID
 		if (containerID == ITEM_STORE_INBOX) {
@@ -2031,7 +2048,24 @@ ReturnValue Game::checkMoveItemToCylinder(const std::shared_ptr<Player> &player,
 
 		const auto containerToStow = isTryingToStow(toPos, toCylinder);
 
+		if (toStoreInbox && !containerToStow) {
+			const bool isGoldPouch = item->getID() == ITEM_GOLD_POUCH;
+			const bool canMoveInStoreInbox = item->canBeMovedToStore() || isGoldPouch;
+			if (!canMoveInStoreInbox) {
+				return RETURNVALUE_NOTBOUGHTINSTORE;
+			}
+
+			// Store Inbox accepts only items already inside it (internal reordering).
+			if (!fromStoreInbox) {
+				return RETURNVALUE_NOTBOUGHTINSTORE;
+			}
+		}
+
 		if (containerID == ITEM_GOLD_POUCH && !containerToStow) {
+			if (!fromStoreInbox) {
+				return RETURNVALUE_NOTBOUGHTINSTORE;
+			}
+
 			if (g_configManager().getBoolean(TOGGLE_GOLD_POUCH_QUICKLOOT_ONLY)) {
 				return RETURNVALUE_CONTAINERNOTENOUGHROOM;
 			}
@@ -2040,11 +2074,6 @@ ReturnValue Game::checkMoveItemToCylinder(const std::shared_ptr<Player> &player,
 
 			if (!allowAnything && item->getID() != ITEM_GOLD_COIN && item->getID() != ITEM_PLATINUM_COIN && item->getID() != ITEM_CRYSTAL_COIN) {
 				return RETURNVALUE_ITEMCANNOTBEMOVEDPOUCH;
-			}
-
-			// prevent move up from ponch to store inbox.
-			if (!item->canBeMovedToStore() && fromCylinder->getContainer() && fromCylinder->getContainer()->getID() == ITEM_GOLD_POUCH) {
-				return RETURNVALUE_NOTBOUGHTINSTORE;
 			}
 
 			return RETURNVALUE_NOERROR;
@@ -7258,6 +7287,16 @@ void Game::combatGetTypeInfo(CombatType_t combatType, const std::shared_ptr<Crea
 							splash = Item::CreateItem(ITEM_SMALLSPLASH, FLUID_BLOOD);
 						}
 					}
+					break;
+				case RACE_CHOCOLATE:
+					color = TEXTCOLOR_LIGHTGREY;
+					effect = CONST_ME_CACAO;
+					splash = Item::CreateItem(ITEM_SMALLSPLASH, FLUID_CHOCOLATE);
+					break;
+				case RACE_CANDY:
+					color = TEXTCOLOR_DARKRED;
+					effect = CONST_ME_SIURP;
+					splash = Item::CreateItem(ITEM_SMALLSPLASH, FLUID_CANDY);
 					break;
 				case RACE_INK:
 					color = TEXTCOLOR_LIGHTGREY;
