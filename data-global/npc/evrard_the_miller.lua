@@ -75,11 +75,9 @@ local function creatureSayCallback(npc, creature, type, message)
 			npcHandler:say("Good, now go. Remember: be like a light summer breeze - quick, almost unnoticeable and most importantly QUIET!", npc, creature)
 			npcHandler:setTopic(playerId, 0)
 		end
-
 	elseif message:lower() == "news" and player:getStorageValue(Storage.Quest.U12_40.TheOrderOfTheLion.QuestLine) == 1 then
 		npcHandler:say("What about the small errand I mentioned? Did you get the stuff?", npc, creature)
 		npcHandler:setTopic(playerId, 2)
-
 	elseif message:lower() == "yes" and player:getStorageValue(Storage.Quest.U12_40.TheOrderOfTheLion.QuestLine) == 1 then
 		if npcHandler:getTopic(playerId) == 2 then
 			if player:getStorageValue(Storage.Quest.U12_40.TheOrderOfTheLion.Parchment) >= 1 and player:getStorageValue(Storage.Quest.U12_40.TheOrderOfTheLion.MapStorage) >= 1 and player:removeItem(635, 1) and player:removeItem(2822, 1) then
@@ -94,7 +92,6 @@ local function creatureSayCallback(npc, creature, type, message)
 				npcHandler:say("You haven't brought both items yet. I need the ledger AND the map from that camp.", npc, creature)
 			end
 		end
-
 	elseif message:lower() == "yes" and player:getStorageValue(Storage.Quest.U12_40.TheOrderOfTheLion.QuestLine) == 2 then
 		if npcHandler:getTopic(playerId) == 3 then
 			player:setStorageValue(Storage.Quest.U12_40.TheOrderOfTheLion.QuestLine, 3)
