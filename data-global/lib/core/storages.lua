@@ -2832,6 +2832,8 @@ Storage = {
 				QuestLine = 47401,
 				AccessEastSide = 47402,
 				AccessSouthernSide = 47403,
+				Parchment = 47404,
+				MapStorage = 47405,
 			},
 			SoulWar = {
 				GoshnarMaliceKilled = 47211,
