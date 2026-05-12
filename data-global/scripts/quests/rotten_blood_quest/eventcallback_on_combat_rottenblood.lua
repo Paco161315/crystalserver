@@ -94,7 +94,6 @@ local function handlePositionSwap(monster, target, chance)
 				local eventMonster = Monster(monsterId)
 				local eventPlayer = Player(playerId)
 				if eventMonster and eventPlayer then
-
 					if not isInBakragoreZone(eventPlayer) then
 						logger.debug("Position swap cancelled: player {} is no longer in Rotten Blood zone", eventPlayer:getName())
 						return

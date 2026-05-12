@@ -152,7 +152,6 @@ local summonInterval = 0
 local activeSummons = {}
 
 local function getRandomPosition(monsterPosition)
-
 	local offsetX = math.random(-2, 2)
 	local offsetY = math.random(-2, 2)
 	local offsetZ = monsterPosition.z
@@ -200,7 +199,6 @@ local function ensureSummons(monster)
 end
 
 mType.onThink = function(monster, interval)
-
 	accumulatedTime = accumulatedTime + interval
 	ensureSummons(monster)
 

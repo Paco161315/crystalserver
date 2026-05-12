@@ -142,7 +142,6 @@ local summonInterval = 0
 local activeSummons = {}
 
 local function getRandomPosition(monsterPosition)
-
 	local offsetX = math.random(-1, 1)
 	local offsetY = math.random(-1, 1)
 	local offsetZ = monsterPosition.z
