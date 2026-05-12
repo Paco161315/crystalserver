@@ -156,7 +156,6 @@ local summonInterval = 0
 local activeSummons = {}
 
 local function getRandomPosition(monsterPosition)
-
 	local offsetX = math.random(-1, 1)
 	local offsetY = math.random(-1, 1)
 	local offsetZ = monsterPosition.z
@@ -277,7 +276,6 @@ local function initializeBoss()
 end
 
 mType.onThink = function(monster, interval)
-
 	if not bossInitialized then
 		initializeBoss()
 		bossInitialized = true

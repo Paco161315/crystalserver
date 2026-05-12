@@ -162,9 +162,7 @@ local accumulatedTime = 0
 local summonInterval = 0
 local activeSummons = {}
 
-
 local function getRandomPosition(monsterPosition)
-
 	local offsetX = math.random(-1, 1)
 	local offsetY = math.random(-1, 1)
 	local offsetZ = monsterPosition.z
@@ -418,7 +416,6 @@ local pillarAndFlames = {
 local bossInitialized = false
 
 mType.onThink = function(monster, interval)
-
 	if not bossInitialized then
 		initializeBoss()
 		bossInitialized = true
@@ -502,7 +499,6 @@ mType.onThink = function(monster, interval)
 						if player.setIcon then
 							player:setIcon("agony-stacks", CreatureIconCategory_Quests, CreatureIconQuests_RedCross, data.iconCount)
 						end
-
 					else
 					end
 				else
@@ -519,7 +515,6 @@ mType.onThink = function(monster, interval)
 				data.lastPos.x = currentPos.x
 				data.lastPos.y = currentPos.y
 				data.lastPos.z = currentPos.z
-
 
 				if tileItem then
 					-- heavy abuse of AI deleted the content here
@@ -572,7 +567,7 @@ mType.onThink = function(monster, interval)
 			end
 
 			if allHaveFinalTaint and playerCount > 0 then
-				local resistanceBonus = essenceCount * 5 
+				local resistanceBonus = essenceCount * 5
 
 				for _, data in pairs(activeEssences) do
 					Game.createMonster(data.monster, data.monsterPosition)
@@ -649,11 +644,9 @@ mType.onMove = function(_, creature, fromPos, toPos)
 	local itemId = item and item:getId() or 0
 
 	if itemId ~= 43589 and itemId ~= 43590 and itemId ~= 43297 then
-
 		if creature:isPlayer() then
 			local newItem = Game.createItem(43589, 1, toPos)
 			if newItem then
-
 				local posX, posY, posZ = toPos.x, toPos.y, toPos.z
 				addEvent(function(x, y, z)
 					local checkTile = Tile(Position(x, y, z))
@@ -695,7 +688,6 @@ mType.onMove = function(_, creature, fromPos, toPos)
 	if creature:isMonster() and creature:getName():lower() == "bakragore" then
 		local spore = Game.createItem(43294, 1, toPos)
 		if spore then
-
 			local spX, spY, spZ = toPos.x, toPos.y, toPos.z
 			addEvent(function(sx, sy, sz)
 				local sporeTile = Tile(Position(sx, sy, sz))
