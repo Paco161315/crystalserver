@@ -57,15 +57,15 @@ local function endConversationWithDelay(npcHandler, npc, creature)
 end
 
 local function greetCallback(npc, creature)
-    local player = Player(creature)
-    local fire = player:getCondition(CONDITION_FIRE)
+	local player = Player(creature)
+	local fire = player:getCondition(CONDITION_FIRE)
 
-    if not fire then
-        endConversationWithDelay(npcHandler, npc, creature)
-        return false
-    end
+	if not fire then
+		endConversationWithDelay(npcHandler, npc, creature)
+		return false
+	end
 	npcHandler:setMessage(MESSAGE_GREET, "Hehe. That's a good show, player. With all the pyrotechnical effects, you got my {attention} - for a minute at least..")
-    return true
+	return true
 end
 
 local function creatureSayCallback(npc, creature, type, message)
