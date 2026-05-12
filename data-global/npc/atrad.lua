@@ -64,7 +64,7 @@ local function greetCallback(npc, creature)
 		endConversationWithDelay(npcHandler, npc, creature)
 		return false
 	end
-	npcHandler:setMessage(MESSAGE_GREET, "Hehe. That's a good show, player. With all the pyrotechnical effects, you got my {attention} - for a minute at least..")
+	npcHandler:setMessage(MESSAGE_GREET, "Hehe. That's a good show, player. With all the pyrotechnical effects, you got my {attention} - for a minute at least.")
 	return true
 end
 
