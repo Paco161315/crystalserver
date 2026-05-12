@@ -57,15 +57,15 @@ local function endConversationWithDelay(npcHandler, npc, creature)
 end
 
 local function greetCallback(npc, creature)
-	local player = Player(creature)
-	local fire = player:getCondition(CONDITION_FIRE)
+    local player = Player(creature)
+    local fire = player:getCondition(CONDITION_FIRE)
 
-	if fire and (player:hasOutfit(156) or player:hasOutfit(152)) then
-		return true
-	end
-
-	endConversationWithDelay(npcHandler, npc, creature)
-	return false
+    if not fire then
+        endConversationWithDelay(npcHandler, npc, creature)
+        return false
+    end
+	npcHandler:setMessage(MESSAGE_GREET, "Hehe. That's a good show, player. With all the pyrotechnical effects, you got my {attention} - for a minute at least..")
+    return true
 end
 
 local function creatureSayCallback(npc, creature, type, message)
@@ -107,6 +107,8 @@ local function creatureSayCallback(npc, creature, type, message)
 end
 
 npcHandler:setCallback(CALLBACK_GREET, greetCallback)
+npcHandler:setMessage(MESSAGE_FAREWELL, "I guess someone blew out the candle.")
+npcHandler:setMessage(MESSAGE_WALKAWAY, "I guess someone blew out the candle.")
 npcHandler:setCallback(CALLBACK_MESSAGE_DEFAULT, creatureSayCallback)
 
 npcHandler:addModule(FocusModule:new(), npcConfig.name, true, true, true)
