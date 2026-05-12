@@ -97,19 +97,16 @@ monster.immunities = {
 	{ type = "bleed", condition = false },
 }
 
--- Registrar eventos de IA (MonsterAI_Death limpia estado al morir)
 monster.events = {
 	"MonsterAI_Death",
 }
 
 mType.onThink = function(monster, variant, interval)
-	-- Sistema de IA: Priorización inteligente de objetivos
 	if MonsterAI and MonsterAI.onThink then
 		MonsterAI.onThink(monster)
 	end
 
 	local monsterPos = monster:getPosition()
-	-- Revisar si ya hay una criatura del tipo correcto en el rango definido
 	local spectators = Game.getSpectators(monsterPos, false, false, 15, 15, 15, 15)
 	local bossAlive = false
 
@@ -123,7 +120,6 @@ mType.onThink = function(monster, variant, interval)
 		end
 	end
 
-	-- Si ninguno de los dos está presente, eliminar el mushroom
 	if not bossAlive then
 		monster:remove()
 	end

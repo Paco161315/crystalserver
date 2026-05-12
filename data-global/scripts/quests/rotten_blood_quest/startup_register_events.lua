@@ -1,7 +1,6 @@
 local rottenBloodStartup = GlobalEvent("RottenBloodStartup")
 
 function rottenBloodStartup.onStartup()
-	-- Lista de todos los monstruos de bakragore que necesitan los eventos
 	local bakragoreMonsters = {
 		"sopping corpus",
 		"oozing corpus",
@@ -21,7 +20,6 @@ function rottenBloodStartup.onStartup()
 		"meandering mushroom",
 	}
 
-	-- Registrar evento de muerte para spawn de Elder Bloodjaw
 	for _, monsterName in ipairs(bakragoreMonsters) do
 		local mType = MonsterType(monsterName)
 		if mType then

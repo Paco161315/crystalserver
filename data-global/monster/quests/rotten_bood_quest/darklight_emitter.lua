@@ -119,7 +119,6 @@ monster.immunities = {
 	{ type = "bleed", condition = false },
 }
 
--- ✅ OPTIMIZACIÓN: Monster actualiza iconos de jugadores cercanos (Upper Left Area)
 mType.onThink = function(monster, interval)
 	onRottenMonsterThink(monster, interval)
 	return true

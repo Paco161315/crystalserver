@@ -159,15 +159,15 @@ local ElderBloodjaws = {
 }
 
 local accumulatedTime = 0
-local summonInterval = 0 -- Tiempo aleatorio entre invocaciones (se ajusta dinámicamente)
-local activeSummons = {} -- Tabla para rastrear las criaturas invocadas
+local summonInterval = 0
+local activeSummons = {}
 
--- Función para obtener una posición aleatoria alrededor del monstruo
+
 local function getRandomPosition(monsterPosition)
-	-- Rango de 4 SQM hacia arriba, abajo, derecha, izquierda
+
 	local offsetX = math.random(-1, 1)
 	local offsetY = math.random(-1, 1)
-	local offsetZ = monsterPosition.z -- Mantener la misma capa (z)
+	local offsetZ = monsterPosition.z
 
 	return Position(monsterPosition.x + offsetX, monsterPosition.y + offsetY, offsetZ)
 end
@@ -183,14 +183,12 @@ local function getClosePosition(centerPos)
 			return tryPos
 		end
 	end
-	return centerPos -- fallback si no se encuentra una válida
+	return centerPos
 end
 
--- Variables globales como Vemiath
 local bossStates = {}
 local bossInitialized = false
 
--- Funciones locales como Vemiath
 local function getPlayerTaintLevel(player)
 	local kv = player:kv():scoped("rotten-blood-quest")
 	local currentTaintKV = kv:get("taints") or 0
@@ -241,12 +239,10 @@ local function initializeBoss()
 	end
 	bossStates["Bakragore"].mechanicsDisabled = false
 
-	-- Iniciar ciclo de teleports
 	local function startTeleportCycle()
 		bossStates["Bakragore"].teleportTimer = addEvent(function()
 			local centerPos = Position(33043, 32397, 15)
 
-			-- Verificar si el sistema de teleport está pausado
 			if Game.getStorageValue("BakragoreTeleportPaused") == 1 then
 				logger.debug("Bakragore teleport system paused, skipping cycle")
 				startTeleportCycle()
@@ -271,11 +267,10 @@ local function initializeBoss()
 				return
 			end
 
-			-- Solo crear teleport si existen Elder Bloodjaw en la sala
 			if elderBloodjawExists then
 				local teleport = Game.createItem(37000, 1, centerPos)
 				if teleport then
-					teleport:setActionId(50001) -- Asignar ActionId para el MoveEvent
+					teleport:setActionId(50001)
 					centerPos:sendMagicEffect(CONST_ME_TELEPORT)
 					logger.debug("Teleport created for Bakragore with ActionId {}", teleport:getActionId())
 
@@ -294,7 +289,7 @@ local function initializeBoss()
 			end
 
 			startTeleportCycle()
-		end, 90000) -- 90 segundos entre teleports
+		end, 90000)
 	end
 
 	startTeleportCycle()
@@ -308,7 +303,6 @@ local function cleanupBoss()
 		bossStates["Bakragore"] = nil
 	end
 
-	-- También limpiar estado global
 	if GlobalRottenBloodStates and GlobalRottenBloodStates["Bakragore"] then
 		if GlobalRottenBloodStates["Bakragore"].teleportTimer then
 			stopEvent(GlobalRottenBloodStates["Bakragore"].teleportTimer)
@@ -338,7 +332,6 @@ local function ensureSummons(monster)
 		end
 	end
 
-	-- Spawnar Elder Bloodjaws basado en taints (solo si mecánicas están activas y spawn no está pausado)
 	if not areMechanicsDisabled() and Game.getStorageValue("BakragoreElderBloodjawSpawnPaused") ~= 1 then
 		local targetCount = calculateElderBloodjawCount()
 		for i = 1, targetCount - existingBloodjaws do
@@ -346,16 +339,14 @@ local function ensureSummons(monster)
 			Game.createMonster("Elder Bloodjaw", summonPos)
 		end
 	else
-		-- Si las mecánicas están desactivadas o spawn pausado, no spawnar Elder Bloodjaw
 		logger.debug("Bakragore mechanics disabled or Elder Bloodjaw spawn paused, not spawning Elder Bloodjaw")
 	end
 
-	-- Asegurar 4 mushrooms
 	for i = 1, 4 - existingMushrooms do
 		local summonPos = getClosePosition(pos)
 		Game.createMonster("Mushroom", summonPos)
 	end
-	-- Asegurar 4 pillars
+
 	for i = 1, 4 - existingPillars do
 		local summonPos = getClosePosition(pos)
 		Game.createMonster("pillar of dark energy", summonPos)
@@ -365,9 +356,8 @@ end
 local playerTracking = {}
 local checkInterval = 1000
 local checkTime = 0
-local lastPlayerCleanup = os.time() -- For periodic cleanup
+local lastPlayerCleanup = os.time()
 
--- CLEANUP: Function to remove disconnected players from tracking
 local function cleanupPlayerTracking()
 	for playerId, _ in pairs(playerTracking) do
 		local player = Player(playerId)
@@ -378,7 +368,6 @@ local function cleanupPlayerTracking()
 	end
 end
 
---tabla para esencias
 local pillarAndFlames = {
 	[1] = {
 		globalstr = "essenceOfMurcion",
@@ -425,34 +414,29 @@ local pillarAndFlames = {
 		pillarResetID = 43507,
 	},
 }
---tabla de esencias
 
 local bossInitialized = false
 
 mType.onThink = function(monster, interval)
-	-- Inicializar mecánicas del boss una sola vez
+
 	if not bossInitialized then
 		initializeBoss()
 		bossInitialized = true
 	end
 
-	-- Solo ejecutar mecánicas si no están desactivadas
 	if not areMechanicsDisabled() then
 		accumulatedTime = accumulatedTime + interval
 		checkTime = checkTime + interval
 		ensureSummons(monster)
 	end
 
-	-- Lógica de invocaciones (sin cambios)
 	if accumulatedTime >= summonInterval then
-		-- ... (mantener misma lógica de invocaciones)
+		-- heavy abuse of AI deleted the content here
 	end
 
-	-- Sistema de daño por inactividad
 	if checkTime >= checkInterval then
 		checkTime = 0
 
-		-- CLEANUP: Periodic cleanup every 5 minutes
 		local currentTime = os.time()
 		if currentTime - lastPlayerCleanup >= 300 then
 			cleanupPlayerTracking()
@@ -461,7 +445,6 @@ mType.onThink = function(monster, interval)
 
 		local spectators = Game.getSpectators(Position(33044, 32398, 15), false, true, 20, 20, 0, 0)
 
-		-- CLEANUP: Track which players are currently in the room
 		local currentPlayers = {}
 		for _, player in ipairs(spectators) do
 			if player:isPlayer() then
@@ -469,7 +452,6 @@ mType.onThink = function(monster, interval)
 			end
 		end
 
-		-- CLEANUP: Remove players who left the room
 		for playerId, _ in pairs(playerTracking) do
 			if not currentPlayers[playerId] then
 				playerTracking[playerId] = nil
@@ -485,7 +467,6 @@ mType.onThink = function(monster, interval)
 				local tileItem = tile and tile:getItemByType(ITEM_TYPE_MAGICFIELD)
 				local damage = 0
 
-				-- Inicializar datos (POSICIÓN MANUAL)
 				if not playerTracking[cid] then
 					playerTracking[cid] = {
 						lastPos = { x = currentPos.x, y = currentPos.y, z = currentPos.z },
@@ -499,7 +480,6 @@ mType.onThink = function(monster, interval)
 				local data = playerTracking[cid]
 				local samePosition = (currentPos.x == data.lastPos.x and currentPos.y == data.lastPos.y and currentPos.z == data.lastPos.z)
 
-				-- Lógica de iconos y daño
 				if samePosition then
 					if data.iconCount <= 20 then
 						data.iconCount = math.max(data.iconCount + 1, 0)
@@ -522,9 +502,7 @@ mType.onThink = function(monster, interval)
 						if player.setIcon then
 							player:setIcon("agony-stacks", CreatureIconCategory_Quests, CreatureIconQuests_RedCross, data.iconCount)
 						end
-						--if player.removeIcon then
-						--    player:removeIcon("agony-stacks")
-						--end
+
 					else
 					end
 				else
@@ -537,17 +515,16 @@ mType.onThink = function(monster, interval)
 						player:setIcon("agony-stacks", CreatureIconCategory_Quests, CreatureIconQuests_RedCross, data.iconCount)
 					end
 				end
-				-- Actualizar posición (SIN CLONE, solo coordenadas)
+
 				data.lastPos.x = currentPos.x
 				data.lastPos.y = currentPos.y
 				data.lastPos.z = currentPos.z
 
-				-- Daño por tiles (sin cambios)
+
 				if tileItem then
-					-- ... (mantener misma lógica de tiles)
+					-- heavy abuse of AI deleted the content here
 				end
 
-				-- Aplicar daño
 				if damage > 0 then
 					doTargetCombatHealth(monster, player, COMBAT_AGONYDAMAGE, -damage, -damage, CONST_ME_AGONY)
 				end
@@ -555,13 +532,10 @@ mType.onThink = function(monster, interval)
 		end
 	end
 
-	--modificacion para essencias rotten - Sistema dinámico sin cambio de nombre
-	-- Ya procesado: evitar cálculos adicionales
 	if monster:getStorageValue(99999) ~= 1 then
 		local essenceCount = 0
 		local activeEssences = {}
 
-		-- Verificar global storages
 		for _, data in pairs(pillarAndFlames) do
 			if Game.getStorageValue(data.globalstr) > 0 then
 				table.insert(activeEssences, data)
@@ -569,12 +543,9 @@ mType.onThink = function(monster, interval)
 			end
 		end
 
-		-- Guardar essenceCount en el boss para usarlo en death event (para loot)
 		monster:setStorageValue(88888, essenceCount)
 
-		-- Si hay esencias activas, verificar que TODOS los jugadores tengan taint 5+
 		if essenceCount > 0 then
-			-- Verificar taints de todos los jugadores en la sala
 			local centerPos = Position(33043, 32397, 15)
 			local spectators = Game.getSpectators(centerPos, false, true, 15, 15, 15, 15)
 			local allHaveFinalTaint = true
@@ -600,25 +571,19 @@ mType.onThink = function(monster, interval)
 				end
 			end
 
-			-- Solo invocar Echos si TODOS tienen taint 5+
 			if allHaveFinalTaint and playerCount > 0 then
-				local resistanceBonus = essenceCount * 5 -- 5% por esencia
+				local resistanceBonus = essenceCount * 5 
 
-				-- Invocar monsters Echo y resetear flamas/pilares
 				for _, data in pairs(activeEssences) do
-					-- Invocar monster
 					Game.createMonster(data.monster, data.monsterPosition)
 
-					-- Resetear global storage
 					Game.setStorageValue(data.globalstr, 0)
 
-					-- Restaurar flama
 					local flame = Tile(data.flamePos):getItemById(data.flameID)
 					if flame then
 						flame:transform(data.flameResetID)
 					end
 
-					-- Restaurar pilar
 					local pillar = Tile(data.pillarPos):getItemById(data.pillarID)
 					if pillar then
 						pillar:transform(data.pillarResetID)
@@ -629,17 +594,14 @@ mType.onThink = function(monster, interval)
 			else
 				logger.warn("Bakragore: Not all players have Final Taint (5+), NO Echos spawned despite {} essences available", essenceCount)
 
-				-- Resetear las esencias sin invocar los Echos
 				for _, data in pairs(activeEssences) do
 					Game.setStorageValue(data.globalstr, 0)
 
-					-- Restaurar flama
 					local flame = Tile(data.flamePos):getItemById(data.flameID)
 					if flame then
 						flame:transform(data.flameResetID)
 					end
 
-					-- Restaurar pilar
 					local pillar = Tile(data.pillarPos):getItemById(data.pillarID)
 					if pillar then
 						pillar:transform(data.pillarResetID)
@@ -648,7 +610,6 @@ mType.onThink = function(monster, interval)
 			end
 		end
 
-		-- Marcar que ya se procesó
 		monster:setStorageValue(99999, 1)
 	end
 
@@ -660,19 +621,16 @@ mType.onAppear = function(monster, creature)
 		monster:setReward(true)
 	end
 
-	-- Aplicar resistencias dinámicas basadas en essenceCount después de que se procese en onThink
 	addEvent(function()
 		local essenceCount = monster:getStorageValue(88888) or 0
 		if essenceCount > 0 then
-			local resistanceBonus = essenceCount * 5 -- 5% por esencia
-			local baseResistance = 15 -- Resistencia base del boss
-			local newResistance = math.min(baseResistance + resistanceBonus, 50) -- Máximo 50%
+			local resistanceBonus = essenceCount * 5
+			local baseResistance = 15
+			local newResistance = math.min(baseResistance + resistanceBonus, 50)
 
-			-- Aplicar resistencias aumentadas (esto es visual/indicativo)
-			-- Las resistencias reales se manejan en el monster.elements
 			logger.debug("Bakragore resistances increased to {}% (base {}% + {}% from {} essences)", newResistance, baseResistance, resistanceBonus, essenceCount)
 		end
-	end, 1000) -- 1 segundo después de aparecer para asegurar que onThink ya se ejecutó
+	end, 1000)
 end
 
 mType.onDisappear = function(monster, creature) end
@@ -690,13 +648,12 @@ mType.onMove = function(_, creature, fromPos, toPos)
 	local item = tile:getTopDownItem()
 	local itemId = item and item:getId() or 0
 
-	-- Solo colocar el ítem si aún no hay uno de los tipos definidos
 	if itemId ~= 43589 and itemId ~= 43590 and itemId ~= 43297 then
-		-- Si es un jugador, colocar ítem 43589
+
 		if creature:isPlayer() then
 			local newItem = Game.createItem(43589, 1, toPos)
 			if newItem then
-				-- OPTIMIZED: Single event handles all transformations with position capture
+
 				local posX, posY, posZ = toPos.x, toPos.y, toPos.z
 				addEvent(function(x, y, z)
 					local checkTile = Tile(Position(x, y, z))
@@ -704,12 +661,10 @@ mType.onMove = function(_, creature, fromPos, toPos)
 						return
 					end
 
-					-- Phase 1: Transform 43589 -> 43590
 					local phase1Item = checkTile:getItemById(43589)
 					if phase1Item then
 						phase1Item:transform(43590)
 
-						-- Phase 2: Transform 43590 -> 43297 (after 3s)
 						addEvent(function(px, py, pz)
 							local phaseTile = Tile(Position(px, py, pz))
 							if not phaseTile then
@@ -720,7 +675,6 @@ mType.onMove = function(_, creature, fromPos, toPos)
 							if phase2Item then
 								phase2Item:transform(43297)
 
-								-- Phase 3: Remove 43297 (after another 3s)
 								addEvent(function(fx, fy, fz)
 									local finalTile = Tile(Position(fx, fy, fz))
 									if finalTile then
@@ -738,11 +692,10 @@ mType.onMove = function(_, creature, fromPos, toPos)
 		end
 	end
 
-	-- Si es el boss "Bakragore", crear espora en cada paso
 	if creature:isMonster() and creature:getName():lower() == "bakragore" then
 		local spore = Game.createItem(43294, 1, toPos)
 		if spore then
-			-- OPTIMIZED: Capture position to avoid closure memory leak
+
 			local spX, spY, spZ = toPos.x, toPos.y, toPos.z
 			addEvent(function(sx, sy, sz)
 				local sporeTile = Tile(Position(sx, sy, sz))

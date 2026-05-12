@@ -57,6 +57,7 @@ local config = {
 	[27605] = { NAME = "Mole", ID = 119, BREAK = true, TYPE = TYPE_MONSTER, CHANCE = 30, FAIL_MSG = { { 2, "The Mole is a bit capricious. Maybe I should leave it alone." }, { 4, "The Mole is a bit capricious. Maybe I should leave it alone." } }, SUCCESS_MSG = "You tamed the mole.", ACHIEV = "Up the Molehill" },
 	[21439] = { NAME = "Noble Lion", ID = 40, BREAK = false, TYPE = TYPE_MONSTER, CHANCE = 30, FAIL_MSG = { { 2, "The lion got scared and ran away." }, { 4, "The lion is trying to nibble." } }, SUCCESS_MSG = "You tamed the lion.", ACHIEV = "Lion King" },
 	[12549] = { NAME = "Panda", ID = 19, BREAK = true, TYPE = TYPE_MONSTER, CHANCE = 40, FAIL_MSG = { { 4, "Panda the leaves and ran away." } }, SUCCESS_MSG = "You have tamed the panda.", ACHIEV = "Chequered Teddy" },
+	[34072] = { NAME = "Phantasmal Jade", ID = 167, BREAK = false, TYPE = TYPE_PHANTASMAL_JADE, CHANCE = 100, REQUIRED = { key = "spectral-horseshoe", count = 4 }, SUCCESS_MSG = "Phantasmal jade is now yours!", ACHIEV = "You Got Horse Power" },	
 	[12509] = { NAME = "Sandstone Scorpion", ID = 21, BREAK = true, TYPE = TYPE_MONSTER, CHANCE = 40, FAIL_MSG = { { 1, "The scorpion has vanished." }, { 2, "Scorpion broken the sceptre." } }, SUCCESS_MSG = "You have tamed the scorpion.", ACHIEV = "Golden Sands" },
 	[20274] = { NAME = "Shock Head", ID = 42, BREAK = true, TYPE = TYPE_MONSTER, CHANCE = 30, FAIL_MSG = { { 1, "The shock head ran away." }, { 3, "The shock head is growling at you." } }, SUCCESS_MSG = "You tamed the shock head.", ACHIEV = "Personal Nightmare" },
 	[36938] = { NAME = "Singeing Steed", ID = 184, BREAK = false, TYPE = TYPE_SINGEING_STEED, CHANCE = 100, REQUIRED = { key = "fiery-horseshoe", count = 4 }, SUCCESS_MSG = "Singeing Steed is now yours!", ACHIEV = "Hot on the Trail" },
@@ -144,6 +145,27 @@ function mounts.onUse(cid, item, fromPosition, itemEx, toPosition)
 			local currentCount = (player:kv():get(mount.REQUIRED.key) or 0) + 1
 			player:kv():set(mount.REQUIRED.key, currentCount)
 			player:getPosition():sendMagicEffect(CONST_ME_FIREATTACK)
+			item:remove(1)
+
+			if currentCount >= mount.REQUIRED.count then
+				if mount.ACHIEV then
+					player:addAchievement(mount.ACHIEV)
+				end
+				player:addAchievement("Natural Born Cowboy")
+				player:addMount(mount.ID)
+				player:sendTextMessage(MESSAGE_EVENT_ADVANCE, mount.SUCCESS_MSG)
+				player:getPosition():sendMagicEffect(CONST_ME_MAGIC_GREEN)
+			end
+			return true
+		end
+	end
+
+	-- Phantasmal Jade
+	if mount.TYPE == TYPE_PHANTASMAL_JADE then
+		if mount.REQUIRED then
+			local currentCount = (player:kv():get(mount.REQUIRED.key) or 0) + 1
+			player:kv():set(mount.REQUIRED.key, currentCount)
+			player:getPosition():sendMagicEffect(CONST_ME_POFF)
 			item:remove(1)
 
 			if currentCount >= mount.REQUIRED.count then

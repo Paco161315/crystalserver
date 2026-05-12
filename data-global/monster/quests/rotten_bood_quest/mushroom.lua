@@ -19,7 +19,7 @@ monster.Bestiary = {}
 monster.health = 10000
 monster.maxHealth = 10000
 monster.race = "venom"
---monster.corpse =
+
 monster.speed = 0
 monster.manaCost = 0
 
@@ -108,28 +108,23 @@ local area = {
 	{ 0, 0, 0, 0, 0, 0, 0 },
 }
 
--- Combat para el efecto visual sin daño
 local visualCombat = Combat()
 visualCombat:setParameter(COMBAT_PARAM_EFFECT, CONST_ME_GREEN_RINGS)
 visualCombat:setArea(createCombatArea(area))
 
--- Combat para el daño
 local damageCombat = Combat()
 damageCombat:setParameter(COMBAT_PARAM_TYPE, COMBAT_LIFEDRAIN)
 damageCombat:setArea(createCombatArea(area))
 
--- Función para ejecutar el daño y el efecto de área después del delay
 local function executeAreaEffect(monsterId)
-	local monster = Creature(monsterId) -- Recuperar al monstruo usando su ID
+	local monster = Creature(monsterId)
 	if not monster then
 		return
 	end
 
-	-- Mostrar el efecto visual del área
 	local variant = Variant(monster:getPosition())
 	visualCombat:execute(monster, variant)
 
-	-- Aplicar el daño a las criaturas dentro del área
 	local targets = Game.getSpectators(monster:getPosition(), false, false, 3, 3, 3, 3)
 	for _, target in ipairs(targets) do
 		if target:isPlayer() or target:isMonster() then
@@ -137,7 +132,6 @@ local function executeAreaEffect(monsterId)
 		end
 	end
 
-	-- Eliminar al monstruo después de ejecutar la acción
 	monster:remove()
 end
 
@@ -154,15 +148,11 @@ mType.onThink = function(monster, variant, interval)
 	end
 
 	if playersNearby then
-		-- Mostrar el efecto en sí mismo
 		monster:getPosition():sendMagicEffect(CONST_ME_MAGIC_GREEN)
-
-		-- Retrasar 1 segundo antes de ejecutar el daño y el efecto de área
 		addEvent(executeAreaEffect, 1000, monster:getId())
 	end
 	addEvent(executeAreaEffect, 18000, monster:getId())
 
-	-- Revisar si ya hay una criatura del tipo correcto en el rango definido
 	local spectators = Game.getSpectators(monsterPos, false, false, 15, 15, 15, 15)
 	local bossAlive = false
 
@@ -176,7 +166,6 @@ mType.onThink = function(monster, variant, interval)
 		end
 	end
 
-	-- Si ninguno de los dos está presente, eliminar el mushroom
 	if not bossAlive then
 		monster:remove()
 	end

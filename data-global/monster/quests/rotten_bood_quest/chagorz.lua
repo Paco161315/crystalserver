@@ -152,15 +152,14 @@ local ElderBloodjaws = {
 }
 
 local accumulatedTime = 0
-local summonInterval = 0 -- Tiempo aleatorio entre invocaciones (se ajusta dinámicamente)
-local activeSummons = {} -- Tabla para rastrear las criaturas invocadas
+local summonInterval = 0
+local activeSummons = {}
 
--- Función para obtener una posición aleatoria alrededor del monstruo
 local function getRandomPosition(monsterPosition)
-	-- Rango de 4 SQM hacia arriba, abajo, derecha, izquierda
+
 	local offsetX = math.random(-1, 1)
 	local offsetY = math.random(-1, 1)
-	local offsetZ = monsterPosition.z -- Mantener la misma capa (z)
+	local offsetZ = monsterPosition.z
 
 	return Position(monsterPosition.x + offsetX, monsterPosition.y + offsetY, offsetZ)
 end
@@ -176,7 +175,7 @@ local function getClosePosition(centerPos)
 			return tryPos
 		end
 	end
-	return centerPos -- fallback si no se encuentra una válida
+	return centerPos
 end
 
 local RottenBloodMechanics = dofile(DATA_DIRECTORY .. "/scripts/quests/rotten_blood_quest/rotten_blood_boss_mechanics.lua")
@@ -196,10 +195,8 @@ local function ensureSummons(monster)
 		end
 	end
 
-	-- Manejar Elder Bloodjaws con el nuevo sistema
 	RottenBloodMechanics.handleElderBloodjawSpawn("Chagorz", monster)
 
-	-- Asegurar 4 Pillars of Dark Energy
 	for i = 1, 4 - existingPillars do
 		local summonPos = getClosePosition(pos)
 		Game.createMonster("pillar of dark energy", summonPos)
@@ -212,25 +209,21 @@ local checkTime = 0
 
 local bossInitialized = false
 
--- Estados del boss para teleports
 local bossStates = {
 	["Chagorz"] = {
 		teleportTimer = nil,
 	},
 }
 
--- Función para inicializar el boss y comenzar el ciclo de teleports
 local function initializeBoss()
 	if bossStates["Chagorz"].teleportTimer then
 		stopEvent(bossStates["Chagorz"].teleportTimer)
 	end
 
-	-- Iniciar ciclo de teleports
 	local function startTeleportCycle()
 		bossStates["Chagorz"].teleportTimer = addEvent(function()
 			local centerPos = Position(33043, 32366, 15)
 
-			-- Verificar si el sistema de teleport está pausado
 			if Game.getStorageValue("ChagorzTeleportPaused") == 1 then
 				logger.debug("Chagorz teleport system paused, skipping cycle")
 				startTeleportCycle()
@@ -255,11 +248,10 @@ local function initializeBoss()
 				return
 			end
 
-			-- Solo crear teleport si existen Elder Bloodjaw en la sala
 			if elderBloodjawExists then
 				local teleport = Game.createItem(37000, 1, centerPos)
 				if teleport then
-					teleport:setActionId(50001) -- Asignar ActionId para el MoveEvent
+					teleport:setActionId(50001)
 					centerPos:sendMagicEffect(CONST_ME_TELEPORT)
 					logger.debug("Teleport created for Chagorz with ActionId {}", teleport:getActionId())
 
@@ -278,32 +270,29 @@ local function initializeBoss()
 			end
 
 			startTeleportCycle()
-		end, 90000) -- 90 segundos entre teleports
+		end, 90000)
 	end
 
 	startTeleportCycle()
 end
 
 mType.onThink = function(monster, interval)
-	-- Inicializar mecánicas del boss una sola vez
+
 	if not bossInitialized then
 		initializeBoss()
 		bossInitialized = true
 	end
 
-	-- Solo ejecutar mecánicas si no están desactivadas
 	if not RottenBloodMechanics.areMechanicsDisabled("Chagorz") then
 		accumulatedTime = accumulatedTime + interval
 		checkTime = checkTime + interval
 		ensureSummons(monster)
 	end
 
-	-- Lógica de invocaciones (sin cambios)
 	if accumulatedTime >= summonInterval then
-		-- ... (mantener misma lógica de invocaciones)
+		-- heavy abuse of AI deleted the content here
 	end
 
-	-- Sistema de daño por inactividad
 	if checkTime >= checkInterval then
 		checkTime = 0
 		local spectators = Game.getSpectators(monster:getPosition(), false, true, 16, 16, 16, 16)
@@ -316,7 +305,6 @@ mType.onThink = function(monster, interval)
 				local tileItem = tile and tile:getItemByType(ITEM_TYPE_MAGICFIELD)
 				local damage = 0
 
-				-- Inicializar datos (POSICIÓN MANUAL)
 				if not playerTracking[cid] then
 					playerTracking[cid] = {
 						lastPos = { x = currentPos.x, y = currentPos.y, z = currentPos.z },
@@ -330,7 +318,6 @@ mType.onThink = function(monster, interval)
 				local data = playerTracking[cid]
 				local samePosition = (currentPos.x == data.lastPos.x and currentPos.y == data.lastPos.y and currentPos.z == data.lastPos.z)
 
-				-- Lógica de iconos y daño
 				if samePosition then
 					if data.iconCount <= 20 then
 						data.iconCount = math.max(data.iconCount + 1, 0)
@@ -353,9 +340,6 @@ mType.onThink = function(monster, interval)
 						if player.setIcon then
 							player:setIcon("agony-stacks", CreatureIconCategory_Quests, CreatureIconQuests_RedCross, data.iconCount)
 						end
-						--if player.removeIcon then
-						--    player:removeIcon("agony-stacks")
-						--end
 					else
 					end
 				else
@@ -368,17 +352,14 @@ mType.onThink = function(monster, interval)
 						player:setIcon("agony-stacks", CreatureIconCategory_Quests, CreatureIconQuests_RedCross, data.iconCount)
 					end
 				end
-				-- Actualizar posición (SIN CLONE, solo coordenadas)
 				data.lastPos.x = currentPos.x
 				data.lastPos.y = currentPos.y
 				data.lastPos.z = currentPos.z
 
-				-- Daño por tiles (sin cambios)
 				if tileItem then
-					-- ... (mantener misma lógica de tiles)
+					-- heavy abuse of AI deleted the content here
 				end
 
-				-- Aplicar daño
 				if damage > 0 then
 					doTargetCombatHealth(monster, player, COMBAT_AGONYDAMAGE, -damage, -damage, CONST_ME_AGONY)
 				end
@@ -408,12 +389,10 @@ mType.onMove = function(_, creature, fromPos, toPos)
 	local item = tile:getTopDownItem()
 	local itemId = item and item:getId() or 0
 
-	-- No hacer nada si ya hay alguna de las fases
 	if itemId == 43589 or itemId == 43590 or itemId == 43625 then
 		return
 	end
 
-	-- Crear la primera fase
 	local newItem = Game.createItem(43589, 1, toPos)
 	if newItem then
 		addEvent(function()
@@ -422,23 +401,21 @@ mType.onMove = function(_, creature, fromPos, toPos)
 			if decayItem then
 				decayItem:transform(43590)
 
-				-- Segunda transformación después de 2 segundos (total 3s)
 				addEvent(function()
 					local updatedItem = tile and tile:getItemById(43590)
 					if updatedItem then
 						updatedItem:transform(43625)
 
-						-- Eliminación después de 1 segundo (total 4s desde inicio)
 						addEvent(function()
 							local finalItem = tile and tile:getItemById(43625)
 							if finalItem then
 								finalItem:remove()
 							end
-						end, 3000) -- 1 segundo después de 43297
+						end, 3000)
 					end
-				end, 3000) -- 2 segundos después de 43590
+				end, 3000)
 			end
-		end, 1000) -- 1 segundo después de crear 43589
+		end, 1000)
 	end
 end
 

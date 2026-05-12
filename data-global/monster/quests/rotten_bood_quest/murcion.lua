@@ -138,15 +138,14 @@ local ElderBloodjaws = {
 }
 
 local accumulatedTime = 0
-local summonInterval = 0 -- Tiempo aleatorio entre invocaciones (se ajusta dinámicamente)
-local activeSummons = {} -- Tabla para rastrear las criaturas invocadas
+local summonInterval = 0
+local activeSummons = {}
 
--- Función para obtener una posición aleatoria alrededor del monstruo
 local function getRandomPosition(monsterPosition)
-	-- Rango de 4 SQM hacia arriba, abajo, derecha, izquierda
+
 	local offsetX = math.random(-1, 1)
 	local offsetY = math.random(-1, 1)
-	local offsetZ = monsterPosition.z -- Mantener la misma capa (z)
+	local offsetZ = monsterPosition.z
 
 	return Position(monsterPosition.x + offsetX, monsterPosition.y + offsetY, offsetZ)
 end
@@ -162,7 +161,7 @@ local function getClosePosition(centerPos)
 			return tryPos
 		end
 	end
-	return centerPos -- fallback si no se encuentra una válida
+	return centerPos
 end
 
 local RottenBloodMechanics = dofile(DATA_DIRECTORY .. "/scripts/quests/rotten_blood_quest/rotten_blood_boss_mechanics.lua")
@@ -182,10 +181,8 @@ local function ensureSummons(monster)
 		end
 	end
 
-	-- Manejar Elder Bloodjaws con el nuevo sistema
 	RottenBloodMechanics.handleElderBloodjawSpawn("Murcion", monster)
 
-	-- Asegurar 4 Mushrooms
 	for i = 1, 4 - existingMushrooms do
 		local summonPos = getClosePosition(pos)
 		Game.createMonster("Mushroom", summonPos)
@@ -193,13 +190,10 @@ local function ensureSummons(monster)
 end
 
 mType.onThink = function(monster, interval)
-	-- Sumar el intervalo al tiempo acumulado
 	accumulatedTime = accumulatedTime + interval
 	ensureSummons(monster)
 
-	-- Revisar si es tiempo de invocar criaturas
 	if accumulatedTime >= summonInterval then
-		-- Eliminar invocaciones anteriores si existen
 		for _, summon in ipairs(activeSummons) do
 			local creature = Creature(summon)
 			if creature then
@@ -208,9 +202,7 @@ mType.onThink = function(monster, interval)
 		end
 		activeSummons = {}
 
-		-- Invocar criaturas según las posiciones definidas
 		for _, monsterData in ipairs(aditionalMonsters) do
-			-- Obtener una posición aleatoria alrededor del monstruo
 			local summonPosition = getRandomPosition(monster:getPosition())
 			local summon = Game.createMonster(monsterData.name, summonPosition)
 			if summon then
@@ -218,9 +210,8 @@ mType.onThink = function(monster, interval)
 			end
 		end
 
-		-- Reiniciar el tiempo acumulado y configurar un nuevo intervalo aleatorio
 		accumulatedTime = 0
-		summonInterval = math.random(8000, 9000) -- Entre 10 y 12 segundos
+		summonInterval = math.random(8000, 9000)
 	end
 end
 
@@ -241,13 +232,11 @@ mType.onMove = function(_, creature, fromPos, toPos)
 	local item = tile:getTopDownItem()
 	local itemId = item and item:getId() or 0
 
-	-- No hacer nada si ya hay alguna de las fases (murcion spore)
 	if itemId == 42851 or itemId == 42853 then
-		-- Si Murcion pisa su propia espora, se cura
 		if creature and creature:isMonster() and creature:getName():lower() == "murcion" then
 			local currentHealth = creature:getHealth()
 			local maxHealth = creature:getMaxHealth()
-			local healAmount = 15000 -- Cantidad de curación
+			local healAmount = 15000
 
 			if currentHealth < maxHealth then
 				creature:addHealth(healAmount)
@@ -257,15 +246,12 @@ mType.onMove = function(_, creature, fromPos, toPos)
 		return
 	end
 
-	-- Solo el boss "Murcion" puede crear la espora
 	if not creature or not creature:isMonster() or creature:getName():lower() ~= "murcion" then
 		return
 	end
 
-	-- Crear la murcion spore con transformación manual
 	local spore = Game.createItem(42851, 1, toPos)
 	if spore then
-		-- Después de 4 segundos, transformar a fase 2
 		addEvent(function(position)
 			local tile = Tile(position)
 			if tile then
@@ -273,7 +259,6 @@ mType.onMove = function(_, creature, fromPos, toPos)
 				if item42851 then
 					item42851:transform(42853)
 
-					-- Después de 3 segundos más, eliminar la espora
 					addEvent(function(pos)
 						local t = Tile(pos)
 						if t then

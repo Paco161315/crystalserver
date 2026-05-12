@@ -14,7 +14,6 @@ function testTeleport.onSay(player, words, param)
 		return false
 	end
 
-	-- Verificar que el boss existe en la configuración
 	local validBosses = { "Vemiath", "Chagorz", "Murcion", "Ichgahal", "Bakragore" }
 	local found = false
 	for _, boss in ipairs(validBosses) do
@@ -30,7 +29,6 @@ function testTeleport.onSay(player, words, param)
 		return false
 	end
 
-	-- Crear teleport de prueba
 	local config = {
 		["Vemiath"] = { centerPos = Position(33043, 32335, 15) },
 		["Chagorz"] = { centerPos = Position(33043, 32366, 15) },
@@ -41,15 +39,13 @@ function testTeleport.onSay(player, words, param)
 
 	local centerPos = config[bossName].centerPos
 
-	-- Crear teleport
 	local teleport = Game.createItem(37000, 1, centerPos)
 	if teleport then
-		teleport:setActionId(50001) -- Asignar ActionId para el MoveEvent
+		teleport:setActionId(50001)
 		centerPos:sendMagicEffect(CONST_ME_TELEPORT)
 		player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "Teleport created for " .. bossName .. " at " .. centerPos.x .. "," .. centerPos.y .. "," .. centerPos.z)
 		player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "Item ID: " .. teleport.itemid .. ", ActionId: " .. teleport:getActionId())
 
-		-- Programar eliminación después de 15 segundos
 		addEvent(function()
 			local tile = Tile(centerPos)
 			if tile then

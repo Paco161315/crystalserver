@@ -17,7 +17,7 @@ local config = {
 		to = Position(33053, 32410, 15),
 	},
 	exit = Position(34106, 32052, 13),
-} --para entrar a esta sala 33009, 32394, 15
+}
 
 local lever = BossLever(config)
 lever:position(Position(33015, 32392, 15))

@@ -2,7 +2,6 @@ local taintCooldown = {}
 local positionSwapCooldown = {}
 local rootCooldown = {}
 
--- Función para obtener el nivel de hazard del ícono (basado en party mínimo taint)
 local function getPlayerHazardLevel(player)
 	local hazardIcon = player:getIcon("rotten-hazard")
 	if hazardIcon and hazardIcon.category == CreatureIconCategory_Quests and hazardIcon.icon == CreatureIconQuests_Hazard then
@@ -14,7 +13,6 @@ local function getPlayerHazardLevel(player)
 	return 0
 end
 
--- Función para verificar si el jugador está en zona de bakragore
 local function isInBakragoreZone(player)
 	local bakragoreMonsters = {
 		"sopping corpus",
@@ -42,16 +40,13 @@ local function isInBakragoreZone(player)
 		"ichgahal",
 	}
 
-	-- Verificar si está en las zonas de bakragore (puedes ajustar estas coordenadas)
 	local pos = player:getPosition()
 	return (pos.x >= 33800 and pos.x <= 34137 and pos.y >= 31653 and pos.y <= 31932 and (pos.z == 14 or pos.z == 15))
 end
 
--- Función para crear Elder Bloodjaw instantáneamente
 local function createElderBloodjawInstant(player, spawnPosition)
 	local playerId = player:getId()
 
-	-- Solo crear si el jugador no tiene cooldown
 	if not taintCooldown[playerId] or os.time() > taintCooldown[playerId] then
 		taintCooldown[playerId] = os.time() + 30
 		local elderBloodjaw = Game.createMonster("elderbloodjaw", spawnPosition, true, true)
@@ -67,7 +62,6 @@ local function createElderBloodjawInstant(player, spawnPosition)
 	return false
 end
 
--- Función para intercambio de posiciones (Hazard 1 y 5)
 local function handlePositionSwap(monster, target, chance)
 	local targetPlayer = target:getPlayer()
 	if not targetPlayer then
@@ -80,7 +74,6 @@ local function handlePositionSwap(monster, target, chance)
 		return
 	end
 
-	-- Hazard 1-4: 6% chance, Hazard 5+: 9% chance
 	local swapChance = 0
 	if hazardLevel >= 1 and hazardLevel <= 4 then
 		swapChance = 2
@@ -91,19 +84,17 @@ local function handlePositionSwap(monster, target, chance)
 	if swapChance > 0 and math.random(1, 100) <= swapChance then
 		local playerId = targetPlayer:getId()
 		if not positionSwapCooldown[playerId] or os.time() > positionSwapCooldown[playerId] then
-			positionSwapCooldown[playerId] = os.time() + 60 -- 60   segundos de cooldown
+			positionSwapCooldown[playerId] = os.time() + 60
 
-			-- Intercambio directo: Monster <-> Player que está siendo atacado
 			local playerPos = targetPlayer:getPosition()
 
-			-- Mostrar efecto 2 segundos antes en la posición del jugador
 			playerPos:sendMagicEffect(CONST_ME_MORTAREA)
 
 			addEvent(function(monsterId, playerId)
 				local eventMonster = Monster(monsterId)
 				local eventPlayer = Player(playerId)
 				if eventMonster and eventPlayer then
-					-- VERIFICAR SI EL JUGADOR SIGUE EN LA ZONA DE ROTTEN BLOOD
+
 					if not isInBakragoreZone(eventPlayer) then
 						logger.debug("Position swap cancelled: player {} is no longer in Rotten Blood zone", eventPlayer:getName())
 						return
@@ -112,24 +103,20 @@ local function handlePositionSwap(monster, target, chance)
 					local monsterPosition = eventMonster:getPosition()
 					local playerPosition = eventPlayer:getPosition()
 
-					-- VERIFICAR QUE EL PLAYER ESTÉ EN EL MISMO PISO
 					if monsterPosition.z ~= playerPosition.z then
 						logger.debug("Position swap cancelled: player {} is on different floor (monster z: {}, player z: {})", eventPlayer:getName(), monsterPosition.z, playerPosition.z)
 						return
 					end
 
-					-- VERIFICAR QUE EL PLAYER ESTÉ A MÁXIMO 2 SQM DEL MONSTER
 					local distance = monsterPosition:getDistance(playerPosition)
 					if distance > 2 then
 						logger.debug("Position swap cancelled: player {} is too far from monster (distance: {} sqm)", eventPlayer:getName(), distance)
 						return
 					end
 
-					-- Intercambiar posiciones: Monster va donde está el player, player va donde estaba el monster
 					eventMonster:teleportTo(playerPosition, true)
 					eventPlayer:teleportTo(monsterPosition, true)
 
-					-- Efectos
 					playerPosition:sendMagicEffect(CONST_ME_TELEPORT)
 					monsterPosition:sendMagicEffect(CONST_ME_TELEPORT)
 
@@ -140,7 +127,6 @@ local function handlePositionSwap(monster, target, chance)
 	end
 end
 
--- Función para spawn de Elder Bloodjaw al morir monstruo (Hazard 2 y 6)
 local function onPlayerKillMonster(player, target)
 	local monster = target:getMonster()
 	if not monster then
@@ -176,12 +162,11 @@ local function onPlayerKillMonster(player, target)
 		return
 	end
 
-	-- Hazard 2: 6% chance, Hazard 6: 9% chance
 	local spawnChance = 0
 	if hazardLevel >= 6 then
-		spawnChance = 9 -- Hazard 6+: 9% chance
+		spawnChance = 9 -- 9% chance
 	elseif hazardLevel >= 2 then
-		spawnChance = 6 -- Hazard 2-5: 6% chance
+		spawnChance = 6 -- 6% chance
 	end
 
 	if spawnChance > 0 and math.random(1, 100) <= spawnChance then
@@ -190,7 +175,6 @@ local function onPlayerKillMonster(player, target)
 	end
 end
 
--- Función para aplicar root (Hazard 3)
 local function applyRootEffect(monster, target)
 	local targetPlayer = target:getPlayer()
 	if not targetPlayer then
@@ -203,32 +187,26 @@ local function applyRootEffect(monster, target)
 		return
 	end
 
-	-- Hazard 3+: 100% chance (TESTING)
 	if hazardLevel >= 3 then
 		if math.random(1, 100) <= 3 then
 			local playerId = targetPlayer:getId()
 			if not rootCooldown[playerId] or os.time() > rootCooldown[playerId] then
-				rootCooldown[playerId] = os.time() + 5 -- 5 segundos de cooldown
+				rootCooldown[playerId] = os.time() + 5
 
-				-- Mostrar efecto visual de advertencia
 				local playerPos = targetPlayer:getPosition()
 				playerPos:sendMagicEffect(CONST_ME_ROOTS)
 
-				-- Aplicar root después de 500ms
 				addEvent(function(pId)
 					local eventPlayer = Player(pId)
 					if eventPlayer then
-						-- Verificar que sigue en zona
 						if not isInBakragoreZone(eventPlayer) then
 							return
 						end
 
-						-- Aplicar condición de root
 						local condition = Condition(CONDITION_ROOTED)
-						condition:setParameter(CONDITION_PARAM_TICKS, 3000) -- 3 segundos
+						condition:setParameter(CONDITION_PARAM_TICKS, 3000)
 						eventPlayer:addCondition(condition)
 
-						-- Efectos visuales
 						eventPlayer:getPosition():sendMagicEffect(CONST_ME_ROOTS)
 					end
 				end, 500, playerId)
@@ -237,7 +215,6 @@ local function applyRootEffect(monster, target)
 	end
 end
 
--- Función para aumentar daño recibido (Hazard 4, 7, 8)
 local function onMonsterAttackPlayer(target, primaryValue, secondaryValue)
 	local targetPlayer = target:getPlayer()
 	if not targetPlayer then
@@ -251,17 +228,14 @@ local function onMonsterAttackPlayer(target, primaryValue, secondaryValue)
 
 	local damageIncrease = 0
 
-	-- Hazard 4: +15% damage
 	if hazardLevel >= 4 then
 		damageIncrease = damageIncrease + 15
 	end
 
-	-- Hazard 7: +30% additional damage
 	if hazardLevel >= 7 then
 		damageIncrease = damageIncrease + 30
 	end
 
-	-- Hazard 8: +45% additional damage
 	if hazardLevel >= 8 then
 		damageIncrease = damageIncrease + 45
 	end
@@ -274,7 +248,6 @@ local function onMonsterAttackPlayer(target, primaryValue, secondaryValue)
 	return primaryValue, secondaryValue
 end
 
--- Callback principal de combate
 local callback = EventCallback("CreatureOnCombatRottenBlood")
 
 function callback.creatureOnCombat(caster, target, primaryValue, primaryType, secondaryValue, secondaryType, origin)
@@ -282,15 +255,11 @@ function callback.creatureOnCombat(caster, target, primaryValue, primaryType, se
 		return primaryValue, primaryType, secondaryValue, secondaryType
 	end
 
-	-- Monstruo atacando jugador
 	if caster:getMonster() and target:getPlayer() then
-		-- Intercambio de posiciones (Hazard 1 y 5)
 		handlePositionSwap(caster, target, 0)
 
-		-- Aplicar root (Hazard 3)
 		applyRootEffect(caster, target)
 
-		-- Aumentar daño recibido (Hazard 4, 7, 8)
 		primaryValue, secondaryValue = onMonsterAttackPlayer(target, primaryValue, secondaryValue)
 	end
 
@@ -299,7 +268,6 @@ end
 
 callback:register()
 
--- Callback para muerte de monstruos (Elder Bloodjaw spawn)
 local deathCallback = CreatureEvent("RottenBloodMonsterDeath")
 
 function deathCallback.onDeath(creature, corpse, killer, mostDamageKiller, lastHitUnjustified, mostDamageUnjustified)
@@ -307,7 +275,6 @@ function deathCallback.onDeath(creature, corpse, killer, mostDamageKiller, lastH
 		return true
 	end
 
-	-- Verificar si el killer es un jugador
 	local killerPlayer = nil
 	if killer and killer:isPlayer() then
 		killerPlayer = killer

@@ -41,7 +41,6 @@ npcType.onSay = function(npc, creature, type, message)
 	npcHandler:onSay(npc, creature, type, message)
 end
 
--- Función para obtener el nivel de taint de un jugador
 local function getPlayerTaintLevel(player)
 	local kv = player:kv():scoped("rotten-blood-quest")
 	local currentTaintKV = kv:get("taints") or 0
@@ -53,17 +52,14 @@ local function getPlayerTaintLevel(player)
 	return math.max(currentTaintKV, currentTaintCondition)
 end
 
--- Función para establecer el nivel de taint de un jugador (como /bakragoreicon)
 local function setPlayerTaintLevel(player, newTaintLevel)
 	local kv = player:kv():scoped("rotten-blood-quest")
 	kv:set("taints", newTaintLevel)
 
-	-- SIEMPRE eliminar TODAS las condiciones de Bakragore primero
 	for i = 0, 10 do
 		player:removeCondition(CONDITION_BAKRAGORE, i)
 	end
 
-	-- Si el nuevo nivel no es 0, crear la nueva condición con el nivel específico
 	if newTaintLevel > 0 then
 		local condition = Condition(CONDITION_BAKRAGORE, CONDITIONID_DEFAULT, 0, true)
 		condition:setParameter(CONDITION_PARAM_SUBID, newTaintLevel)
@@ -82,7 +78,6 @@ local function creatureSayCallback(npc, creature, type, message)
 
 	message = message:lower()
 
-	-- Sistema de eliminación de taints (reducir 1 por vez con confirmación)
 	if MsgContains(message, "taints") or MsgContains(message, "cleanse") or MsgContains(message, "purify") then
 		local currentTaint = getPlayerTaintLevel(player)
 
@@ -94,11 +89,10 @@ local function creatureSayCallback(npc, creature, type, message)
 
 		local newTaintLevel = currentTaint - 1
 		npcHandler:say("I can sense " .. currentTaint .. " levels of rotten taint in your soul. I can reduce it to " .. newTaintLevel .. " level" .. (newTaintLevel == 1 and "" or "s") .. ". Do you wish me to proceed with the purification? Say {yes} to confirm or {no} to cancel.", npc, creature)
-		npcHandler:setTopic(playerId, 1) -- Topic 1: Confirmar reducción de taint
+		npcHandler:setTopic(playerId, 1)
 		return true
 	end
 
-	-- Confirmación para reducir taint
 	if MsgContains(message, "yes") and npcHandler:getTopic(playerId) == 1 then
 		local currentTaint = getPlayerTaintLevel(player)
 
@@ -106,10 +100,9 @@ local function creatureSayCallback(npc, creature, type, message)
 			player:removeIcon("rotten-area")
 			player:removeIconBakragore()
 			local newTaintLevel = currentTaint - 1
-			-- Eliminar todas las taints y establecer el nuevo nivel (como /bakragoreicon)
+
 			setPlayerTaintLevel(player, newTaintLevel)
 
-			-- Si llega a 0, eliminar iconos adicionales y efectos especiales
 			if newTaintLevel == 0 then
 				player:removeIcon("rotten-area")
 				player:removeIconBakragore()
@@ -127,14 +120,12 @@ local function creatureSayCallback(npc, creature, type, message)
 		return true
 	end
 
-	-- Cancelar purificación
 	if MsgContains(message, "no") and npcHandler:getTopic(playerId) == 1 then
 		npcHandler:say("Very well. Return to me if you change your mind about purifying your soul.", npc, creature)
 		npcHandler:setTopic(playerId, 0)
 		return true
 	end
 
-	-- Sistema original de quest
 	local access = player:kv():scoped("rotten-blood-quest"):get("access") or 0
 	if access == 5 then
 		npcHandler:say("You already have started this quest. If you wish to cleanse your soul from rotten {taints}, I can help you with that.", npc, creature)

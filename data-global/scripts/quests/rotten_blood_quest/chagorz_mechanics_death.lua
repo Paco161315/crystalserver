@@ -5,7 +5,6 @@ function chagorzDeath.onDeath(creature, corpse, killer, mostDamageKiller, lastHi
 		return true
 	end
 
-	-- Limpiar GlobalStorage del boss
 	Game.setStorageValue("ChagorzTeleportPaused", -1)
 	Game.setStorageValue("ChagorzElderBloodjawSpawnPaused", -1)
 

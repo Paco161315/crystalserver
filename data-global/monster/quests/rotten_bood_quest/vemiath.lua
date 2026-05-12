@@ -153,15 +153,13 @@ local ElderBloodjaws = {
 }
 
 local accumulatedTime = 0
-local summonInterval = 0 -- Tiempo aleatorio entre invocaciones (se ajusta dinámicamente)
-local activeSummons = {} -- Tabla para rastrear las criaturas invocadas
+local summonInterval = 0
+local activeSummons = {}
 
--- Función para obtener una posición aleatoria alrededor del monstruo
 local function getRandomPosition(monsterPosition)
-	-- Rango de 4 SQM hacia arriba, abajo, derecha, izquierda
 	local offsetX = math.random(-1, 1)
 	local offsetY = math.random(-1, 1)
-	local offsetZ = monsterPosition.z -- Mantener la misma capa (z)
+	local offsetZ = monsterPosition.z
 
 	return Position(monsterPosition.x + offsetX, monsterPosition.y + offsetY, offsetZ)
 end
@@ -177,10 +175,9 @@ local function getClosePosition(centerPos)
 			return tryPos
 		end
 	end
-	return centerPos -- fallback si no se encuentra una válida
+	return centerPos
 end
 
--- Funciones locales para evitar duplicar registros de eventos
 local bossStates = {}
 
 local function getPlayerTaintLevel(player)
@@ -195,7 +192,7 @@ local function getPlayerTaintLevel(player)
 end
 
 local function calculateElderBloodjawCount()
-	local centerPos = Position(33043, 32335, 15) -- Vemiath center
+	local centerPos = Position(33043, 32335, 15)
 	local maxTaintLevel = 0
 	local spectators = Game.getSpectators(centerPos, false, true, 15, 15, 15, 15)
 
@@ -232,12 +229,10 @@ local function initializeBoss()
 	end
 	bossStates["Vemiath"].mechanicsDisabled = false
 
-	-- Iniciar ciclo de teleports
 	local function startTeleportCycle()
 		bossStates["Vemiath"].teleportTimer = addEvent(function()
 			local centerPos = Position(33043, 32335, 15)
 
-			-- Verificar si el sistema de teleport está pausado
 			if Game.getStorageValue("VemiathTeleportPaused") == 1 then
 				logger.debug("Vemiath teleport system paused, skipping cycle")
 				startTeleportCycle()
@@ -262,11 +257,10 @@ local function initializeBoss()
 				return
 			end
 
-			-- Solo crear teleport si existen Elder Bloodjaw en la sala
 			if elderBloodjawExists then
 				local teleport = Game.createItem(37000, 1, centerPos)
 				if teleport then
-					teleport:setActionId(50001) -- Asignar ActionId para el MoveEvent
+					teleport:setActionId(50001)
 					centerPos:sendMagicEffect(CONST_ME_TELEPORT)
 					logger.debug("Teleport created for Vemiath with ActionId {}", teleport:getActionId())
 
@@ -285,7 +279,7 @@ local function initializeBoss()
 			end
 
 			startTeleportCycle()
-		end, 90000) -- 90 segundos entre teleports
+		end, 90000)
 	end
 
 	startTeleportCycle()
@@ -299,7 +293,6 @@ local function cleanupBoss()
 		bossStates["Vemiath"] = nil
 	end
 
-	-- También limpiar estado global
 	if GlobalRottenBloodStates and GlobalRottenBloodStates["Vemiath"] then
 		if GlobalRottenBloodStates["Vemiath"].teleportTimer then
 			stopEvent(GlobalRottenBloodStates["Vemiath"].teleportTimer)
@@ -326,7 +319,6 @@ local function ensureSummons(monster)
 		end
 	end
 
-	-- Spawnar Elder Bloodjaws basado en taints (solo si mecánicas están activas y spawn no está pausado)
 	if not areMechanicsDisabled() and Game.getStorageValue("VemiathElderBloodjawSpawnPaused") ~= 1 then
 		local targetCount = calculateElderBloodjawCount()
 		for i = 1, targetCount - existingBloodjaws do
@@ -334,11 +326,9 @@ local function ensureSummons(monster)
 			Game.createMonster("Elder Bloodjaw", summonPos)
 		end
 	else
-		-- Si las mecánicas están desactivadas o spawn pausado, no spawnar Elder Bloodjaw
 		logger.debug("Vemiath mechanics disabled or Elder Bloodjaw spawn paused, not spawning Elder Bloodjaw")
 	end
 
-	-- Asegurar 4 Pillars of Dark Energy
 	for i = 1, 4 - existingPillarDark do
 		local summonPos = getClosePosition(pos)
 		Game.createMonster("pillar of dark energy", summonPos)
@@ -352,13 +342,11 @@ local checkTime = 0
 local bossInitialized = false
 
 mType.onThink = function(monster, interval)
-	-- Inicializar mecánicas del boss una sola vez
 	if not bossInitialized then
 		initializeBoss()
 		bossInitialized = true
 	end
 
-	-- Solo ejecutar mecánicas si no están desactivadas
 	local mechanicsDisabled = areMechanicsDisabled()
 
 	if not mechanicsDisabled then
@@ -366,17 +354,14 @@ mType.onThink = function(monster, interval)
 		checkTime = checkTime + interval
 		ensureSummons(monster)
 	else
-		-- Las mecánicas están desactivadas, solo ejecutar ensureSummons para mantener otros monstruos
 		ensureSummons(monster)
 		logger.debug("Vemiath onThink: mechanics disabled, skipping main logic")
 	end
 
-	-- Lógica de invocaciones (sin cambios)
 	if accumulatedTime >= summonInterval then
-		-- ... (mantener misma lógica de invocaciones)
+		-- heavy abuse of AI deleted the content here
 	end
 
-	-- Sistema de daño por inactividad
 	if checkTime >= checkInterval then
 		checkTime = 0
 		local spectators = Game.getSpectators(monster:getPosition(), false, true, 16, 16, 16, 16)
@@ -389,7 +374,6 @@ mType.onThink = function(monster, interval)
 				local tileItem = tile and tile:getItemByType(ITEM_TYPE_MAGICFIELD)
 				local damage = 0
 
-				-- Inicializar datos (POSICIÓN MANUAL)
 				if not playerTracking[cid] then
 					playerTracking[cid] = {
 						lastPos = { x = currentPos.x, y = currentPos.y, z = currentPos.z },
@@ -403,7 +387,6 @@ mType.onThink = function(monster, interval)
 				local data = playerTracking[cid]
 				local samePosition = (currentPos.x == data.lastPos.x and currentPos.y == data.lastPos.y and currentPos.z == data.lastPos.z)
 
-				-- Lógica de iconos y daño
 				if samePosition then
 					if data.iconCount <= 20 then
 						data.iconCount = math.max(data.iconCount + 1, 0)
@@ -426,9 +409,6 @@ mType.onThink = function(monster, interval)
 						if player.setIcon then
 							player:setIcon("agony-stacks", CreatureIconCategory_Quests, CreatureIconQuests_RedCross, data.iconCount)
 						end
-						--if player.removeIcon then
-						--    player:removeIcon("agony-stacks")
-						--end
 					else
 					end
 				else
@@ -441,17 +421,14 @@ mType.onThink = function(monster, interval)
 						player:setIcon("agony-stacks", CreatureIconCategory_Quests, CreatureIconQuests_RedCross, data.iconCount)
 					end
 				end
-				-- Actualizar posición (SIN CLONE, solo coordenadas)
 				data.lastPos.x = currentPos.x
 				data.lastPos.y = currentPos.y
 				data.lastPos.z = currentPos.z
 
-				-- Daño por tiles (sin cambios)
 				if tileItem then
-					-- ... (mantener misma lógica de tiles)
+					-- heavy abuse of AI deleted the content here
 				end
 
-				-- Aplicar daño
 				if damage > 0 then
 					doTargetCombatHealth(monster, player, COMBAT_AGONYDAMAGE, -damage, -damage, CONST_ME_AGONY)
 				end
@@ -481,12 +458,10 @@ mType.onMove = function(_, creature, fromPos, toPos)
 	local item = tile:getTopDownItem()
 	local itemId = item and item:getId() or 0
 
-	-- No hacer nada si ya hay alguna de las fases
 	if itemId == 43589 or itemId == 43590 or itemId == 43625 then
 		return
 	end
 
-	-- Crear la primera fase
 	local newItem = Game.createItem(43589, 1, toPos)
 	if newItem then
 		addEvent(function()
@@ -495,23 +470,21 @@ mType.onMove = function(_, creature, fromPos, toPos)
 			if decayItem then
 				decayItem:transform(43590)
 
-				-- Segunda transformación después de 2 segundos (total 3s)
 				addEvent(function()
 					local updatedItem = tile and tile:getItemById(43590)
 					if updatedItem then
 						updatedItem:transform(43297)
 
-						-- Eliminación después de 1 segundo (total 4s desde inicio)
 						addEvent(function()
 							local finalItem = tile and tile:getItemById(43297)
 							if finalItem then
 								finalItem:remove()
 							end
-						end, 3000) -- 1 segundo después de 43297
+						end, 3000)
 					end
-				end, 3000) -- 2 segundos después de 43590
+				end, 3000)
 			end
-		end, 1000) -- 1 segundo después de crear 43589
+		end, 1000)
 	end
 end
 

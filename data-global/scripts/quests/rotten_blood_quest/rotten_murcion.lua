@@ -12,14 +12,14 @@ local config = {
 		{ pos = Position(32978, 32365, 15), teleport = Position(33009, 32372, 15) },
 	},
 	specPos = {
-		from = Position(33000, 32360, 15), --fix 33001, 32361, 15
-		to = Position(33017, 32375, 15), --fix 33015, 32373, 15
+		from = Position(33000, 32360, 15),
+		to = Position(33017, 32375, 15),
 	},
 	spawnMushroomPos = {
-		from = Position(33001, 32361, 15), --fix
-		to = Position(33015, 32373, 15), --fix 33015, 32373, 15
+		from = Position(33001, 32361, 15),
+		to = Position(33015, 32373, 15),
 	},
-	exit = Position(33904, 31693, 15), --fix
+	exit = Position(33904, 31693, 15),
 	monsters = {
 		--{ name = "Mushroom", pos = Position(33015, 32365, 15) },
 	},

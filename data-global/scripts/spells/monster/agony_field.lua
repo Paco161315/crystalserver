@@ -3,7 +3,6 @@ combat:setParameter(COMBAT_PARAM_TYPE, COMBAT_AGONYDAMAGE)
 combat:setParameter(COMBAT_PARAM_EFFECT, CONST_ME_POISONAREA)
 combat:setParameter(COMBAT_PARAM_DISTANCEEFFECT, CONST_ANI_POISON)
 
--- Create agony field item (ID 43297) at target position
 combat:setParameter(COMBAT_PARAM_CREATEITEM, 43297)
 
 local spell = Spell("instant")

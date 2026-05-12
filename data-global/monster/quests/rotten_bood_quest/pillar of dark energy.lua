@@ -108,12 +108,11 @@ mType.onThink = function(monster, variant, interval)
 	mushroomCheck[uid] = mushroomCheck[uid] + 1
 
 	if mushroomCheck[uid] >= 10 then
-		mushroomCheck[uid] = nil -- limpiar memoria
+		mushroomCheck[uid] = nil
 		monster:remove()
 		return
 	end
 
-	-- Verificar si hay bosses
 	local monsterPos = monster:getPosition()
 	local spectators = Game.getSpectators(monsterPos, false, false, 15, 15, 15, 15)
 	local bossAlive = false

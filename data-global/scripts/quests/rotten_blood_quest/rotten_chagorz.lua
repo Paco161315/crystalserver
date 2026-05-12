@@ -16,10 +16,10 @@ local config = {
 		to = Position(33052, 32375, 15),
 	},
 	spawnMushroomPos = {
-		from = Position(33001, 32361, 15), --fix
-		to = Position(33015, 32373, 15), --fix 33015, 32373, 15
+		from = Position(33001, 32361, 15),
+		to = Position(33015, 32373, 15),
 	},
-	exit = Position(33904, 31693, 15), --fix
+	exit = Position(33904, 31693, 15),
 	monsters = {
 		--{ name = "Elder Bloodjaw", pos = Position(33048, 32367, 15) },
 		--{ name = "Elder Bloodjaw", pos = Position(33040, 32367, 15) },

@@ -1,6 +1,3 @@
--- Rotten Blood Teleport Script
--- Item 42676 at position 34003, 31841, 14 teleports to 34122, 31879, 14
-
 local teleportPosition = Position(34003, 31841, 14)
 local destinationPosition = Position(34122, 31879, 14)
 
@@ -12,12 +9,10 @@ function teleportTile.onStepIn(creature, item, position, fromPosition)
 		return true
 	end
 
-	-- Check if player is stepping on the correct position
 	if position ~= teleportPosition then
 		return true
 	end
 
-	-- Check if the item at that position is the correct one
 	local tile = Tile(position)
 	if not tile then
 		return true
@@ -35,7 +30,6 @@ function teleportTile.onStepIn(creature, item, position, fromPosition)
 		return true
 	end
 
-	-- Teleport the player
 	player:teleportTo(destinationPosition)
 	destinationPosition:sendMagicEffect(CONST_ME_TELEPORT)
 	position:sendMagicEffect(CONST_ME_TELEPORT)

@@ -98,6 +98,4 @@ monster.immunities = {
 	{ type = "bleed", condition = false },
 }
 
--- Sin función onThink - este Elder Bloodjaw no se auto-elimina
-
 mType:register(monster)

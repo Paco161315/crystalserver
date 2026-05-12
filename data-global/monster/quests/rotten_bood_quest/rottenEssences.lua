@@ -13,21 +13,18 @@ function essencesRottenBlood.onUse(player, item, fromPosition, target, toPositio
 		return true
 	end
 
-	-- Verificar si el jugador ya tiene el storage
 	local value = player:getStorageValue(info.str)
 	if value >= 1 then
 		player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "sorry not possible.")
 		return true
 	end
 
-	-- Asignar el storage y eliminar el ítem
 	player:setStorageValue(info.str, 1)
 	player:getPosition():sendMagicEffect(CONST_ME_MAGIC_BLUE)
 	item:remove(1)
 	return true
 end
 
--- Registrar IDs de las esencias
 essencesRottenBlood:id(43501, 43502, 43503, 43504)
 essencesRottenBlood:register()
 
@@ -73,31 +70,25 @@ local activateEssenceFlame = Action("activateEssenceFlame")
 function activateEssenceFlame.onUse(player, item, fromPosition, target, toPosition, isHotkey)
 	for storageId, info in pairs(flamesID) do
 		if item:getId() == info.flameID then
-			-- Verificar que el jugador tenga el storage correspondiente
 			local value = player:getStorageValue(storageId)
 			if value >= 1 then
-				-- Verificar si el globalStorage ya fue activado
 				if Game.getStorageValue(info.globalstr) > 0 then
 					player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "This flame has already been activated.")
 					return true
 				end
 
-				-- Transformar la flama
 				local flameItem = Tile(info.flamePos):getItemById(info.flameID)
 				if flameItem then
 					flameItem:transform(info.transformflameID)
 				end
 
-				-- Transformar el pilar
 				local pillarItem = Tile(info.pillarPos):getItemById(pillarID)
 				if pillarItem then
 					pillarItem:transform(pillarID + 1)
 				end
 
-				-- Asignar el globalStorage
 				Game.setStorageValue(info.globalstr, 1)
 				player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "essence of " .. info.name .. " activated.")
-				-- Eliminar el storage del jugador (reiniciar)
 				player:setStorageValue(storageId, 0)
 				player:getPosition():sendMagicEffect(CONST_ME_MAGIC_BLUE)
 			end
@@ -109,6 +100,5 @@ function activateEssenceFlame.onUse(player, item, fromPosition, target, toPositi
 	return false
 end
 
--- Registrar todos los flameIDs como Action
 activateEssenceFlame:id(43983, 43497, 43987, 43985)
 activateEssenceFlame:register()

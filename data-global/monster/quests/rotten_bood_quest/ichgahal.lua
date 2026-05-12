@@ -148,15 +148,14 @@ local ElderBloodjaws = {
 }
 
 local accumulatedTime = 0
-local summonInterval = 0 -- Tiempo aleatorio entre invocaciones (se ajusta dinámicamente)
-local activeSummons = {} -- Tabla para rastrear las criaturas invocadas
+local summonInterval = 0
+local activeSummons = {}
 
--- Función para obtener una posición aleatoria alrededor del monstruo
 local function getRandomPosition(monsterPosition)
-	-- Rango de 4 SQM hacia arriba, abajo, derecha, izquierda
+
 	local offsetX = math.random(-2, 2)
 	local offsetY = math.random(-2, 2)
-	local offsetZ = monsterPosition.z -- Mantener la misma capa (z)
+	local offsetZ = monsterPosition.z
 
 	return Position(monsterPosition.x + offsetX, monsterPosition.y + offsetY, offsetZ)
 end
@@ -172,7 +171,7 @@ local function getClosePosition(centerPos)
 			return tryPos
 		end
 	end
-	return centerPos -- fallback si no se encuentra una válida
+	return centerPos
 end
 
 local RottenBloodMechanics = dofile(DATA_DIRECTORY .. "/scripts/quests/rotten_blood_quest/rotten_blood_boss_mechanics.lua")
@@ -192,10 +191,8 @@ local function ensureSummons(monster)
 		end
 	end
 
-	-- Manejar Elder Bloodjaws con el nuevo sistema
 	RottenBloodMechanics.handleElderBloodjawSpawn("Ichgahal", monster)
 
-	-- Asegurar 4 Mushrooms
 	for i = 1, 4 - existingMushrooms do
 		local summonPos = getClosePosition(pos)
 		Game.createMonster("Mushroom", summonPos)
@@ -203,13 +200,11 @@ local function ensureSummons(monster)
 end
 
 mType.onThink = function(monster, interval)
-	-- Sumar el intervalo al tiempo acumulado
+
 	accumulatedTime = accumulatedTime + interval
 	ensureSummons(monster)
 
-	-- Revisar si es tiempo de invocar criaturas
 	if accumulatedTime >= summonInterval then
-		-- Eliminar invocaciones anteriores si existen
 		for _, summon in ipairs(activeSummons) do
 			local creature = Creature(summon)
 			if creature then
@@ -218,9 +213,7 @@ mType.onThink = function(monster, interval)
 		end
 		activeSummons = {}
 
-		-- Invocar criaturas según las posiciones definidas
 		for _, monsterData in ipairs(aditionalMonsters) do
-			-- Obtener una posición aleatoria alrededor del monstruo
 			local summonPosition = getRandomPosition(monster:getPosition())
 			local summon = Game.createMonster(monsterData.name, summonPosition)
 			if summon then
@@ -228,9 +221,8 @@ mType.onThink = function(monster, interval)
 			end
 		end
 
-		-- Reiniciar el tiempo acumulado y configurar un nuevo intervalo aleatorio
 		accumulatedTime = 0
-		summonInterval = math.random(8000, 9000) -- Entre 10 y 12 segundos
+		summonInterval = math.random(8000, 9000)
 	end
 end
 
@@ -251,17 +243,14 @@ mType.onMove = function(_, creature, fromPos, toPos)
 	local item = tile:getTopDownItem()
 	local itemId = item and item:getId() or 0
 
-	-- No hacer nada si ya hay alguna de las fases
 	if itemId == 43294 or itemId == 43295 or itemId == 43296 then
 		return
 	end
 
-	-- Solo el boss "Ichgahal" puede crear la espora
 	if not creature or not creature:isMonster() or creature:getName():lower() ~= "ichgahal" then
 		return
 	end
 
-	-- Crear la primera fase de la espora
 	local newItem = Game.createItem(43294, 1, toPos)
 	if newItem then
 		addEvent(function()
