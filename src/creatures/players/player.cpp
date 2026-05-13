@@ -11227,6 +11227,7 @@ void Player::onCreatureAppear(const std::shared_ptr<Creature> &creature, bool is
 	Creature::onCreatureAppear(creature, isLogin);
 
 	if (isLogin && creature == getPlayer()) {
+		g_logger().info("{} has logged in", getName());
 		onEquipInventory();
 
 		const auto &outfit = Outfits::getInstance().getOutfitByLookType(getPlayer(), defaultOutfit.lookType);
