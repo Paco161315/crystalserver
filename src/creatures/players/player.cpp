@@ -9736,7 +9736,8 @@ void Player::setBountyTalismanEquipped(bool equipped) {
 }
 
 bool Player::isBountyTalismanEquipped() const {
-	return bountyTalismanEquipped;
+    const auto ammoItem = getInventoryItem(CONST_SLOT_AMMO);
+    return ammoItem && ammoItem->getID() == 51978;
 }
 
 void Player::sendBountyTaskData() const {
