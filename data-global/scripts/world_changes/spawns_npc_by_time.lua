@@ -111,7 +111,7 @@ local npcSpawns = {
 	},
 }
 
-local spawnsNpcByTime = GlobalEvent("SpawnsNpcByTimeBounac")
+local spawnsNpcByTime = GlobalEvent("SpawnsNpcByTime")
 
 function spawnsNpcByTime.onPeriodChange(period)
 	local npcsToRemove = {}
@@ -157,7 +157,7 @@ end
 
 spawnsNpcByTime:register()
 
-local spawnsNpcBySpawn = GlobalEvent("SpawnsNpcBySpawnBounac")
+local spawnsNpcBySpawn = GlobalEvent("SpawnsNpcByTime")
 
 function spawnsNpcBySpawn.onStartup()
 	local currentPeriod = LIGHT_STATE_SUNRISE
