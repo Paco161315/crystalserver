@@ -157,7 +157,7 @@ end
 
 spawnsNpcByTime:register()
 
-local spawnsNpcBySpawn = GlobalEvent("SpawnsNpcByTime")
+local spawnsNpcBySpawn = GlobalEvent("SpawnsNpcBySpawn")
 
 function spawnsNpcBySpawn.onStartup()
 	local currentPeriod = LIGHT_STATE_SUNRISE
