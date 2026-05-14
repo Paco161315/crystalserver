@@ -1,7 +1,3 @@
-if not configManager.getBoolean(configKeys.CLEAN_DATABASE) then
-	return
-end
-
 local config = {
 	deleteAccountWithNoPlayers = true,
 	printResult = true,
@@ -57,6 +53,10 @@ function playerCleaner.onStartup()
 		"GOD",
 	}
 	local ignoredList = "'" .. table.concat(ignoredNames, "','") .. "'"
+
+	if not configManager.getBoolean(configKeys.CLEAN_DATABASE) then
+		return
+	end
 
 	for _, tier in ipairs(cleanup) do
 		local query = ("SELECT `id`, `account_id` FROM `players`" .. " WHERE `level` < " .. tier.level .. " AND `name` NOT IN(" .. ignoredList .. ")" .. " AND `group_id` < 2" .. " AND `lastlogin` < UNIX_TIMESTAMP() - " .. tier.time .. " AND `lastlogin` > 0;")
