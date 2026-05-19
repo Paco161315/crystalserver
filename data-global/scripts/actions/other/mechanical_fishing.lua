@@ -1,27 +1,47 @@
 local waterIds = { 622, 4597, 4598, 4599, 4600, 12561, 12563, 4601, 4602, 4609, 4610, 4611, 4612, 4613, 4614, 629, 630, 631, 632, 633, 634, 7236, 9582, 12560, 12561, 12562, 12563, 12558, 12559, 13988, 13989, 21414, 21312 }
 
-local lootTrash    = { 3119, 3123, 3264, 3409, 3578 }
-local lootCommon   = { 3035, 3051, 3052, 3580, 236, 237 }
-local lootRare     = { 3026, 3029, 3032, 7158, 7159 }
+local lootTrash = { 3119, 3123, 3264, 3409, 3578 }
+local lootCommon = { 3035, 3051, 3052, 3580, 236, 237 }
+local lootRare = { 3026, 3029, 3032, 7158, 7159 }
 local lootVeryRare = { 281, 282, 9303 }
 local lootVeryRare1 = { 281, 12557 }
-local lootRare1    = { 3026, 12557 }
-local lootCommon1  = { 3035, 237, 12557 }
+local lootRare1 = { 3026, 12557 }
+local lootCommon1 = { 3035, 237, 12557 }
 
 local fishableWaterIds = {
-	4597, 4598, 4599, 4600, 4601, 4602,
-	629, 630, 631, 632, 633, 634,
+	4597,
+	4598,
+	4599,
+	4600,
+	4601,
+	4602,
+	629,
+	630,
+	631,
+	632,
+	633,
+	634,
 	21312,
 }
 
 local nonFishableWaterIds = {
-	4609, 4610, 4611, 4612, 4613, 4614,
-	4809, 4810, 4811, 4812, 4813, 4814,
+	4609,
+	4610,
+	4611,
+	4612,
+	4613,
+	4614,
+	4809,
+	4810,
+	4811,
+	4812,
+	4813,
+	4814,
 	21314,
 }
 
 local dirtyWaterFishable = { 12561, 12562, 12563 }
-local dirtyWaterSpent    = { 12558, 12559, 12560 }
+local dirtyWaterSpent = { 12558, 12559, 12560 }
 
 local dirtyWaterTransform = {
 	[12561] = 12558,
@@ -30,32 +50,32 @@ local dirtyWaterTransform = {
 }
 
 local SHIMMER_COOLDOWN_STORAGE = 20526
-local SHIMMER_COUNT_STORAGE    = 20527
+local SHIMMER_COUNT_STORAGE = 20527
 local SHIMMER_COOLDOWN_SECONDS = 20 * 60 * 60
 
 local transformToNonFishable = {
-	[4597]  = { to = 4609,  decay = true },
-	[4598]  = { to = 4610,  decay = true },
-	[4599]  = { to = 4611,  decay = true },
-	[4600]  = { to = 4612,  decay = true },
-	[4601]  = { to = 4613,  decay = true },
-	[4602]  = { to = 4614,  decay = true },
-	[629]   = { to = 4809,  decay = true },
-	[630]   = { to = 4810,  decay = true },
-	[631]   = { to = 4811,  decay = true },
-	[632]   = { to = 4812,  decay = true },
-	[633]   = { to = 4813,  decay = true },
-	[634]   = { to = 4814,  decay = true },
+	[4597] = { to = 4609, decay = true },
+	[4598] = { to = 4610, decay = true },
+	[4599] = { to = 4611, decay = true },
+	[4600] = { to = 4612, decay = true },
+	[4601] = { to = 4613, decay = true },
+	[4602] = { to = 4614, decay = true },
+	[629] = { to = 4809, decay = true },
+	[630] = { to = 4810, decay = true },
+	[631] = { to = 4811, decay = true },
+	[632] = { to = 4812, decay = true },
+	[633] = { to = 4813, decay = true },
+	[634] = { to = 4814, decay = true },
 	[21312] = { to = 21314, decay = true },
 }
 
 local elementals = {
 	chances = {
-		{ from = 0,    to = 500,  itemId = 3026 }, -- white pearl
-		{ from = 501,  to = 801,  itemId = 3029 }, -- small sapphire
-		{ from = 802,  to = 1002, itemId = 3032 }, -- small emerald
-		{ from = 1003, to = 1053, itemId = 281  }, -- giant shimmering pearl (green)
-		{ from = 1054, to = 1104, itemId = 282  }, -- giant shimmering pearl (brown)
+		{ from = 0, to = 500, itemId = 3026 }, -- white pearl
+		{ from = 501, to = 801, itemId = 3029 }, -- small sapphire
+		{ from = 802, to = 1002, itemId = 3032 }, -- small emerald
+		{ from = 1003, to = 1053, itemId = 281 }, -- giant shimmering pearl (green)
+		{ from = 1054, to = 1104, itemId = 282 }, -- giant shimmering pearl (brown)
 		{ from = 1105, to = 1115, itemId = 9303 }, -- leviathan's amulet
 	},
 }
@@ -63,19 +83,17 @@ local elementals = {
 local useWorms = true
 
 local YALAHAR_SEWERS = {
-	fromX = 32736, fromY = 31142,
-	toX   = 32854, toY   = 31260,
-	z     = 8,
+	fromX = 32736,
+	fromY = 31142,
+	toX = 32854,
+	toY = 31260,
+	z = 8,
 }
 local MECHANICAL_FISH_ID = 9307
-local NAIL_ID            = 953
+local NAIL_ID = 953
 
 local function isInYalaharSewers(position)
-	return position.x >= YALAHAR_SEWERS.fromX
-		and position.x <= YALAHAR_SEWERS.toX
-		and position.y >= YALAHAR_SEWERS.fromY
-		and position.y <= YALAHAR_SEWERS.toY
-		and position.z == YALAHAR_SEWERS.z
+	return position.x >= YALAHAR_SEWERS.fromX and position.x <= YALAHAR_SEWERS.toX and position.y >= YALAHAR_SEWERS.fromY and position.y <= YALAHAR_SEWERS.toY and position.z == YALAHAR_SEWERS.z
 end
 
 local function refreeIceHole(position)
