@@ -10,8 +10,8 @@ local config = {
 }
 
 local cleanup = {
-	{ level = 8,   time = 30  * 24 * 60 * 60 },
-	{ level = 50,  time = 90  * 24 * 60 * 60 },
+	{ level = 8, time = 30 * 24 * 60 * 60 },
+	{ level = 50, time = 90 * 24 * 60 * 60 },
 	{ level = 100, time = 180 * 24 * 60 * 60 },
 	{ level = 200, time = 360 * 24 * 60 * 60 },
 	{ level = 300, time = 720 * 24 * 60 * 60 },
@@ -45,7 +45,7 @@ local playerCleaner = GlobalEvent("PlayerCleaner")
 playerCleaner:type("startup")
 
 function playerCleaner.onStartup()
-	local beforePlayers  = getPlayerCount()
+	local beforePlayers = getPlayerCount()
 	local beforeAccounts = getAccountCount()
 
 	local ignoredNames = {
@@ -67,17 +67,7 @@ function playerCleaner.onStartup()
 	local pids = {}
 
 	for _, tier in ipairs(cleanup) do
-		local query = string.format(
-			"SELECT `id`, `account_id` FROM `players`" ..
-			" WHERE `level` < %d" ..
-			" AND `name` NOT IN(%s)" ..
-			" AND `group_id` < 2" ..
-			" AND `lastlogin` < UNIX_TIMESTAMP() - %d" ..
-			" AND `lastlogin` > 0;",
-			tier.level,
-			ignoredList,
-			tier.time
-		)
+		local query = string.format("SELECT `id`, `account_id` FROM `players`" .. " WHERE `level` < %d" .. " AND `name` NOT IN(%s)" .. " AND `group_id` < 2" .. " AND `lastlogin` < UNIX_TIMESTAMP() - %d" .. " AND `lastlogin` > 0;", tier.level, ignoredList, tier.time)
 
 		local result = db.storeQuery(query)
 		if result then
@@ -92,14 +82,8 @@ function playerCleaner.onStartup()
 
 	-- ── delete players ──────────────────────────────────────────────────────
 	for pid, _ in pairs(pids) do
-		db.query(string.format(
-			"DELETE FROM `znote_players` WHERE `player_id` = %d;",
-			tonumber(pid)
-		))
-		db.query(string.format(
-			"DELETE FROM `players` WHERE `id` = %d;",
-			tonumber(pid)
-		))
+		db.query(string.format("DELETE FROM `znote_players` WHERE `player_id` = %d;", tonumber(pid)))
+		db.query(string.format("DELETE FROM `players` WHERE `id` = %d;", tonumber(pid)))
 	end
 
 	-- ── delete empty accounts ─────────────────────────────────────────────────
@@ -110,37 +94,22 @@ function playerCleaner.onStartup()
 			if not aidsProcessed[aid] then
 				aidsProcessed[aid] = true
 
-				local cnt = queryCount(string.format(
-					"SELECT COUNT(`id`) AS `count` FROM `players` WHERE `account_id` = %d;",
-					tonumber(aid)
-				))
+				local cnt = queryCount(string.format("SELECT COUNT(`id`) AS `count` FROM `players` WHERE `account_id` = %d;", tonumber(aid)))
 
 				if cnt <= 0 then
-					db.query(string.format(
-						"DELETE FROM `znote_accounts` WHERE `account_id` = %d;",
-						tonumber(aid)
-					))
-					db.query(string.format(
-						"DELETE FROM `accounts` WHERE `id` = %d;",
-						tonumber(aid)
-					))
+					db.query(string.format("DELETE FROM `znote_accounts` WHERE `account_id` = %d;", tonumber(aid)))
+					db.query(string.format("DELETE FROM `accounts` WHERE `id` = %d;", tonumber(aid)))
 				end
 			end
 		end
 	end
 
 	-- ── report ───────────────────────────────────────────────────────────────
-	local deletedPlayers  = beforePlayers  - getPlayerCount()
+	local deletedPlayers = beforePlayers - getPlayerCount()
 	local deletedAccounts = beforeAccounts - getAccountCount()
 
 	if deletedPlayers > 0 or deletedAccounts > 0 then
-		local text = string.format(
-			">> [DBCLEANUP] %d inactive player(s)%s deleted from the database.",
-			deletedPlayers,
-			config.deleteAccountWithNoPlayers
-				and (" and " .. deletedAccounts .. " empty account(s)")
-				or ""
-		)
+		local text = string.format(">> [DBCLEANUP] %d inactive player(s)%s deleted from the database.", deletedPlayers, config.deleteAccountWithNoPlayers and (" and " .. deletedAccounts .. " empty account(s)") or "")
 
 		if config.printResult then
 			print("")
