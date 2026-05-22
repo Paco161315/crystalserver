@@ -71,7 +71,6 @@ local function creatureSayCallback(npc, creature, type, message)
 			npcHandler:say("Halt! This area is restricted during the siege. State your business or turn back.", npc, creature)
 			npcHandler:setTopic(playerId, 1)
 		end
-
 	elseif MsgContains(message, "pass") or MsgContains(message, "in") then
 		if player:getStorageValue(Storage.Quest.U12_40.TheOrderOfTheLion.AccessEastSide) >= 1 then
 			player:teleportTo(destinationIn)
@@ -85,7 +84,6 @@ local function creatureSayCallback(npc, creature, type, message)
 				"The people of Bounac are cautious during these troubled times. Earn their trust and come back.",
 			}, npc, creature)
 		end
-
 	elseif MsgContains(message, "out") then
 		if player:getStorageValue(Storage.Quest.U12_40.TheOrderOfTheLion.AccessEastSide) >= 1 then
 			player:teleportTo(destinationOut)
@@ -94,7 +92,6 @@ local function creatureSayCallback(npc, creature, type, message)
 		else
 			npcHandler:say("You are not even supposed to be in here.", npc, creature)
 		end
-
 	elseif message:lower() == "yes" and npcHandler:getTopic(playerId) == 1 then
 		if player:getStorageValue(Storage.Quest.U12_40.TheOrderOfTheLion.BounacTrust) >= 5 then
 			grantAccess(player, npc, creature)
