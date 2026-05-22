@@ -1,3 +1,7 @@
+if not configManager.getBoolean(configKeys.CLEAN_DATABASE) then
+	return
+end
+
 local config = {
 	deleteAccountWithNoPlayers = true,
 	printResult = true,
@@ -6,14 +10,16 @@ local config = {
 }
 
 local cleanup = {
-	{ level = 8, time = 30 * 24 * 60 * 60 },
-	{ level = 50, time = 90 * 24 * 60 * 60 },
+	{ level = 8,   time = 30  * 24 * 60 * 60 },
+	{ level = 50,  time = 90  * 24 * 60 * 60 },
 	{ level = 100, time = 180 * 24 * 60 * 60 },
 	{ level = 200, time = 360 * 24 * 60 * 60 },
 	{ level = 300, time = 720 * 24 * 60 * 60 },
 	{ level = 400, time = 1095 * 24 * 60 * 60 },
 	{ level = 500, time = 1460 * 24 * 60 * 60 },
 }
+
+-- ─── helpers ─────────────────────────────────────────────────────────────────
 
 local function queryCount(query)
 	local result = db.storeQuery(query)
@@ -33,15 +39,14 @@ local function getAccountCount()
 	return queryCount("SELECT COUNT(`id`) AS `count` FROM `accounts`;")
 end
 
--- ─── startup event ───────────────────────────────────────────────────────────
+-- ─── startup event ────────────────────────────────────────────────────────────
+
 local playerCleaner = GlobalEvent("PlayerCleaner")
 playerCleaner:type("startup")
 
 function playerCleaner.onStartup()
-	local beforePlayers = getPlayerCount()
+	local beforePlayers  = getPlayerCount()
 	local beforeAccounts = getAccountCount()
-
-	local pids = {}
 
 	local ignoredNames = {
 		"Rook Sample",
@@ -52,14 +57,27 @@ function playerCleaner.onStartup()
 		"Monk Sample",
 		"GOD",
 	}
-	local ignoredList = "'" .. table.concat(ignoredNames, "','") .. "'"
 
-	if not configManager.getBoolean(configKeys.CLEAN_DATABASE) then
-		return
+	local escapedNames = {}
+	for i, name in ipairs(ignoredNames) do
+		escapedNames[i] = db.escapeString(name)
 	end
+	local ignoredList = table.concat(escapedNames, ",")
+
+	local pids = {}
 
 	for _, tier in ipairs(cleanup) do
-		local query = ("SELECT `id`, `account_id` FROM `players`" .. " WHERE `level` < " .. tier.level .. " AND `name` NOT IN(" .. ignoredList .. ")" .. " AND `group_id` < 2" .. " AND `lastlogin` < UNIX_TIMESTAMP() - " .. tier.time .. " AND `lastlogin` > 0;")
+		local query = string.format(
+			"SELECT `id`, `account_id` FROM `players`" ..
+			" WHERE `level` < %d" ..
+			" AND `name` NOT IN(%s)" ..
+			" AND `group_id` < 2" ..
+			" AND `lastlogin` < UNIX_TIMESTAMP() - %d" ..
+			" AND `lastlogin` > 0;",
+			tier.level,
+			ignoredList,
+			tier.time
+		)
 
 		local result = db.storeQuery(query)
 		if result then
@@ -72,10 +90,16 @@ function playerCleaner.onStartup()
 		end
 	end
 
-	-- ── delete players ────────────────────────────────────────────────────────
+	-- ── delete players ──────────────────────────────────────────────────────
 	for pid, _ in pairs(pids) do
-		db.query(("DELETE FROM `znote_players` WHERE `player_id` = %d;"):format(pid))
-		db.query(("DELETE FROM `players` WHERE `id` = %d;"):format(pid))
+		db.query(string.format(
+			"DELETE FROM `znote_players` WHERE `player_id` = %d;",
+			tonumber(pid)
+		))
+		db.query(string.format(
+			"DELETE FROM `players` WHERE `id` = %d;",
+			tonumber(pid)
+		))
 	end
 
 	-- ── delete empty accounts ─────────────────────────────────────────────────
@@ -86,22 +110,37 @@ function playerCleaner.onStartup()
 			if not aidsProcessed[aid] then
 				aidsProcessed[aid] = true
 
-				local cnt = queryCount(("SELECT COUNT(`id`) AS `count` FROM `players` WHERE `account_id` = %d;"):format(aid))
+				local cnt = queryCount(string.format(
+					"SELECT COUNT(`id`) AS `count` FROM `players` WHERE `account_id` = %d;",
+					tonumber(aid)
+				))
 
 				if cnt <= 0 then
-					db.query(("DELETE FROM `znote_accounts` WHERE `account_id` = %d;"):format(aid))
-					db.query(("DELETE FROM `accounts` WHERE `id` = %d;"):format(aid))
+					db.query(string.format(
+						"DELETE FROM `znote_accounts` WHERE `account_id` = %d;",
+						tonumber(aid)
+					))
+					db.query(string.format(
+						"DELETE FROM `accounts` WHERE `id` = %d;",
+						tonumber(aid)
+					))
 				end
 			end
 		end
 	end
 
-	-- ── report ────────────────────────────────────────────────────────────────
-	local deletedPlayers = beforePlayers - getPlayerCount()
+	-- ── report ───────────────────────────────────────────────────────────────
+	local deletedPlayers  = beforePlayers  - getPlayerCount()
 	local deletedAccounts = beforeAccounts - getAccountCount()
 
 	if deletedPlayers > 0 or deletedAccounts > 0 then
-		local text = string.format(">> [DBCLEANUP] %d inactive player(s)%s deleted from the database.", deletedPlayers, config.deleteAccountWithNoPlayers and (" and " .. deletedAccounts .. " empty account(s)") or "")
+		local text = string.format(
+			">> [DBCLEANUP] %d inactive player(s)%s deleted from the database.",
+			deletedPlayers,
+			config.deleteAccountWithNoPlayers
+				and (" and " .. deletedAccounts .. " empty account(s)")
+				or ""
+		)
 
 		if config.printResult then
 			print("")
