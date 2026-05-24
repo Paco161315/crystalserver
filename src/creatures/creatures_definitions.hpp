@@ -1603,6 +1603,7 @@ struct CombatDamage {
 
 	CombatOrigin origin = ORIGIN_NONE;
 	bool critical = false;
+	bool isExtraAttack = false; 
 	int affected = 1;
 	bool extension = false;
 	std::string exString;

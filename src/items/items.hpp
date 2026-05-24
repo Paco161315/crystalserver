@@ -387,6 +387,10 @@ public:
 	std::string elementalBond;
 	int16_t mantra = 0;
 
+	int32_t extraAttack = 0;
+	int32_t extraAttackDelay = 500;
+	int32_t extraAttackChance = 0;
+
 	uint32_t proficiencyId = 0;
 };
 

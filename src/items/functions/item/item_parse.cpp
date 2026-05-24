@@ -91,6 +91,7 @@ void ItemParse::initParse(const std::string &stringValue, pugi::xml_node attribu
 	ItemParse::parseUnscriptedItems(stringValue, attributeNode, valueAttribute, itemType);
 	ItemParse::parseElementalBond(stringValue, valueAttribute, itemType);
 	ItemParse::parseMantra(stringValue, valueAttribute, itemType);
+	ItemParse::parseExtraAttack(stringValue, valueAttribute, itemType);
 }
 
 void ItemParse::parseDummyRate(pugi::xml_node attributeNode, ItemType &itemType) {
