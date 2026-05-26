@@ -86,18 +86,6 @@ local npcSpawns = {
 		position = Position(32411, 32486, 7),
 	},
 	{
-		name = "Kesar's Valet (Day)",
-		spawnPeriod = LIGHT_STATE_SUNRISE,
-		despawnPeriod = LIGHT_STATE_SUNSET,
-		position = Position(32365, 32476, 2),
-	},
-	{
-		name = "Kesar's Valet (Night)",
-		spawnPeriod = LIGHT_STATE_SUNSET,
-		despawnPeriod = LIGHT_STATE_SUNRISE,
-		position = Position(32372, 32472, 3),
-	},
-	{
 		name = "Kesar the Younger (Day)",
 		spawnPeriod = LIGHT_STATE_SUNRISE,
 		despawnPeriod = LIGHT_STATE_SUNSET,
