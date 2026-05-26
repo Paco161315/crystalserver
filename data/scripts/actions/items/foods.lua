@@ -115,6 +115,9 @@ local foods = {
 	[30198] = { 40, "Mmmmm!" }, -- meringue cake
 	[30202] = { 15, "Slurp." }, -- winterberry liquor
 	[31560] = { 40, "Slurp." }, -- goanna meat
+	[32043] = { 840, "Munch." }, -- bass
+	[32044] = { 600, "Munch." }, -- small bass
+	[32045] = { 300, "Munch." }, -- tiny bass
 	[32069] = { 15, "Slurp." }, -- candy floss
 	[37530] = { 10, "Slurp." }, -- bottle of champagne
 	[37531] = { 5, "Mmmm." }, -- candy floss
@@ -149,6 +152,10 @@ function food.onUse(player, item, fromPosition, target, toPosition, isHotkey)
 	end
 
 	player:feed(itemFood[1] * 12)
+	if configManager.getBoolean(configKeys.FOOD_HEALING) then
+		player:addHealth(itemFood[1] * 0.5)
+		player:addMana(itemFood[1] * 0.5)
+	end
 	player:say(itemFood[2], TALKTYPE_MONSTER_SAY)
 	player:updateSupplyTracker(item)
 	player:getPosition():sendSingleSoundEffect(SOUND_EFFECT_TYPE_ACTION_EAT, player:isInGhostMode() and nil or player)

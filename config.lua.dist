@@ -662,6 +662,10 @@ playerAlwaysLoginMounted = false
 toggleMountInProtectionZone = false
 mountSounds = false
 
+-- Food
+-- NOTE: set foodHealing to true will insta-heal health and mana points depending the type of food
+foodHealing = false
+
 -- Scripts
 warnUnsafeScripts = true
 convertUnsafeScripts = true
