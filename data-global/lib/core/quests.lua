@@ -6927,5 +6927,72 @@ if not Quests then
 				},
 			},
 		},
+		[53] = {
+			name = "The Order of the Lion",
+			startStorageId = Storage.Quest.U12_40.TheOrderOfTheLion.AccessSouthernSide,
+			startStorageValue = 1,
+			missions = {
+				[1] = {
+					name = "Mission 01: Infiltrating the Camp",
+					storageId = Storage.Quest.U12_40.TheOrderOfTheLion.QuestLine,
+					missionId = 10467,
+					startValue = 1,
+					endValue = 3,
+					states = {
+						[1] = "Evrard the Miller asked you to sneak into the usurper camp to the east and retrieve a ledger from the harbour warehouse and a map from somewhere in the camp. Be quiet and avoid being seen.",
+						[2] = "You have retrieved both the ledger and the map. Report back to Evrard the Miller.",
+						[3] = "Evrard rewarded you with access to an underground route into the city and a passphrase: YSELDA. Use it with the citizens of Bounac to earn their trust.",
+					},
+				},
+				[2] = {
+					name = "Mission 02: Gaining the Trust of Bounac Residents",
+					storageId = Storage.Quest.U12_40.TheOrderOfTheLion.BounacTrust,
+					missionId = 10468,
+					startValue = 1,
+					endValue = 5,
+					states = {
+						[1] = "You have earned the trust of 1 citizen of Bounac. Use the passphrase YSELDA with the other residents to earn their trust as well.",
+						[2] = "You have earned the trust of 2 citizens of Bounac. Keep helping the residents.",
+						[3] = "You have earned the trust of 3 citizens of Bounac. Keep helping the residents.",
+						[4] = "You have earned the trust of 4 citizens of Bounac. Almost there.",
+						[5] = "You have earned the trust of all 5 citizens of Bounac. Speak to the Bounac Guard and ask to pass.",
+					},
+				},
+				[3] = {
+					name = "Mission 03: Audience with Kesar the Younger",
+					storageId = Storage.Quest.U12_40.TheOrderOfTheLion.KesarMission,
+					missionId = 10469,
+					startValue = 1,
+					endValue = 3,
+					states = {
+						[1] = "Kesar the Younger has asked you to wait while he attends to other matters. Return to him after some time and ask him about the siege again.",
+						[2] = "You have agreed to Kesar's plan. Wait for one Tibian day and then return to his chambers during the night. Stay alert — enemies may appear.",
+						[3] = "You have defeated Fugue. Speak with Kesar the Younger during the day to report and discuss the next steps.",
+					},
+				},
+				[4] = {
+					name = "Mission 04: The Other Orders",
+					storageId = Storage.Quest.U12_40.TheOrderOfTheLion.KesarMission,
+					missionId = 10470,
+					startValue = 3,
+					endValue = 4,
+					states = {
+						[3] = "Kesar has asked you to investigate the other knightly orders before he can act. Travel to Edron and learn what you can about the Order of the Falcon, and seek out the other successor order that travelled far south into the desert.",
+						[4] = "You have reported back to Kesar about the fate of the other orders. He is now ready to face Drume. Head to the battlefield on the eastern coast of Bounac.",
+					},
+				},
+				[5] = {
+					name = "Mission 05: The Battle of Bounac",
+					storageId = Storage.Quest.U12_40.TheOrderOfTheLion.KesarMission,
+					missionId = 10471,
+					startValue = 4,
+					endValue = 5,
+					states = {
+						[4] = "Join up to 4 other adventurers at the battlefield on the eastern coast of Bounac. Defeat the Usurper Commanders, then face Drume himself.",
+						[5] = "You have defeated Drume and his forces. Report back to Kesar the Younger to receive your reward.",
+					},
+				},
+			},
+		},
 	}
 end

@@ -1,5 +1,5 @@
 local reward = {
-	[47404] = 635, -- parchment
+	[47404] = 635,  -- parchment
 	[47405] = 2822, -- map
 }
 
