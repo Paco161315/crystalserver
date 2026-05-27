@@ -435,6 +435,7 @@ bool ConfigManager::load() {
 	loadStringConfig(L, FORGE_INFLUENCED_INTERVAL_TYPE, "forgeInfluencedIntervalType", "hour");
 	loadStringConfig(L, GLOBAL_SERVER_SAVE_TIME, "globalServerSaveTime", "06:00");
 	loadStringConfig(L, LOCATION, "location", "");
+	loadStringConfig(L, LOGLEVEL, "logLevel", "info");
 	loadStringConfig(L, M_CONST, "memoryConst", "1<<16");
 	loadStringConfig(L, METRICS_PROMETHEUS_ADDRESS, "metricsPrometheusAddress", "localhost:9464");
 	loadStringConfig(L, OWNER_EMAIL, "ownerEmail", "");
@@ -446,7 +447,6 @@ bool ConfigManager::load() {
 	loadStringConfig(L, TIBIADROME_CONCOCTION_TICK_TYPE, "tibiadromeConcoctionTickType", "online");
 	loadStringConfig(L, URL, "url", "");
 	loadStringConfig(L, WORLD_TYPE, "worldType", "pvp");
-	loadStringConfig(L, LOGLEVEL, "logLevel", "info");
 
 	loadLuaOTCFeatures(L);
 
