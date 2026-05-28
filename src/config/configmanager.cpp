@@ -84,17 +84,17 @@ bool ConfigManager::load() {
 		loadStringConfig(L, MYSQL_USER, "mysqlUser", "root");
 	}
 
-	loadBoolConfig(L, ADVANCED_PARTY_PROTECTION, "advancedPartyProtection", false);
+	loadBoolConfig(L, ADVANCED_PARTY_PROTECTION, "advancedPartyProtection", true);
 	loadBoolConfig(L, AIMBOT_HOTKEY_ENABLED, "hotkeyAimbotEnabled", true);
 	loadBoolConfig(L, ALLOW_CHANGEOUTFIT, "allowChangeOutfit", true);
-	loadBoolConfig(L, ALLOW_LURE_CREATURES, "allowLureCreatures", false);
+	loadBoolConfig(L, ALLOW_LURE_CREATURES, "allowLureCreatures", true);
 	loadBoolConfig(L, ALLOW_RELOAD, "allowReload", false);
 	loadBoolConfig(L, ALWAYS_MOUNT_LOGIN, "playerAlwaysLoginMounted", false);
 	loadBoolConfig(L, AUTOBANK, "autoBank", false);
 	loadBoolConfig(L, AUTOLOOT, "autoLoot", false);
 	loadBoolConfig(L, BEDS_ONLY_PREMIUM, "bedsOnlyPremium", true);
 	loadBoolConfig(L, BOOSTED_BOSS_SLOT, "boostedBossSlot", true);
-	loadBoolConfig(L, BLOCK_RESPAWN, "blockRespawn", false);
+	loadBoolConfig(L, BLOCK_RESPAWN, "blockRespawn", true);
 	loadBoolConfig(L, CHAIN_SYSTEM_VIP_ONLY, "chainSystemVipOnly", false);
 	loadBoolConfig(L, CLASSIC_ATTACK_SPEED, "classicAttackSpeed", false);
 	loadBoolConfig(L, CLEAN_PROTECTION_ZONES, "cleanProtectionZones", false);
@@ -128,7 +128,7 @@ bool ConfigManager::load() {
 	loadBoolConfig(L, MARKET_PREMIUM, "premiumToCreateMarketOffer", true);
 	loadBoolConfig(L, METRICS_ENABLE_OSTREAM, "metricsEnableOstream", false);
 	loadBoolConfig(L, METRICS_ENABLE_PROMETHEUS, "metricsEnablePrometheus", false);
-	loadBoolConfig(L, MOUNT_SOUNDS, "mountSounds", false);
+	loadBoolConfig(L, MOUNT_SOUNDS, "mountSounds", true);
 	loadBoolConfig(L, ONLY_INVITED_CAN_MOVE_HOUSE_ITEMS, "onlyInvitedCanMoveHouseItems", true);
 	loadBoolConfig(L, ONLY_PREMIUM_ACCOUNT, "onlyPremiumAccount", false);
 	loadBoolConfig(L, PARTY_AUTO_SHARE_EXPERIENCE, "partyAutoShareExperience", true);
