@@ -1077,6 +1077,7 @@ public:
 	// Weapon Proficiency
 	EquippedWeaponProficiencyBonuses &getEquippedWeaponProficiency();
 	void sendWeaponProficiencyInfo(const uint16_t itemId) const;
+	void resetWeaponProficiencyExperience(const uint16_t itemId);
 	void resetAllWeaponProficiencyPerks(const uint16_t itemId);
 	void applyEquippedWeaponProficiency(const uint16_t itemId);
 	void removeEquippedWeaponProficiency(const uint16_t itemId);

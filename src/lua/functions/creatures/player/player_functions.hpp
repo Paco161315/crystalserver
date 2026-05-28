@@ -425,6 +425,7 @@ class PlayerFunctions {
 	static int luaPlayerApplyImbuementScrollToItem(lua_State* L);
 	static int luaPlayerOnClearAllImbuementsOnEtcher(lua_State* L);
 	static int luaPlayerSendWeaponProficiencyExperience(lua_State* L);
+	static int luaPlayerResetWeaponProficiencyExperience(lua_State* L);
 
 	static int luaPlayerGetMapShader(lua_State* L);
 	static int luaPlayerSetMapShader(lua_State* L);

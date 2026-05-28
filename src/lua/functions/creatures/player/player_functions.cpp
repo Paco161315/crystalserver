@@ -450,6 +450,7 @@ void PlayerFunctions::init(lua_State* L) {
 	Lua::registerMethod(L, "Player", "applyImbuementScrollToItem", PlayerFunctions::luaPlayerApplyImbuementScrollToItem);
 	Lua::registerMethod(L, "Player", "onClearAllImbuementsOnEtcher", PlayerFunctions::luaPlayerOnClearAllImbuementsOnEtcher);
 	Lua::registerMethod(L, "Player", "sendWeaponProficiencyExperience", PlayerFunctions::luaPlayerSendWeaponProficiencyExperience);
+	Lua::registerMethod(L, "Player", "resetWeaponProficiencyExperience", PlayerFunctions::luaPlayerResetWeaponProficiencyExperience);
 
 	// OTCR Features
 	Lua::registerMethod(L, "Player", "getMapShader", PlayerFunctions::luaPlayerGetMapShader);
@@ -5364,6 +5365,22 @@ int PlayerFunctions::luaPlayerSendWeaponProficiencyExperience(lua_State* L) {
 	const uint32_t addProficiencyExperience = Lua::getNumber<uint32_t>(L, 3, 0);
 
 	player->sendWeaponProficiencyExperience(itemId, addProficiencyExperience);
+	Lua::pushBoolean(L, true);
+	return 1;
+}
+
+int PlayerFunctions::luaPlayerResetWeaponProficiencyExperience(lua_State* L) {
+	// player:resetWeaponProficiencyExperience(itemId)
+	const auto &player = Lua::getUserdataShared<Player>(L, 1);
+	if (!player) {
+		Lua::reportErrorFunc(Lua::getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
+		Lua::pushBoolean(L, false);
+		return 1;
+	}
+
+	const uint16_t itemId = Lua::getNumber<uint16_t>(L, 2, 0);
+
+	player->resetWeaponProficiencyExperience(itemId);
 	Lua::pushBoolean(L, true);
 	return 1;
 }
