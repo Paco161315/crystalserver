@@ -116,9 +116,9 @@ bool ConfigManager::load() {
 	loadBoolConfig(L, GLOBAL_SERVER_SAVE_CLOSE, "globalServerSaveClose", false);
 	loadBoolConfig(L, GLOBAL_SERVER_SAVE_NOTIFY_MESSAGE, "globalServerSaveNotifyMessage", true);
 	loadBoolConfig(L, GLOBAL_SERVER_SAVE_SHUTDOWN, "globalServerSaveShutdown", true);
-	loadBoolConfig(L, HALF_LOSS_EXP, "halfLossExp", false);
-	loadBoolConfig(L, HALF_LOSS_SKILL, "halfLossSkill", false);
-	loadBoolConfig(L, HALF_LOSS_MAGIC, "halfLossMagicLevel", false);
+	loadBoolConfig(L, HALF_LOSS_EXP, "halfLossExp", true);
+	loadBoolConfig(L, HALF_LOSS_SKILL, "halfLossSkill", true);
+	loadBoolConfig(L, HALF_LOSS_MAGIC, "halfLossMagicLevel", true);
 	loadBoolConfig(L, HOUSE_OWNED_BY_ACCOUNT, "houseOwnedByAccount", false);
 	loadBoolConfig(L, HOUSE_PURSHASED_SHOW_PRICE, "housePurchasedShowPrice", false);
 	loadBoolConfig(L, INGAME_GUILD_MANAGEMENT, "ingameGuildManagement", true);
