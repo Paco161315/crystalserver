@@ -319,7 +319,7 @@ void SpawnMonster::checkSpawnMonster() {
 			sb.lastSpawn = OTSYS_TIME();
 			continue;
 		}
-		
+
 		if (OTSYS_TIME() < sb.lastSpawn + sb.interval) {
 			continue;
 		}
