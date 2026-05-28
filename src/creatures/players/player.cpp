@@ -12441,13 +12441,13 @@ void Player::sendWeaponProficiencyExperience(const uint16_t itemId, const uint32
 }
 
 void Player::resetWeaponProficiencyExperience(const uint16_t itemId) {
-    auto iter = weaponProficiencies.find(itemId);
-    if (iter != weaponProficiencies.end()) {
-        iter->second.experience = 0;
-    }
-    if (client) {
-        client->sendWeaponProficiencyExperience(itemId, 0);
-    }
+	auto iter = weaponProficiencies.find(itemId);
+	if (iter != weaponProficiencies.end()) {
+		iter->second.experience = 0;
+	}
+	if (client) {
+		client->sendWeaponProficiencyExperience(itemId, 0);
+	}
 }
 
 void Player::sendWeaponProficiencyInfo(const uint16_t itemId) const {
