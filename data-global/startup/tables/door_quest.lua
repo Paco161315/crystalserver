@@ -456,7 +456,7 @@ QuestDoorAction = {
 	[Storage.Quest.U8_4.BloodBrothers.BloodCrystalDoor] = {
 		itemId = false,
 		itemPos = { { x = 32776, y = 31107, z = 10 } },
-	},	
+	},
 	[Storage.Quest.U8_4.BloodBrothers.LibraryDoor] = {
 		itemId = 8259,
 		itemPos = {
@@ -482,7 +482,7 @@ QuestDoorAction = {
 		itemPos = {
 			{ x = 32953, y = 31460, z = 7 },
 		},
-	},	
+	},
 	[Storage.Quest.U8_4.BloodBrothers.Arthei_Marziel_Door] = {
 		itemId = 8259,
 		itemPos = {
