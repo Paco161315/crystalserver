@@ -75,7 +75,7 @@ function drumeAction.onUse(player, item, fromPosition, target, toPosition, isHot
 
 	for _, pi in pairs(players) do
 		if not pi:canFightBoss("Drume") then
-			player:sendCancelMessage("Someone of your team has already fought in the skirmish in the last 10h.")
+			player:sendCancelMessage("Someone of your team has already fought in the skirmish in the last twenty hours.")
 			player:getPosition():sendMagicEffect(CONST_ME_POFF)
 			return true
 		end
