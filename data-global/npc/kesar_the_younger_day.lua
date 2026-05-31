@@ -160,6 +160,7 @@ local function creatureSayCallback(npc, creature, type, message)
 				"And if we can persuade you into a longer stay perhaps, there is a small house further to the south of the island which may pique your interest. ...",
 				"Thank you for your service to Bounac, Hero.",
 			}, npc, creature)
+			player:setStorageValue(Storage.Quest.U12_40.TheOrderOfTheLion.AugustinDoor, 1)
 			if not player:hasAchievement("Lionheart") then
 				player:addAchievement("Lionheart")
 			end

@@ -2835,7 +2835,7 @@ Storage = {
 			RevenantOutfits = {},
 			TheOrderOfTheLion = {
 				Evrard = 47401,
-				AccessEastSide = 47402,
+				AccessEasternSide = 47402,
 				AccessSouthernSide = 47403,
 				Parchment = 47404,
 				MapStorage = 47405,
@@ -2851,6 +2851,7 @@ Storage = {
 				KesarMission = 47415,
 				FugueSpawnTime = 47416,
 				FugueSpawned = 47417,
+				AugustinDoor = 47418,
 			},
 			SoulWar = {
 				GoshnarMaliceKilled = 47211,
