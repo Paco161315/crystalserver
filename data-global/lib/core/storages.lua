@@ -2806,8 +2806,13 @@ Storage = {
 					KingZelosKilled = 46877,
 					InquisitionOutfitReceived = 46878,
 				},
-				Cobra = 46864,
+				CobraBastion = {
+					Access = 46864,
+				},
 			},
+			HandOfTheInquisitionOutfits = {},
+			-- Kilmaresh = {}, done earlier in the file
+		},
 			HandOfTheInquisitionOutfits = {},
 			-- Kilmaresh = {}, done earlier in the file
 		},
@@ -2829,7 +2834,7 @@ Storage = {
 		U12_40 = { -- update 12.40 - Reserved Storages 47201 - 47500
 			RevenantOutfits = {},
 			TheOrderOfTheLion = {
-				QuestLine = 47401,
+				Evrard = 47401,
 				AccessEastSide = 47402,
 				AccessSouthernSide = 47403,
 				Parchment = 47404,

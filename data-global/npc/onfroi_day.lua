@@ -65,8 +65,10 @@ local function creatureSayCallback(npc, creature, type, message)
 		player:setStorageValue(Storage.Quest.U12_40.TheOrderOfTheLion.OnfroiTask, 2)
 		player:setStorageValue(Storage.Quest.U12_40.TheOrderOfTheLion.BounacTrust, player:getStorageValue(Storage.Quest.U12_40.TheOrderOfTheLion.BounacTrust) + 1)
 		npcHandler:say("You did it, excellent! Most respectable, you did great! That took a load of my mind. And you've earned my trust!", npc, creature)
+
 	elseif MsgContains(message, "yselda") and player:getStorageValue(Storage.Quest.U12_40.TheOrderOfTheLion.AccessSouthernSide) >= 1 and player:getStorageValue(Storage.Quest.U12_40.TheOrderOfTheLion.OnfroiTask) < 1 then
 		player:setStorageValue(Storage.Quest.U12_40.TheOrderOfTheLion.OnfroiTask, 1)
+		player:setStorageValue(Storage.Quest.U12_40.TheOrderOfTheLion.OnfroiKills, 0)
 		npcHandler:say({
 			"You mean it, right? Where did you got that from, actually?. ...",
 			"Now, I have indeed a favour to ask. If you can accomplish that, you've earned my trust surely. ...",
@@ -99,27 +101,7 @@ local itemsTable = {
 		{ itemName = "vial", clientId = 2874, sell = 5 },
 	},
 	["runes"] = {
-		{ itemName = "avalanche rune", clientId = 3161, buy = 64 },
 		{ itemName = "blank rune", clientId = 3147, buy = 10 },
-		{ itemName = "chameleon rune", clientId = 3178, buy = 210 },
-		{ itemName = "convince creature rune", clientId = 3177, buy = 80 },
-		{ itemName = "cure poison rune", clientId = 3153, buy = 65 },
-		{ itemName = "destroy field rune", clientId = 3148, buy = 15 },
-		{ itemName = "energy field rune", clientId = 3164, buy = 38 },
-		{ itemName = "energy wall rune", clientId = 3166, buy = 85 },
-		{ itemName = "explosion rune", clientId = 3200, buy = 31 },
-		{ itemName = "fire bomb rune", clientId = 3192, buy = 147 },
-		{ itemName = "fire field rune", clientId = 3188, buy = 28 },
-		{ itemName = "fire wall rune", clientId = 3190, buy = 61 },
-		{ itemName = "great fireball rune", clientId = 3191, buy = 64 },
-		{ itemName = "heavy magic missile rune", clientId = 3198, buy = 12 },
-		{ itemName = "intense healing rune", clientId = 3152, buy = 95 },
-		{ itemName = "light magic missile rune", clientId = 3174, buy = 4 },
-		{ itemName = "poison field rune", clientId = 3172, buy = 21 },
-		{ itemName = "poison wall rune", clientId = 3176, buy = 52 },
-		{ itemName = "stalagmite rune", clientId = 3179, buy = 12 },
-		{ itemName = "sudden death rune", clientId = 3155, buy = 162 },
-		{ itemName = "ultimate healing rune", clientId = 3160, buy = 175 },
 	},
 	["wands"] = {
 		{ itemName = "moonlight rod", clientId = 3070, buy = 1000 },
@@ -132,8 +114,19 @@ local itemsTable = {
 		{ itemName = "wand of dragonbreath", clientId = 3075, buy = 1000 },
 		{ itemName = "wand of vortex", clientId = 3074, buy = 500 },
 	},
+	["exercise weapons"] = {
+		{ itemName = "durable exercise rod", clientId = 35283, buy = 1250000, count = 1800 },
+		{ itemName = "durable exercise wand", clientId = 35284, buy = 1250000, count = 1800 },
+		{ itemName = "exercise rod", clientId = 28556, buy = 347222, count = 500 },
+		{ itemName = "exercise wand", clientId = 28557, buy = 347222, count = 500 },
+		{ itemName = "lasting exercise rod", clientId = 35289, buy = 10000000, count = 14400 },
+		{ itemName = "lasting exercise wand", clientId = 35290, buy = 10000000, count = 14400 },
+	},
 	["others"] = {
 		{ itemName = "spellwand", clientId = 651, sell = 299 },
+	},
+	["shields"] = {
+		{ itemName = "spellbook", clientId = 3059, buy = 150 },
 	},
 }
 

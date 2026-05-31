@@ -20,6 +20,18 @@ local npcSpawns = {
 		position = Position(33504, 32222, 7),
 	},
 	{
+		name = "Evrard the Miller",
+		spawnPeriod = LIGHT_STATE_SUNRISE,
+		despawnPeriod = LIGHT_STATE_SUNSET,
+		position = Position(32422, 32464, 7),
+	},
+	{
+		name = "Evrard",
+		spawnPeriod = LIGHT_STATE_SUNSET,
+		despawnPeriod = LIGHT_STATE_SUNRISE,
+		position = Position(32404, 32493, 6),
+	},
+	{
 		name = "Wes the Blacksmith (Day)",
 		spawnPeriod = LIGHT_STATE_SUNRISE,
 		despawnPeriod = LIGHT_STATE_SUNSET,
@@ -96,6 +108,18 @@ local npcSpawns = {
 		spawnPeriod = LIGHT_STATE_SUNSET,
 		despawnPeriod = LIGHT_STATE_SUNRISE,
 		position = Position(32368, 32473, 3),
+	},
+	{
+		name = "Kesar's Valet (Day)",
+		spawnPeriod = LIGHT_STATE_SUNRISE,
+		despawnPeriod = LIGHT_STATE_SUNSET,
+		position = Position(32367, 32476, 2),
+	},
+	{
+		name = "Kesar's Valet (Night)",
+		spawnPeriod = LIGHT_STATE_SUNSET,
+		despawnPeriod = LIGHT_STATE_SUNRISE,
+		position = Position(32372, 32473, 3),
 	},
 }
 

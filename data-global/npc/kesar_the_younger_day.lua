@@ -119,7 +119,7 @@ local function creatureSayCallback(npc, creature, type, message)
 
 		if mission == 3 then
 			local hasFalcon = player:getStorageValue(Storage.Quest.U11_80.TheSecretLibrary.FalconBastion.Access) >= 1
-			local hasCobra = player:getStorageValue(Storage.U12_20.GraveDanger.CobraBastion.Access) >= 1
+			local hasCobra = player:getStorageValue(Storage.Quest.U12_20.GraveDanger.CobraBastion.Access) >= 1
 
 			if hasFalcon and hasCobra then
 				npcHandler:say({
@@ -160,8 +160,8 @@ local function creatureSayCallback(npc, creature, type, message)
 				"And if we can persuade you into a longer stay perhaps, there is a small house further to the south of the island which may pique your interest. ...",
 				"Thank you for your service to Bounac, Hero.",
 			}, npc, creature)
-			if not spectator:hasAchievement("Lionheart") then
-				spectator:addAchievement("Lionheart")
+			if not player:hasAchievement("Lionheart") then
+				player:addAchievement("Lionheart")
 			end
 			return true
 		end

@@ -1,4 +1,4 @@
-local internalNpcName = "Evrard the Miller"
+local internalNpcName = "Evrard"
 local npcType = Game.createNpcType(internalNpcName)
 local npcConfig = {}
 
@@ -20,7 +20,7 @@ npcConfig.outfit = {
 }
 
 npcConfig.respawnType = {
-	period = RESPAWNPERIOD_DAY,
+	period = RESPAWNPERIOD_NIGHT,
 	underground = false,
 }
 
