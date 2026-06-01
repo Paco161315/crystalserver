@@ -6935,7 +6935,7 @@ if not Quests then
 				[1] = {
 					name = "Mission 01: Infiltrating the Camp",
 					storageId = Storage.Quest.U12_40.TheOrderOfTheLion.Evrard,
-					missionId = 10467,
+					missionId = 10473,
 					startValue = 1,
 					endValue = 3,
 					states = {
@@ -6947,7 +6947,7 @@ if not Quests then
 				[2] = {
 					name = "Gaining the Trust of Bounac Residents",
 					storageId = Storage.Quest.U12_40.TheOrderOfTheLion.BounacTrust,
-					missionId = 10468,
+					missionId = 10474,
 					startValue = 1,
 					endValue = 5,
 					states = {
@@ -6961,7 +6961,7 @@ if not Quests then
 				[3] = {
 					name = "Mission: Tasks of Trust",
 					storageId = Storage.Quest.U12_40.TheOrderOfTheLion.WesTask,
-					missionId = 10470,
+					missionId = 10475,
 					startValue = 1,
 					endValue = 2,
 					states = {
@@ -6972,7 +6972,7 @@ if not Quests then
 				[4] = {
 					name = "Mission: The Baker's Request",
 					storageId = Storage.Quest.U12_40.TheOrderOfTheLion.JehanTask,
-					missionId = 10471,
+					missionId = 10476,
 					startValue = 1,
 					endValue = 1,
 					states = {
@@ -6982,7 +6982,7 @@ if not Quests then
 				[5] = {
 					name = "Mission: Purify the Crypt",
 					storageId = Storage.Quest.U12_40.TheOrderOfTheLion.OnfroiKills,
-					missionId = 10472,
+					missionId = 10477,
 					startValue = 0,
 					endValue = 20,
 					description = function(player)
@@ -6992,7 +6992,7 @@ if not Quests then
 				[6] = {
 					name = "Mission: The Hunt for Dal",
 					storageId = Storage.Quest.U12_40.TheOrderOfTheLion.DalKills,
-					missionId = 10473,
+					missionId = 10478,
 					startValue = 0,
 					endValue = 20,
 					description = function(player)
@@ -7002,7 +7002,7 @@ if not Quests then
 				[7] = {
 					name = "Mission: Provisions for the Butcher",
 					storageId = Storage.Quest.U12_40.TheOrderOfTheLion.FralTask,
-					missionId = 10474,
+					missionId = 10479,
 					startValue = 1,
 					endValue = 1,
 					states = {
@@ -7012,7 +7012,7 @@ if not Quests then
 				[8] = {
 					name = "Mission 02: The Siege of Bounac",
 					storageId = Storage.Quest.U12_40.TheOrderOfTheLion.KesarMission,
-					missionId = 10469,
+					missionId = 10480,
 					startValue = 1,
 					endValue = 5,
 					states = {
