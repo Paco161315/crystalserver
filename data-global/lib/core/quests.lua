@@ -6356,7 +6356,7 @@ if not Quests then
 					states = {
 						[1] = "Valindara agreed to craft a Swan Feather Cloak for you. \z
 						Collect 100 Swan Feathers from the eight spots around Feyrist near the swans \z
-						Once you have them all, return to Valindara and say 'swan cloak'.",
+						Once you have them all, return to Valindara.",
 						[2] = "You delivered 100 Swan Feathers to Valindara and received your Swan Feather Cloak.",
 					},
 				},
