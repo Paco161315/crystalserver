@@ -2812,8 +2812,6 @@ Storage = {
 				HandOfTheInquisitionOutfits = {},
 				-- Kilmaresh = {}, done earlier in the file
 			},
-			HandOfTheInquisitionOutfits = {},
-			-- Kilmaresh = {}, done earlier in the file
 		},
 		U12_30 = { -- update 12.30 - Reserved Storages 47001 - 47200
 			FalconerOutfits = {},
