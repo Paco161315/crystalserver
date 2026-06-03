@@ -2809,10 +2809,9 @@ Storage = {
 				CobraBastion = {
 					Access = 46864,
 				},
+				HandOfTheInquisitionOutfits = {},
+				-- Kilmaresh = {}, done earlier in the file
 			},
-			HandOfTheInquisitionOutfits = {},
-			-- Kilmaresh = {}, done earlier in the file
-		},
 			HandOfTheInquisitionOutfits = {},
 			-- Kilmaresh = {}, done earlier in the file
 		},
