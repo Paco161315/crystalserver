@@ -2521,7 +2521,7 @@ Storage = {
 					SwanFeatherCooldown06 = 45817,
 					SwanFeatherCooldown07 = 45818,
 					SwanFeatherCooldown08 = 45819,
-			},
+				},
 			},
 		},
 		U11_50 = { -- update 11.50 - Reserved Storages 45851 - 46000
