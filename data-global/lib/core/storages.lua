@@ -2513,8 +2513,15 @@ Storage = {
 				},
 				Mission05 = {
 					SwanFeatherCloak = 45811,
-					SwanFeatherCooldown = 45812,
-				},
+					SwanFeatherCooldown01 = 45812,
+					SwanFeatherCooldown02 = 45813,
+					SwanFeatherCooldown03 = 45814,
+					SwanFeatherCooldown04 = 45815,
+					SwanFeatherCooldown05 = 45816,
+					SwanFeatherCooldown06 = 45817,
+					SwanFeatherCooldown07 = 45818,
+					SwanFeatherCooldown08 = 45819,
+			},
 			},
 		},
 		U11_50 = { -- update 11.50 - Reserved Storages 45851 - 46000
