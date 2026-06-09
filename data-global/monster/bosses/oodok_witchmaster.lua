@@ -71,7 +71,7 @@ monster.loot = {
 	{ id = 5910, chance = 11300 }, -- green piece of cloth
 	{ name = "leather armor", chance = 10000 },
 	{ id = 3065, chance = 4800 }, -- terra rod
-	{ name = "strange symbol", chance = 4800 },	
+	{ name = "strange symbol", chance = 4800 },
 	{ id = 3115, chance = 3200 }, -- bone
 	{ name = "poison dagger", chance = 4800 },
 	{ id = 5911, chance = 1600 }, -- green piece of cloth

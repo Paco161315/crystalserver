@@ -66,7 +66,7 @@ monster.loot = {
 	{ name = "platinum coin", chance = 100000, maxCount = 2 },
 	{ name = "sniper arrow", chance = 46000, maxCount = 10 },
 	{ name = "poison arrow", chance = 31000, maxCount = 10 },
-	{ name = "small diamond", chance = 25000, maxCount = 3 },	
+	{ name = "small diamond", chance = 25000, maxCount = 3 },
 	{ name = "small ruby", chance = 25000, maxCount = 3 },
 	{ name = "arrow", chance = 11250, maxCount = 10 },
 	{ id = 3449, chance = 11250, maxCount = 8 }, -- burst arrow
