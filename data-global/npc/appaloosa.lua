@@ -131,11 +131,7 @@ spawnRaidHorses = function()
 	}
 
 	local function getRandomRaidPosition(area)
-		return Position(
-			math.random(area.from.x, area.to.x),
-			math.random(area.from.y, area.to.y),
-			area.from.z
-		)
+		return Position(math.random(area.from.x, area.to.x), math.random(area.from.y, area.to.y), area.from.z)
 	end
 
 	for _, area in ipairs(raidAreas) do
