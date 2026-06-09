@@ -116,7 +116,7 @@ local function creatureSayCallback(npc, creature, type, message)
 	end
 
 	if player:getStorageValue(Storage.Quest.U11_40.CultsOfTibia.MotA.Mission) == 10 then
-		if MsgContains(message, "artefact") then
+		if MsgContains(message, "artifact") then
 			npcHandler:say("So you found out that one artefact in the MoTA is fake? And {Gareth} sent you to me to get a new artefact as a replacement? Sorry, I hardly know you so I don't trust you. I won't help you with that!", npc, creature)
 			player:setStorageValue(Storage.Quest.U11_40.CultsOfTibia.MotA.Mission, 11)
 		end
