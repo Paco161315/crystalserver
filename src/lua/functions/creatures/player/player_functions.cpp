@@ -66,6 +66,7 @@ void PlayerFunctions::init(lua_State* L) {
 	Lua::registerMethod(L, "Player", "isPlayer", PlayerFunctions::luaPlayerIsPlayer);
 
 	Lua::registerMethod(L, "Player", "getGuid", PlayerFunctions::luaPlayerGetGuid);
+	Lua::registerMethod(L, "Player", "getSpellAimPosition", PlayerFunctions::luaPlayerGetSpellAimPosition);
 	Lua::registerMethod(L, "Player", "getIp", PlayerFunctions::luaPlayerGetIp);
 	Lua::registerMethod(L, "Player", "getAccountId", PlayerFunctions::luaPlayerGetAccountId);
 	Lua::registerMethod(L, "Player", "getLastLoginSaved", PlayerFunctions::luaPlayerGetLastLoginSaved);
@@ -319,6 +320,7 @@ void PlayerFunctions::init(lua_State* L) {
 	Lua::registerMethod(L, "Player", "getTransferableCoins", PlayerFunctions::luaPlayerGetTransferableCoins);
 	Lua::registerMethod(L, "Player", "addTransferableCoins", PlayerFunctions::luaPlayerAddTransferableCoins);
 	Lua::registerMethod(L, "Player", "removeTransferableCoins", PlayerFunctions::luaPlayerRemoveTransferableCoins);
+	Lua::registerMethod(L, "Player", "removeTransferableAndTibiaCoins", PlayerFunctions::luaPlayerRemoveTransferableAndTibiaCoins);
 
 	Lua::registerMethod(L, "Player", "sendBlessStatus", PlayerFunctions::luaPlayerSendBlessStatus);
 	Lua::registerMethod(L, "Player", "hasBlessing", PlayerFunctions::luaPlayerHasBlessing);
@@ -341,6 +343,7 @@ void PlayerFunctions::init(lua_State* L) {
 	Lua::registerMethod(L, "Player", "popupFYI", PlayerFunctions::luaPlayerPopupFYI);
 
 	Lua::registerMethod(L, "Player", "isPzLocked", PlayerFunctions::luaPlayerIsPzLocked);
+	Lua::registerMethod(L, "Player", "addInFightTicks", PlayerFunctions::luaPlayerAddInFightTicks);
 
 	Lua::registerMethod(L, "Player", "getClient", PlayerFunctions::luaPlayerGetClient);
 
@@ -483,6 +486,9 @@ void PlayerFunctions::init(lua_State* L) {
 
 	Lua::registerMethod(L, "Player", "sendBannerType", PlayerFunctions::luaPlayersendBannerType);
 	Lua::registerMethod(L, "Player", "sendQuestProgress", PlayerFunctions::luaPlayerSendQuestStatusUpdate);
+	Lua::registerMethod(L, "Player", "sendLeaderMonsterKilledBanner", PlayerFunctions::luaPlayerSendLeaderMonsterKilledBanner);
+	Lua::registerMethod(L, "Player", "addLeaderMonsterKill", PlayerFunctions::luaPlayerAddLeaderMonsterKill);
+	Lua::registerMethod(L, "Player", "hasKilledLeaderMonster", PlayerFunctions::luaPlayerHasKilledLeaderMonster);
 
 	Lua::registerMethod(L, "Player", "sendIconBakragore", PlayerFunctions::luaPlayerSendIconBakragore);
 	Lua::registerMethod(L, "Player", "removeIconBakragore", PlayerFunctions::luaPlayerRemoveIconBakragore);
@@ -501,10 +507,22 @@ void PlayerFunctions::init(lua_State* L) {
 	Lua::registerMethod(L, "Player", "setSereneCooldown", PlayerFunctions::luaPlayerSetSereneCooldown);
 	Lua::registerMethod(L, "Player", "getVirtue", PlayerFunctions::luaPlayerGetVirtue);
 	Lua::registerMethod(L, "Player", "setVirtue", PlayerFunctions::luaPlayerSetVirtue);
+	Lua::registerMethod(L, "Player", "getStance", PlayerFunctions::luaPlayerGetStance);
+	Lua::registerMethod(L, "Player", "setStance", PlayerFunctions::luaPlayerSetStance);
+	Lua::registerMethod(L, "Player", "getElementalStance", PlayerFunctions::luaPlayerGetElementalStance);
+	Lua::registerMethod(L, "Player", "setElementalStance", PlayerFunctions::luaPlayerSetElementalStance);
 
 	Lua::registerMethod(L, "Player", "applyImbuementScrollToItem", PlayerFunctions::luaPlayerApplyImbuementScrollToItem);
 	Lua::registerMethod(L, "Player", "onClearAllImbuementsOnEtcher", PlayerFunctions::luaPlayerOnClearAllImbuementsOnEtcher);
 	Lua::registerMethod(L, "Player", "sendWeaponProficiencyExperience", PlayerFunctions::luaPlayerSendWeaponProficiencyExperience);
+	Lua::registerMethod(L, "Player", "sendBossDifficultySelection", PlayerFunctions::luaPlayerSendBossDifficultySelection);
+	Lua::registerMethod(L, "Player", "sendCyclopediaDiscoveryTest", PlayerFunctions::luaPlayerSendCyclopediaDiscoveryTest);
+	Lua::registerMethod(L, "Player", "sendDiscoveryData", PlayerFunctions::luaPlayerSendDiscoveryData);
+	Lua::registerMethod(L, "Player", "sendDiscoveryCurrentArea", PlayerFunctions::luaPlayerSendDiscoveryCurrentArea);
+	Lua::registerMethod(L, "Player", "sendDiscoveryExploring", PlayerFunctions::luaPlayerSendDiscoveryExploring);
+	Lua::registerMethod(L, "Player", "sendDiscoveryDonations", PlayerFunctions::luaPlayerSendDiscoveryDonations);
+	Lua::registerMethod(L, "Player", "sendDiscoveryArea", PlayerFunctions::luaPlayerSendDiscoveryArea);
+	Lua::registerMethod(L, "Player", "checkNewTitles", PlayerFunctions::luaPlayerCheckNewTitles);
 
 	// OTCR Features
 	Lua::registerMethod(L, "Player", "getMapShader", PlayerFunctions::luaPlayerGetMapShader);
@@ -829,6 +847,17 @@ int PlayerFunctions::luaPlayerAddMinorCharmEchoes(lua_State* L) {
 int PlayerFunctions::luaPlayerIsPlayer(lua_State* L) {
 	// player:isPlayer()
 	Lua::pushBoolean(L, Lua::getUserdataShared<Player>(L, 1) != nullptr);
+	return 1;
+}
+
+int PlayerFunctions::luaPlayerGetSpellAimPosition(lua_State* L) {
+	// player:getSpellAimPosition()  -- crosshair/cursor tile from the say packet tail, or nil
+	const auto &player = Lua::getUserdataShared<Player>(L, 1);
+	if (player && player->hasSpellAimPosition()) {
+		Lua::pushPosition(L, player->getSpellAimPosition());
+	} else {
+		lua_pushnil(L);
+	}
 	return 1;
 }
 
@@ -1439,6 +1468,167 @@ int PlayerFunctions::luaPlayerSetKills(lua_State* L) {
 
 	player->unjustifiedKills = std::move(newKills);
 	player->sendUnjustifiedPoints();
+	Lua::pushBoolean(L, true);
+	return 1;
+}
+
+int PlayerFunctions::luaPlayerSendCreatureSquare(lua_State* L) {
+	// player:sendCreatureSquare(creature, markType[, weaponType = 255])
+	const auto &player = Lua::getUserdataShared<Player>(L, 1);
+	if (!player) {
+		Lua::pushBoolean(L, false);
+		return 1;
+	}
+
+	const auto &creature = Lua::getUserdataShared<Creature>(L, 2);
+	if (!creature) {
+		Lua::pushBoolean(L, false);
+		return 1;
+	}
+
+	const auto markType = Lua::getNumber<uint8_t>(L, 3, 0);
+	const auto weaponType = Lua::getNumber<uint8_t>(L, 4, 255);
+	player->sendCreatureSquare(creature, static_cast<SquareColor_t>(markType), static_cast<SquareColor_t>(weaponType));
+	Lua::pushBoolean(L, true);
+	return 1;
+}
+
+int PlayerFunctions::luaPlayerSendDiscoveryData(lua_State* L) {
+	// player:sendDiscoveryData(mainAreas, discoveredSubIds, discoverableSubIds)
+	const auto &player = Lua::getUserdataShared<Player>(L, 1);
+	if (!player) {
+		Lua::pushBoolean(L, false);
+		return 1;
+	}
+
+	std::vector<std::tuple<uint16_t, uint8_t, uint8_t>> mainAreas;
+	luaL_checktype(L, 2, LUA_TTABLE);
+	lua_pushnil(L);
+	while (lua_next(L, 2) != 0) {
+		luaL_checktype(L, -1, LUA_TTABLE);
+		lua_rawgeti(L, -1, 1); // areaId
+		lua_rawgeti(L, -2, 2); // status
+		lua_rawgeti(L, -3, 3); // progress
+		mainAreas.emplace_back(static_cast<uint16_t>(luaL_checknumber(L, -3)), static_cast<uint8_t>(luaL_checknumber(L, -2)), static_cast<uint8_t>(luaL_checknumber(L, -1)));
+		lua_pop(L, 4);
+	}
+
+	const auto readIdList = [L](int idx, std::vector<uint16_t> &out) {
+		luaL_checktype(L, idx, LUA_TTABLE);
+		lua_pushnil(L);
+		while (lua_next(L, idx) != 0) {
+			out.push_back(static_cast<uint16_t>(luaL_checknumber(L, -1)));
+			lua_pop(L, 1);
+		}
+	};
+	std::vector<uint16_t> discovered;
+	std::vector<uint16_t> discoverable;
+	readIdList(3, discovered);
+	readIdList(4, discoverable);
+
+	player->sendCyclopediaMapDiscoveryData(mainAreas, discovered, discoverable);
+	Lua::pushBoolean(L, true);
+	return 1;
+}
+
+int PlayerFunctions::luaPlayerSendDiscoveryCurrentArea(lua_State* L) {
+	// player:sendDiscoveryCurrentArea(subAreaId)
+	const auto &player = Lua::getUserdataShared<Player>(L, 1);
+	if (!player) {
+		Lua::pushBoolean(L, false);
+		return 1;
+	}
+
+	player->sendCyclopediaMapSetCurrentArea(Lua::getNumber<uint16_t>(L, 2, 0));
+	Lua::pushBoolean(L, true);
+	return 1;
+}
+
+int PlayerFunctions::luaPlayerSendDiscoveryExploring(lua_State* L) {
+	// player:sendDiscoveryExploring(subAreaId) - 0xDD sub 11, currentExploringSubAreaID (0 = none)
+	const auto &player = Lua::getUserdataShared<Player>(L, 1);
+	if (!player) {
+		Lua::pushBoolean(L, false);
+		return 1;
+	}
+
+	player->sendCyclopediaMapSetExploringArea(Lua::getNumber<uint16_t>(L, 2, 0));
+	Lua::pushBoolean(L, true);
+	return 1;
+}
+
+int PlayerFunctions::luaPlayerSendDiscoveryDonations(lua_State* L) {
+	// player:sendDiscoveryDonations(goal, areas) ; areas = { {areaId, improvedRespawnActive, donated}, ... }
+	const auto &player = Lua::getUserdataShared<Player>(L, 1);
+	if (!player) {
+		Lua::pushBoolean(L, false);
+		return 1;
+	}
+
+	const auto goal = Lua::getNumber<uint64_t>(L, 2, 0);
+	std::vector<std::tuple<uint16_t, bool, uint64_t>> areas;
+	luaL_checktype(L, 3, LUA_TTABLE);
+	lua_pushnil(L);
+	while (lua_next(L, 3) != 0) {
+		luaL_checktype(L, -1, LUA_TTABLE);
+		lua_rawgeti(L, -1, 1); // areaId
+		lua_rawgeti(L, -2, 2); // improvedRespawnActive
+		lua_rawgeti(L, -3, 3); // donated
+		areas.emplace_back(
+			static_cast<uint16_t>(luaL_checknumber(L, -3)),
+			lua_toboolean(L, -2) != 0,
+			static_cast<uint64_t>(luaL_checknumber(L, -1))
+		);
+		lua_pop(L, 4);
+	}
+
+	player->sendCyclopediaMapDonations(goal, areas);
+	Lua::pushBoolean(L, true);
+	return 1;
+}
+
+int PlayerFunctions::luaPlayerSendDiscoveryArea(lua_State* L) {
+	// player:sendDiscoveryArea(subAreaId, active, poiTarget, points) ; points = { {x, y, z, state}, ... }
+	const auto &player = Lua::getUserdataShared<Player>(L, 1);
+	if (!player) {
+		Lua::pushBoolean(L, false);
+		return 1;
+	}
+
+	const auto subAreaId = Lua::getNumber<uint16_t>(L, 2, 0);
+	const bool active = lua_isboolean(L, 3) != 0 ? Lua::getBoolean(L, 3) : true;
+	const auto poiTarget = Lua::getNumber<uint8_t>(L, 4, 7);
+
+	std::vector<std::pair<Position, uint8_t>> points;
+	luaL_checktype(L, 5, LUA_TTABLE);
+	lua_pushnil(L);
+	while (lua_next(L, 5) != 0) {
+		luaL_checktype(L, -1, LUA_TTABLE);
+		lua_rawgeti(L, -1, 1); // x
+		lua_rawgeti(L, -2, 2); // y
+		lua_rawgeti(L, -3, 3); // z
+		lua_rawgeti(L, -4, 4); // state
+		points.emplace_back(
+			Position(static_cast<uint16_t>(luaL_checknumber(L, -4)), static_cast<uint16_t>(luaL_checknumber(L, -3)), static_cast<uint8_t>(luaL_checknumber(L, -2))),
+			static_cast<uint8_t>(luaL_checknumber(L, -1))
+		);
+		lua_pop(L, 5);
+	}
+
+	player->sendCyclopediaMapSetDiscoveryArea(subAreaId, active, poiTarget, points);
+	Lua::pushBoolean(L, true);
+	return 1;
+}
+
+int PlayerFunctions::luaPlayerCheckNewTitles(lua_State* L) {
+	// player:checkNewTitles() - re-run the cyclopedia title unlock checks (e.g. after a discovery milestone)
+	const auto &player = Lua::getUserdataShared<Player>(L, 1);
+	if (!player) {
+		Lua::pushBoolean(L, false);
+		return 1;
+	}
+
+	player->title()->checkAndUpdateNewTitles();
 	Lua::pushBoolean(L, true);
 	return 1;
 }
@@ -2341,7 +2531,7 @@ int PlayerFunctions::luaPlayerSetGuild(lua_State* L) {
 int PlayerFunctions::luaPlayerGetGuildLevel(lua_State* L) {
 	// player:getGuildLevel()
 	const auto &player = Lua::getUserdataShared<Player>(L, 1);
-	if (player && player->getGuild()) {
+	if (player && player->getGuild() && player->getGuildRank()) {
 		lua_pushnumber(L, player->getGuildRank()->level);
 	} else {
 		lua_pushnil(L);
@@ -3512,6 +3702,38 @@ int PlayerFunctions::luaPlayerRemoveTransferableCoins(lua_State* L) {
 	return 1;
 }
 
+int PlayerFunctions::luaPlayerRemoveTransferableAndTibiaCoins(lua_State* L) {
+	// player:removeTransferableAndTibiaCoins(coins)
+	const auto &player = Lua::getUserdataShared<Player>(L, 1);
+	if (!player || !player->getAccount()) {
+		Lua::reportErrorFunc(Lua::getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
+		lua_pushnil(L);
+		return 1;
+	}
+
+	if (player->account->removeCoins(
+			enumToValue(CoinType::Transferable),
+			enumToValue(CoinType::Normal),
+			Lua::getNumber<uint32_t>(L, 2),
+			"REMOVE Coins"
+		)
+	    != enumToValue(AccountErrors_t::Ok)) {
+		Lua::reportErrorFunc("failed to remove transferable and regular coins");
+		lua_pushnil(L);
+		return 1;
+	}
+
+	if (player->getAccount()->save() != enumToValue(AccountErrors_t::Ok)) {
+		Lua::reportErrorFunc("failed to save account");
+		lua_pushnil(L);
+		return 1;
+	}
+
+	Lua::pushBoolean(L, true);
+
+	return 1;
+}
+
 int PlayerFunctions::luaPlayerSendBlessStatus(lua_State* L) {
 	// player:sendBlessStatus()
 	const auto &player = Lua::getUserdataShared<Player>(L, 1);
@@ -3627,11 +3849,20 @@ int PlayerFunctions::luaPlayerCanLearnSpell(lua_State* L) {
 }
 
 int PlayerFunctions::luaPlayerLearnSpell(lua_State* L) {
-	// player:learnSpell(spellName)
+	// player:learnSpell(spellName[, showBanner = true])
 	const auto &player = Lua::getUserdataShared<Player>(L, 1);
 	if (player) {
 		const std::string &spellName = Lua::getString(L, 2);
+		const bool showBanner = Lua::getBoolean(L, 3, true);
+		const bool alreadyLearned = player->hasLearnedInstantSpell(spellName);
 		player->learnInstantSpell(spellName);
+		// Show the "New Spell Unlocked" banner only when the spell is genuinely new.
+		if (showBanner && !alreadyLearned) {
+			const auto &spell = g_spells().getInstantSpellByName(spellName);
+			if (spell && spell->getSpellId() > 0) {
+				player->sendScreenshotAndBannerUnlockedSpell(spell->getSpellId());
+			}
+		}
 		Lua::pushBoolean(L, true);
 	} else {
 		lua_pushnil(L);
@@ -3750,6 +3981,18 @@ int PlayerFunctions::luaPlayerIsPzLocked(lua_State* L) {
 	const auto &player = Lua::getUserdataShared<Player>(L, 1);
 	if (player) {
 		Lua::pushBoolean(L, player->isPzLocked());
+	} else {
+		lua_pushnil(L);
+	}
+	return 1;
+}
+
+int PlayerFunctions::luaPlayerAddInFightTicks(lua_State* L) {
+	// player:addInFightTicks([pzlock = false])
+	const auto &player = Lua::getUserdataShared<Player>(L, 1);
+	if (player) {
+		player->addInFightTicks(Lua::getBoolean(L, 2, false));
+		Lua::pushBoolean(L, true);
 	} else {
 		lua_pushnil(L);
 	}
@@ -5394,6 +5637,51 @@ int PlayerFunctions::luaPlayerSendQuestStatusUpdate(lua_State* L) {
 	return 0;
 }
 
+int PlayerFunctions::luaPlayerSendLeaderMonsterKilledBanner(lua_State* L) {
+	// player:sendLeaderMonsterKilledBanner(raceId, charmPoints) -> "Echo Warden Killed" banner (shows the creature)
+	const auto &player = Lua::getUserdataShared<Player>(L, 1);
+	if (!player) {
+		lua_pushnil(L);
+		return 1;
+	}
+
+	player->sendScreenshotAndBannerLeaderMonsterKilled(Lua::getNumber<uint16_t>(L, 2), Lua::getNumber<uint32_t>(L, 3));
+	Lua::pushBoolean(L, true);
+	return 1;
+}
+
+int PlayerFunctions::luaPlayerAddLeaderMonsterKill(lua_State* L) {
+	// player:addLeaderMonsterKill(monsterName) -> true on the FIRST Echo Warden of this creature type
+	// Awards the retail Charm Points, fires the "Echo Warden Killed" banner, flags the cyclopedia
+	// badge and refreshes the charm balance. Returns false if this type was already credited.
+	const auto &player = Lua::getUserdataShared<Player>(L, 1);
+	if (!player) {
+		Lua::reportErrorFunc(Lua::getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
+		return 1;
+	}
+
+	const auto &monsterType = g_monsters().getMonsterType(Lua::getString(L, 2), true);
+	if (!monsterType) {
+		Lua::pushBoolean(L, false);
+		return 1;
+	}
+
+	Lua::pushBoolean(L, g_iobestiary().addLeaderMonsterKill(player, monsterType));
+	return 1;
+}
+
+int PlayerFunctions::luaPlayerHasKilledLeaderMonster(lua_State* L) {
+	// player:hasKilledLeaderMonster(monsterName)
+	const auto &player = Lua::getUserdataShared<Player>(L, 1);
+	if (!player) {
+		Lua::reportErrorFunc(Lua::getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
+		return 1;
+	}
+
+	Lua::pushBoolean(L, g_iobestiary().hasKilledLeaderMonster(player, Lua::getString(L, 2)));
+	return 1;
+}
+
 int PlayerFunctions::luaPlayerSendIconBakragore(lua_State* L) {
 	// player:sendIconBakragore()
 	const auto &player = Lua::getUserdataShared<Player>(L, 1);
@@ -5606,6 +5894,60 @@ int PlayerFunctions::luaPlayerSetVirtue(lua_State* L) {
 	return 1;
 }
 
+int PlayerFunctions::luaPlayerGetStance(lua_State* L) {
+	// player:getStance()
+	const auto &player = Lua::getUserdataShared<Player>(L, 1);
+	if (!player) {
+		Lua::reportErrorFunc(Lua::getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
+		lua_pushnil(L);
+		return 1;
+	}
+	lua_pushnumber(L, static_cast<uint8_t>(player->getStance()));
+	return 1;
+}
+
+int PlayerFunctions::luaPlayerSetStance(lua_State* L) {
+	// player:setStance(stanceType)
+	const auto &player = Lua::getUserdataShared<Player>(L, 1);
+	if (!player) {
+		Lua::reportErrorFunc(Lua::getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
+		lua_pushnil(L);
+		return 1;
+	}
+	const auto stance = static_cast<Stance_t>(Lua::getNumber<uint8_t>(L, 2, 0));
+	const bool result = player->setStance(stance);
+	player->persistStances(); // Vocation Adjustment: persist active stances across sessions
+	lua_pushboolean(L, result);
+	return 1;
+}
+
+int PlayerFunctions::luaPlayerGetElementalStance(lua_State* L) {
+	// player:getElementalStance()
+	const auto &player = Lua::getUserdataShared<Player>(L, 1);
+	if (!player) {
+		Lua::reportErrorFunc(Lua::getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
+		lua_pushnil(L);
+		return 1;
+	}
+	lua_pushnumber(L, static_cast<uint8_t>(player->getElementalStance()));
+	return 1;
+}
+
+int PlayerFunctions::luaPlayerSetElementalStance(lua_State* L) {
+	// player:setElementalStance(stanceType)
+	const auto &player = Lua::getUserdataShared<Player>(L, 1);
+	if (!player) {
+		Lua::reportErrorFunc(Lua::getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
+		lua_pushnil(L);
+		return 1;
+	}
+	const auto stance = static_cast<Stance_t>(Lua::getNumber<uint8_t>(L, 2, 0));
+	const bool result = player->setElementalStance(stance);
+	player->persistStances(); // Vocation Adjustment: persist active stances across sessions
+	lua_pushboolean(L, result);
+	return 1;
+}
+
 int PlayerFunctions::luaPlayerApplyImbuementScrollToItem(lua_State* L) {
 	// player:applyImbuementScrollToItem(scrollId, item)
 	const auto &player = Lua::getUserdataShared<Player>(L, 1);
@@ -5666,6 +6008,79 @@ int PlayerFunctions::luaPlayerSendWeaponProficiencyExperience(lua_State* L) {
 	const uint32_t addProficiencyExperience = Lua::getNumber<uint32_t>(L, 3, 0);
 
 	player->sendWeaponProficiencyExperience(itemId, addProficiencyExperience);
+	Lua::pushBoolean(L, true);
+	return 1;
+}
+
+int PlayerFunctions::luaPlayerSendBossDifficultySelection(lua_State* L) {
+	// player:sendBossDifficultySelection(selectedDifficulty, numbers{}, banners{}, redMods{}, greenMods{})
+	const auto &player = Lua::getUserdataShared<Player>(L, 1);
+	if (!player) {
+		Lua::reportErrorFunc(Lua::getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
+		Lua::pushBoolean(L, false);
+		return 1;
+	}
+
+	const uint8_t selectedDifficulty = Lua::getNumber<uint8_t>(L, 2, 0);
+
+	auto readNumbers = [L](int idx, std::vector<uint32_t> &out) {
+		if (!lua_istable(L, idx)) {
+			return;
+		}
+		for (int i = 1;; ++i) {
+			lua_rawgeti(L, idx, i);
+			if (lua_isnil(L, -1)) {
+				lua_pop(L, 1);
+				break;
+			}
+			out.push_back(Lua::getNumber<uint32_t>(L, -1, 0));
+			lua_pop(L, 1);
+		}
+	};
+	auto readStrings = [L](int idx, std::vector<std::string> &out) {
+		if (!lua_istable(L, idx)) {
+			return;
+		}
+		for (int i = 1;; ++i) {
+			lua_rawgeti(L, idx, i);
+			if (lua_isnil(L, -1)) {
+				lua_pop(L, 1);
+				break;
+			}
+			out.push_back(Lua::getString(L, -1, ""));
+			lua_pop(L, 1);
+		}
+	};
+
+	std::vector<uint32_t> numbers;
+	std::vector<std::string> banners;
+	std::vector<std::string> redMods;
+	std::vector<std::string> greenMods;
+	readNumbers(3, numbers);
+	readStrings(4, banners);
+	readStrings(5, redMods);
+	readStrings(6, greenMods);
+
+	player->sendBossDifficultySelection(selectedDifficulty, numbers, banners, redMods, greenMods);
+	Lua::pushBoolean(L, true);
+	return 1;
+}
+
+int PlayerFunctions::luaPlayerSendCyclopediaDiscoveryTest(lua_State* L) {
+	// player:sendCyclopediaDiscoveryTest(mainAreaId, subAreaId, x, y, z) — Cyclopedia Map discovery test (S2C 0xDD).
+	const auto &player = Lua::getUserdataShared<Player>(L, 1);
+	if (!player) {
+		Lua::reportErrorFunc(Lua::getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
+		Lua::pushBoolean(L, false);
+		return 1;
+	}
+
+	const uint16_t mainAreaId = Lua::getNumber<uint16_t>(L, 2, 24);
+	const uint16_t subAreaId = Lua::getNumber<uint16_t>(L, 3, 28);
+	const uint16_t x = Lua::getNumber<uint16_t>(L, 4, 32369);
+	const uint16_t y = Lua::getNumber<uint16_t>(L, 5, 32214);
+	const uint8_t z = Lua::getNumber<uint8_t>(L, 6, 7);
+	player->sendCyclopediaDiscoveryTest(mainAreaId, subAreaId, Position(x, y, z));
 	Lua::pushBoolean(L, true);
 	return 1;
 }

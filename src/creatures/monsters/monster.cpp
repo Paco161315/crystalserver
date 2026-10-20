@@ -110,7 +110,7 @@ void Monster::setName(const std::string &name) {
 	auto spectators = Spectators().find<Player>(position, true);
 	for (const auto &spectator : spectators) {
 		if (const auto &tmpPlayer = spectator->getPlayer()) {
-			tmpPlayer->sendUpdateTileCreature(static_self_cast<Monster>());
+			tmpPlayer->sendCreatureReload(static_self_cast<Monster>());
 		}
 	}
 }
@@ -380,7 +380,12 @@ void Monster::onRemoveCreature(const std::shared_ptr<Creature> &creature, bool i
 
 	if (creature.get() == this) {
 		if (spawnMonster) {
-			spawnMonster->startSpawnMonsterCheck();
+			// remove OUR block explicitly (matched by pointer): the isRemoved() flag is
+			// not set yet inside this callback, so cleanup() alone would skip this corpse
+			// until the next timer tick (AoE double-kills lost up to a full interval)
+			const auto spawn = spawnMonster;
+			spawn->removeMonster(static_self_cast<Monster>());
+			spawn->startSpawnMonsterCheck();
 		}
 
 		setIdle(true);
@@ -918,11 +923,13 @@ RaceType_t Monster::getRace() const {
 }
 
 float Monster::getMitigation() const {
-	float mitigation = mType->info.mitigation * getDefenseMultiplier();
+	// Vocation Adjustment: monster mitigation increased ~50% (x1.5) with a higher ceiling (30 -> 45)
+	// to compensate for the player mitigation rework.
+	float mitigation = mType->info.mitigation * getDefenseMultiplier() * 1.5f;
 	if (g_configManager().getBoolean(DISABLE_MONSTER_ARMOR)) {
 		mitigation += std::ceil(static_cast<float>(getDefense() + getArmor()) / 100.f) * getDefenseMultiplier() * 2.f;
 	}
-	return std::min<float>(mitigation, 30.f);
+	return std::min<float>(mitigation, 45.f);
 }
 
 int32_t Monster::getArmor() const {
@@ -1126,6 +1133,7 @@ void Monster::onThink(uint32_t interval) {
 
 	if (!mType->canSpawn(position)) {
 		g_game().removeCreature(static_self_cast<Monster>());
+		return;
 	}
 
 	if (!isInSpawnRange(position)) {
@@ -2556,7 +2564,7 @@ void Monster::dropLoot(const std::shared_ptr<Container> &corpse, const std::shar
 			}
 		}
 
-		if (!this->isRewardBoss() && g_configManager().getNumber(RATE_LOOT) > 0) {
+		if (!this->isRewardBoss() && g_configManager().getFloat(RATE_LOOT) > 0) {
 			g_callbacks().executeCallback(EventCallback_t::monsterOnDropLoot, &EventCallback::monsterOnDropLoot, getMonster(), corpse);
 			g_callbacks().executeCallback(EventCallback_t::monsterPostDropLoot, &EventCallback::monsterPostDropLoot, getMonster(), corpse);
 		}
@@ -2599,11 +2607,8 @@ bool Monster::challengeCreature(const std::shared_ptr<Creature> &creature, int t
 	if (result) {
 		challengeFocusDuration = targetChangeCooldown;
 		targetChangeTicks = 0;
-		// Wheel of destiny
-		const auto &player = creature ? creature->getPlayer() : nullptr;
-		if (player && !player->isRemoved()) {
-			player->wheel()->healIfBattleHealingActive();
-		}
+		// Vocation Adjustment: Battle Healing no longer heals on challenge (reworked into a healing
+		// multiplier in Game::applyWheelOfDestinyHealing).
 	}
 	return result;
 }
@@ -2669,7 +2674,37 @@ float Monster::getAttackMultiplier() const {
 	if (auto stacks = getForgeStack(); stacks > 0) {
 		multiplier *= (1.35 + (stacks - 1) * 0.1);
 	}
+	if (echoWarden) {
+		multiplier *= echoAtkMult;
+	}
 	return multiplier;
+}
+
+bool Monster::applyEchoWarden(float hpMult, float atkMult) {
+	if (echoWarden) {
+		return false;
+	}
+	if (!mType) {
+		return false;
+	}
+	// Same protections as the forge/soulpit guards: never on summon/boss/fiendish/soulpit.
+	// (C: also excluded `dark`, but this fork has no dark-monster layer.)
+	if (isSummon() || mType->isBoss() || forgeStack > 0 || soulPit) {
+		return false;
+	}
+
+	echoWarden = true;
+	echoAtkMult = atkMult;
+
+	healthMax = static_cast<int32_t>(std::ceil(static_cast<float>(healthMax) * hpMult));
+	health = healthMax;
+	runAwayHealth = static_cast<int32_t>(std::ceil(static_cast<float>(runAwayHealth) * hpMult));
+
+	// Intense glow, distinct "warden" key (NOT "forge"); NO rename, classification stays NORMAL.
+	setIcon("warden", CreatureIcon(CreatureIconModifications_t::Fiendish, 0));
+	g_game().updateCreatureIcon(static_self_cast<Monster>());
+	g_game().sendUpdateCreature(static_self_cast<Monster>());
+	return true;
 }
 
 float Monster::getDefenseMultiplier() const {

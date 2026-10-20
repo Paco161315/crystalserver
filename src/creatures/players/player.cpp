@@ -656,9 +656,15 @@ int32_t Player::getDefense(bool sendToClient /* = false*/) const {
 	}
 
 	if (shield) {
+		// Vocation Adjustment: combat-mode removal compensation. getShieldAndWeapon() classifies
+		// both real shields and spellbooks as WEAPON_SHIELD; split via isSpellBook():
+		// spellbook defense +60%, real shield defense +30%.
+		const int32_t baseShieldDefense = shield->isSpellBook()
+			? (shield->getDefense() * 160) / 100
+			: (shield->getDefense() * 130) / 100;
 		defenseValue = (weapon != nullptr)
-			? shield->getDefense() + (weapon->getExtraDefense() + equippedWeaponProficiency.weaponShieldMod)
-			: shield->getDefense();
+			? baseShieldDefense + (weapon->getExtraDefense() + equippedWeaponProficiency.weaponShieldMod)
+			: baseShieldDefense;
 		// Wheel of destiny - Combat Mastery
 		if (shield->getDefense() > 0) {
 			defenseValue += wheel()->getMajorStatConditional("Combat Mastery", WheelMajor_t::DEFENSE);
@@ -692,7 +698,11 @@ uint16_t Player::getDefenseEquipment() const {
 	}
 
 	if (shield) {
-		defenseValue = weapon != nullptr ? (shield->getDefense() + equippedWeaponProficiency.defense) + (weapon->getExtraDefense() + equippedWeaponProficiency.weaponShieldMod) : shield->getDefense();
+		// Vocation Adjustment: keep displayed defense in sync with getDefense() (+30% shield / +60% spellbook).
+		const int32_t baseShieldDefense = shield->isSpellBook()
+			? (shield->getDefense() * 160) / 100
+			: (shield->getDefense() * 130) / 100;
+		defenseValue = weapon != nullptr ? (baseShieldDefense + equippedWeaponProficiency.defense) + (weapon->getExtraDefense() + equippedWeaponProficiency.weaponShieldMod) : baseShieldDefense;
 		if (shield->getDefense() > 0) {
 			defenseValue += wheel()->getMajorStatConditional("Combat Mastery", WheelMajor_t::DEFENSE);
 		}
@@ -702,16 +712,11 @@ uint16_t Player::getDefenseEquipment() const {
 }
 
 float Player::getAttackFactor() const {
-	switch (fightMode) {
-		case FIGHTMODE_ATTACK:
-			return 1.0f;
-		case FIGHTMODE_BALANCED:
-			return 0.75f;
-		case FIGHTMODE_DEFENSE:
-			return 0.5f;
-		default:
-			return 1.0f;
-	}
+	// Vocation Adjustment: combat-mode removal compensation. Fight modes are gone
+	// (parseFightModes hardcodes FIGHTMODE_ATTACK), so apply a flat +20% here -- this
+	// factor multiplies into every weapon getWeaponDamage (melee, distance, ammo, fist).
+	// Wands ignore attackFactor and spells use magic level, so neither is affected.
+	return 1.2f;
 }
 
 float Player::getDefenseFactor(bool sendToClient /* = false*/) const {
@@ -781,6 +786,12 @@ std::unordered_set<PlayerIcon> Player::getClientIcons() {
 				return icons;
 			}
 		}
+	}
+
+	// Vocation Adjustment: show the "Monk's Virtue bonus" special-condition icon while this player carries
+	// an active monk virtue aura (a member near a serene monk, or the serene monk itself).
+	if (getMonkAuraVocMask() != 0 && icons.size() < 9) {
+		icons.insert(PlayerIcon::MonksVirtueBonus);
 	}
 
 	if (pzLocked && icons.size() < 9) {
@@ -1410,7 +1421,7 @@ bool Player::canWalkthrough(const std::shared_ptr<Creature> &creature) {
 
 	if (player) {
 		const auto &playerTile = player->getTile();
-		if (!playerTile || (!playerTile->hasFlag(TILESTATE_NOPVPZONE) && !playerTile->hasFlag(TILESTATE_PROTECTIONZONE) && player->getLevel() > static_cast<uint32_t>(g_configManager().getNumber(PROTECTION_LEVEL)) && g_game().getWorldType() != WORLDTYPE_OPTIONAL)) {
+		if (!playerTile || (!playerTile->hasFlag(TILESTATE_NOPVPZONE) && !playerTile->hasFlag(TILESTATE_PROTECTIONZONE) && player->getLevel() > static_cast<uint32_t>(g_configManager().getNumber(PROTECTION_LEVEL)) && g_game().worlds().getCurrentWorld()->type != WORLDTYPE_OPTIONAL)) {
 			return false;
 		}
 
@@ -1458,7 +1469,7 @@ bool Player::canWalkthroughEx(const std::shared_ptr<Creature> &creature) const {
 	const auto &npc = creature->getNpc();
 	if (player) {
 		const auto &playerTile = player->getTile();
-		return playerTile && (playerTile->hasFlag(TILESTATE_NOPVPZONE) || playerTile->hasFlag(TILESTATE_PROTECTIONZONE) || player->getLevel() <= static_cast<uint32_t>(g_configManager().getNumber(PROTECTION_LEVEL)) || g_game().getWorldType() == WORLDTYPE_OPTIONAL);
+		return playerTile && (playerTile->hasFlag(TILESTATE_NOPVPZONE) || playerTile->hasFlag(TILESTATE_PROTECTIONZONE) || player->getLevel() <= static_cast<uint32_t>(g_configManager().getNumber(PROTECTION_LEVEL)) || g_game().worlds().getCurrentWorld()->type == WORLDTYPE_OPTIONAL);
 	} else if (npc) {
 		const auto &tile = npc->getTile();
 		const auto &houseTile = std::dynamic_pointer_cast<HouseTile>(tile);
@@ -1788,6 +1799,12 @@ uint32_t Player::getMinorCharmEchoes() const {
 
 void Player::setMinorCharmEchoes(uint32_t points) {
 	minorCharmEchoes = points;
+}
+
+void Player::sendCharmResourcesBalance() const {
+	if (client) {
+		client->sendCharmResourcesBalance(getCharmPoints(), getMinorCharmEchoes(), getMaxCharmPoints(), getMaxMinorCharmEchoes());
+	}
 }
 
 uint32_t Player::getMaxCharmPoints() const {
@@ -2197,10 +2214,10 @@ void Player::sendIcons() {
 	client->sendIcons(iconSet, iconBakragore);
 }
 
-void Player::sendIconBakragore(IconBakragore icon) const {
-	if (client) {
-		client->sendIconBakragore(icon);
-	}
+void Player::sendIconBakragore(IconBakragore icon) {
+	// sendIcons() reads both normal conditions and Bakragore
+	// condition to send the correct combined 0xA2 packet.
+	sendIcons();
 }
 
 void Player::removeBakragoreIcons() {
@@ -2212,8 +2229,9 @@ void Player::removeBakragoreIcons() {
 }
 
 void Player::removeBakragoreIcon(const IconBakragore icon) {
-	if (hasCondition(CONDITION_BAKRAGORE, enumToValue(icon))) {
-		removeCondition(CONDITION_BAKRAGORE, CONDITIONID_DEFAULT, true);
+	const auto &condition = getCondition(CONDITION_BAKRAGORE, CONDITIONID_DEFAULT, enumToValue(icon));
+	if (condition) {
+		removeCondition(condition);
 	}
 }
 
@@ -2912,7 +2930,7 @@ void Player::onAttackedCreatureChangeZone(ZoneType_t zone) {
 				onAttackedCreatureDisappear(false);
 			}
 		}
-	} else if (zone == ZONE_NORMAL && g_game().getWorldType() == WORLDTYPE_OPTIONAL) {
+	} else if (zone == ZONE_NORMAL && g_game().worlds().getCurrentWorld()->type == WORLDTYPE_OPTIONAL) {
 		// attackedCreature can leave a pvp zone if not pzlocked
 		if (attackedCreature->getPlayer()) {
 			setAttackedCreature(nullptr);
@@ -3542,6 +3560,7 @@ void Player::addManaSpent(uint64_t amount) {
 
 		g_creatureEvents().playerAdvance(static_self_cast<Player>(), SKILL_MAGLEVEL, magLevel - 1, magLevel);
 		sendScreenshotAndBannerUpSkill(SKILL_MAGLEVEL, magLevel);
+		checkSpellUnlocksOnAdvance(level, level, magLevel - 1, magLevel);
 
 		sendUpdateStats = true;
 		currReqMana = nextReqMana;
@@ -3588,7 +3607,7 @@ void Player::addExperience(const std::shared_ptr<Creature> &target, uint64_t exp
 		return;
 	}
 
-	const auto rate = exp / rawExp;
+	const auto rate = rawExp != 0 ? exp / rawExp : 1;
 	const std::map<std::string, std::string> attrs({ { "player", getName() }, { "level", std::to_string(getLevel()) }, { "rate", std::to_string(rate) } });
 	if (sendText) {
 		g_metrics().addCounter("player_experience_raw", rawExp, attrs);
@@ -3685,6 +3704,7 @@ void Player::addExperience(const std::shared_ptr<Creature> &target, uint64_t exp
 		ss << "You advanced from Level " << prevLevel << " to Level " << level << '.';
 		sendTextMessage(MESSAGE_EVENT_ADVANCE, ss.str());
 		sendScreenshotAndBannerUpLevel(level);
+		checkSpellUnlocksOnAdvance(prevLevel, level, magLevel, magLevel);
 	}
 
 	if (nextLevelExp > currLevelExp) {
@@ -3849,6 +3869,20 @@ bool Player::hasShield() const {
 
 	const auto &itemRight = inventory[CONST_SLOT_RIGHT];
 	if (itemRight && itemRight->getWeaponType() == WEAPON_SHIELD) {
+		return true;
+	}
+	return false;
+}
+
+bool Player::hasRealShield() const {
+	// Like hasShield() but excludes spellbooks, which this engine types as WEAPON_SHIELD too.
+	const auto &itemLeft = inventory[CONST_SLOT_LEFT];
+	if (itemLeft && itemLeft->getWeaponType() == WEAPON_SHIELD && !itemLeft->isSpellBook()) {
+		return true;
+	}
+
+	const auto &itemRight = inventory[CONST_SLOT_RIGHT];
+	if (itemRight && itemRight->getWeaponType() == WEAPON_SHIELD && !itemRight->isSpellBook()) {
 		return true;
 	}
 	return false;
@@ -4076,7 +4110,7 @@ void Player::death(const std::shared_ptr<Creature> &lastHitCreature) {
 			magLevel--;
 		}
 
-		manaSpent -= lostMana;
+		manaSpent = (lostMana > manaSpent) ? 0 : manaSpent - lostMana;
 
 		uint64_t nextReqMana = vocation->getReqMana(magLevel + 1);
 		if (nextReqMana > vocation->getReqMana(magLevel)) {
@@ -4130,7 +4164,7 @@ void Player::death(const std::shared_ptr<Creature> &lastHitCreature) {
 				skills[i].level--;
 			}
 
-			skills[i].tries = std::max<int32_t>(0, skills[i].tries - lostSkillTries);
+			skills[i].tries = (lostSkillTries > skills[i].tries) ? 0 : skills[i].tries - lostSkillTries;
 			skills[i].percent = Player::getPercentLevel(skills[i].tries, vocation->getReqSkillTries(i, skills[i].level));
 		}
 
@@ -4395,22 +4429,59 @@ std::shared_ptr<Item> Player::getCorpse(const std::shared_ptr<Creature> &lastHit
 	} else {
 		descriptionStream << fmt::format("You recognize {}. {} was killed by ", getNameDescription(), subjectPronoun);
 
-		std::vector<std::string> killers;
-		std::string firstMonster;
+		// Only attackers of the fight that ended in this death count. damageMap is cleared only
+		// when the player goes idle, so during a long hunt it still holds every creature that has
+		// hit the player since the hunt began. Same in-fight window as Creature::onDeath.
+		const int64_t timeNow = OTSYS_TIME();
+		const uint32_t inFightTicks = g_configManager().getNumber(PZ_LOCKED);
+		const auto isRecentAttacker = [timeNow, inFightTicks](const CountBlock_t &damageInfo) {
+			return damageInfo.total > 0 && damageInfo.ticks > 0 && timeNow - damageInfo.ticks <= inFightTicks;
+		};
 
+		// The monster named is the one that landed the killing blow - the creature the death list
+		// (player_deaths.killed_by) is derived from. damageMap is ordered by creature id, so taking
+		// its first monster named whichever attacker had been alive the longest, e.g. a monster that
+		// hit the player on the way into a hunting area instead of the one that killed them there.
+		// Only when the last hit was not a monster of this fight (a player, an ownerless field) the
+		// monster with the most damage in it is named.
+		// Not the mostDamageCreature argument: Creature::onDeath has already replaced it with the
+		// summon's master and, under shared experience, with the party leader.
+		std::shared_ptr<Creature> killerMonster;
+		if (lastHitCreature && lastHitCreature->isMonster()) {
+			const auto it = damageMap.find(lastHitCreature->getID());
+			if (it != damageMap.end() && isRecentAttacker(it->second)) {
+				killerMonster = lastHitCreature;
+			}
+		}
+		const bool killerIsLastHit = killerMonster != nullptr;
+		int32_t killerMonsterDamage = 0;
+
+		std::vector<std::string> killers;
 		for (const auto &[creatureId, damageInfo] : damageMap) {
-			auto damageDealer = g_game().getCreatureByID(creatureId);
-			if (damageDealer) {
-				if (damageDealer->isPlayer()) {
-					killers.push_back(damageDealer->getNameDescription());
-				} else if (damageDealer->isMonster() && firstMonster.empty()) {
-					auto master = damageDealer->getMaster();
-					if (master && master->isPlayer()) {
-						firstMonster = fmt::format("{} summoned by {}", damageDealer->getNameDescription(), master->getNameDescription());
-					} else {
-						firstMonster = damageDealer->getNameDescription();
-					}
-				}
+			if (creatureId == 0 || creatureId == getID() || !isRecentAttacker(damageInfo)) {
+				continue;
+			}
+
+			const auto damageDealer = g_game().getCreatureByID(creatureId);
+			if (!damageDealer) {
+				continue;
+			}
+
+			if (damageDealer->isPlayer()) {
+				killers.push_back(damageDealer->getNameDescription());
+			} else if (!killerIsLastHit && damageDealer->isMonster() && damageInfo.total > killerMonsterDamage) {
+				killerMonster = damageDealer;
+				killerMonsterDamage = damageInfo.total;
+			}
+		}
+
+		std::string monsterKiller;
+		if (killerMonster) {
+			const auto master = killerMonster->getMaster();
+			if (master && master->isPlayer()) {
+				monsterKiller = fmt::format("{} summoned by {}", killerMonster->getNameDescription(), master->getNameDescription());
+			} else {
+				monsterKiller = killerMonster->getNameDescription();
 			}
 		}
 
@@ -4421,11 +4492,11 @@ std::shared_ptr<Item> Player::getCorpse(const std::shared_ptr<Creature> &lastHit
 				}
 				descriptionStream << killers[i];
 			}
-			if (!firstMonster.empty()) {
-				descriptionStream << " and " << firstMonster;
+			if (!monsterKiller.empty()) {
+				descriptionStream << " and " << monsterKiller;
 			}
-		} else if (!firstMonster.empty()) {
-			descriptionStream << firstMonster;
+		} else if (!monsterKiller.empty()) {
+			descriptionStream << monsterKiller;
 		} else {
 			descriptionStream << "an unknown attacker";
 		}
@@ -5343,7 +5414,7 @@ uint32_t Player::getCapacity() const {
 	if (hasFlag(PlayerFlags_t::HasInfiniteCapacity)) {
 		return std::numeric_limits<uint32_t>::max();
 	}
-	return capacity + bonusCapacity + varStats[STAT_CAPACITY] + (m_wheelPlayer->getStat(WheelStat_t::CAPACITY) * 100);
+	return static_cast<uint32_t>(std::max<int64_t>(0, static_cast<int64_t>(capacity) + bonusCapacity + varStats[STAT_CAPACITY] + (m_wheelPlayer->getStat(WheelStat_t::CAPACITY) * 100)));
 }
 
 uint32_t Player::getBonusCapacity() const {
@@ -5911,8 +5982,12 @@ std::shared_ptr<Thing> Player::getThing(size_t index) const {
 
 // TODO: review this function
 bool Player::updateSaleShopList(const std::shared_ptr<Item> &item) {
+	if (!item) {
+		return true;
+	}
+
 	const uint16_t itemId = item->getID();
-	if (!itemId || !item) {
+	if (!itemId) {
 		return true;
 	}
 
@@ -6282,7 +6357,7 @@ void Player::onCombatRemoveCondition(const std::shared_ptr<Condition> &condition
 	// Creature::onCombatRemoveCondition(condition);
 	if (condition->getId() > 0) {
 		// Means the condition is from an item, id == slot
-		if (g_game().getWorldType() == WORLDTYPE_HARDCORE) {
+		if (g_game().worlds().getCurrentWorld()->type == WORLDTYPE_HARDCORE) {
 			const auto &item = getInventoryItem(static_cast<Slots_t>(condition->getId()));
 			if (item) {
 				// 25% chance to destroy the item
@@ -6328,7 +6403,7 @@ void Player::onAttackedCreature(const std::shared_ptr<Creature> &target) {
 
 	const auto &targetPlayer = target->getPlayer();
 	if (targetPlayer && !isPartner(targetPlayer) && !isGuildMate(targetPlayer)) {
-		if (!pzLocked && g_game().getWorldType() == WORLDTYPE_HARDCORE) {
+		if (!pzLocked && g_game().worlds().getCurrentWorld()->type == WORLDTYPE_HARDCORE) {
 			pzLocked = true;
 			sendIcons();
 		}
@@ -6404,10 +6479,10 @@ void Player::onAttackedCreatureDrainHealth(const std::shared_ptr<Creature> &targ
 
 void Player::onTargetCreatureGainHealth(const std::shared_ptr<Creature> &target, int32_t points) {
 	if (target && m_party) {
-		std::shared_ptr<Player> tmpPlayer = nullptr;
+		std::shared_ptr<Player> tmpPlayer;
 
-		if (isPartner(tmpPlayer) && (tmpPlayer != getPlayer())) {
-			tmpPlayer = target->getPlayer();
+		if (const auto &targetPlayer = target->getPlayer()) {
+			tmpPlayer = targetPlayer;
 		} else if (const auto &targetMaster = target->getMaster()) {
 			if (const auto &targetMasterPlayer = targetMaster->getPlayer()) {
 				tmpPlayer = targetMasterPlayer;
@@ -6472,6 +6547,14 @@ void Player::addBestiaryKill(const std::shared_ptr<MonsterType> &mType) {
 		return;
 	}
 	uint32_t kills = g_configManager().getNumber(BESTIARY_KILL_MULTIPLIER);
+
+	auto scopedDoubleBestiary = g_kv().scoped("eventscheduler")->get("double-bestiary");
+	bool doubleBestiaryEnabled = scopedDoubleBestiary && scopedDoubleBestiary->get<bool>();
+	if (doubleBestiaryEnabled) {
+		kills *= 2;
+		g_logger().debug("[{}] double bestiary is enabled.", __FUNCTION__);
+	}
+
 	if (isConcoctionActive(Concoction_t::BestiaryBetterment)) {
 		kills *= 2;
 	}
@@ -6491,6 +6574,14 @@ void Player::addBosstiaryKill(const std::shared_ptr<MonsterType> &mType) {
 		return;
 	}
 	uint32_t kills = g_configManager().getNumber(BOSSTIARY_KILL_MULTIPLIER);
+
+	auto scopedDoubleBosstiary = g_kv().scoped("eventscheduler")->get("double-bosstiary");
+	bool doubleBosstiaryEnabled = scopedDoubleBosstiary && scopedDoubleBosstiary->get<bool>();
+	if (doubleBosstiaryEnabled) {
+		kills *= 2;
+		g_logger().debug("[{}] double bosstiary is enabled.", __FUNCTION__);
+	}
+
 	if (g_ioBosstiary().getBoostedBossId() == mType->info.raceid) {
 		kills *= g_configManager().getNumber(BOOSTED_BOSS_KILL_BONUS);
 	}
@@ -6962,7 +7053,11 @@ void Player::sendRemoveTileThing(const Position &pos, int32_t stackpos) const {
 
 void Player::sendUpdateTileCreature(const std::shared_ptr<Creature> &creature) {
 	if (client) {
-		client->sendUpdateTileCreature(creature->getPosition(), creature->getTile()->getClientIndexOfCreature(static_self_cast<Player>(), creature), creature);
+		const auto &tile = creature->getTile();
+		if (!tile) {
+			return;
+		}
+		client->sendUpdateTileCreature(creature->getPosition(), tile->getClientIndexOfCreature(static_self_cast<Player>(), creature), creature);
 	}
 }
 
@@ -7002,7 +7097,7 @@ Skulls_t Player::getSkull() const {
 }
 
 Skulls_t Player::getSkullClient(const std::shared_ptr<Creature> &creature) {
-	if (!creature || g_game().getWorldType() != WORLDTYPE_OPEN) {
+	if (!creature || g_game().worlds().getCurrentWorld()->type != WORLDTYPE_OPEN) {
 		return SKULL_NONE;
 	}
 
@@ -7068,7 +7163,7 @@ void Player::clearAttacked() {
 }
 
 void Player::addUnjustifiedDead(const std::shared_ptr<Player> &attacked) {
-	if (hasFlag(PlayerFlags_t::NotGainInFight) || hasFlag(PlayerFlags_t::NotGainUnjustified) || attacked == getPlayer() || g_game().getWorldType() == WORLDTYPE_HARDCORE) {
+	if (hasFlag(PlayerFlags_t::NotGainInFight) || hasFlag(PlayerFlags_t::NotGainUnjustified) || attacked == getPlayer() || g_game().worlds().getCurrentWorld()->type == WORLDTYPE_HARDCORE) {
 		return;
 	}
 
@@ -7202,7 +7297,7 @@ double Player::getLostPercent() const {
 		return std::max<int32_t>(0, deathLosePercent) / 100.;
 	}
 
-	bool isRetro = g_configManager().getBoolean(TOGGLE_SERVER_IS_RETRO);
+	bool isRetro = g_game().isRetroPVP();
 	const auto factor = (isRetro ? 6.31 : 8);
 	double percentReduction = (blessingCount * factor) / 100.;
 
@@ -7362,8 +7457,8 @@ uint16_t Player::getSkillLevel(skills_t skill) const {
 		skillLevel += m_wheelPlayer->checkAvatarSkill(WheelAvatarSkill_t::CRITICAL_DAMAGE);
 		skillLevel += equippedWeaponProficiency.critExtraDamage; // Proficiency Perk: critExtraDamage
 	} else if (skill == SKILL_CRITICAL_HIT_CHANCE) {
-		skillLevel += 500; // Summer Update 2025 - Flag Bonus
-		skillLevel += equippedWeaponProficiency.critHitChance; // Summer Update 2025 - Proficiency Perk: critHitChance
+		skillLevel += 500; // Vocation Adjustment - Flag Bonus
+		skillLevel += equippedWeaponProficiency.critHitChance; // Vocation Adjustment - Proficiency Perk: critHitChance
 
 		const int32_t avatarCritChance = m_wheelPlayer->checkAvatarSkill(WheelAvatarSkill_t::CRITICAL_CHANCE);
 		if (avatarCritChance > 0) {
@@ -7489,6 +7584,19 @@ int32_t Player::getSpecializedMagicLevel(CombatType_t combat, bool useCharges) c
 
 	// Proficiency Perk: specialMagicLevel
 	result += equippedWeaponProficiency.specialMagicLevel[combatTypeToIndex(combat)];
+
+	// Vocation Adjustment: Paladin Divine Defiance grants 7.5% of distance fighting as bonus
+	// holy AND healing magic level (one hook feeds both the native formula and the Lua callback).
+	if (getStance() == STANCE_DIVINE_DEFIANCE && (combat == COMBAT_HOLYDAMAGE || combat == COMBAT_HEALING)) {
+		result += static_cast<int32_t>(getSkillLevel(SKILL_DISTANCE) * 0.075);
+	}
+
+	// Vocation Adjustment: Druid Elemental Synthesis grants 10% of magic level as bonus ice
+	// and earth magic level.
+	if (getStance() == STANCE_ELEMENTAL_SYNTHESIS && (combat == COMBAT_ICEDAMAGE || combat == COMBAT_EARTHDAMAGE)) {
+		result += static_cast<int32_t>(getMagicLevel() * 0.10);
+	}
+
 	return result;
 }
 
@@ -8328,9 +8436,9 @@ void Player::sendHighscoresNoData() const {
 	}
 }
 
-void Player::sendHighscores(const std::vector<HighscoreCharacter> &characters, uint8_t categoryId, uint32_t vocationId, uint16_t page, uint16_t pages, uint32_t updateTimer) const {
+void Player::sendHighscores(const std::string &selectedWorld, const std::vector<HighscoreCharacter> &characters, uint8_t categoryId, uint32_t vocationId, uint16_t page, uint16_t pages, uint32_t updateTimer) const {
 	if (client) {
-		client->sendHighscores(characters, categoryId, vocationId, page, pages, updateTimer);
+		client->sendHighscores(selectedWorld, characters, categoryId, vocationId, page, pages, updateTimer);
 	}
 }
 
@@ -8349,6 +8457,12 @@ void Player::resetAsyncOngoingTask(uint64_t flags) {
 void Player::sendEnterWorld() const {
 	if (client) {
 		client->sendEnterWorld();
+	}
+}
+
+void Player::sendMapDescription(const Position &pos) const {
+	if (client) {
+		client->sendMapDescription(pos);
 	}
 }
 
@@ -8428,6 +8542,55 @@ void Player::sendScreenshotAndBannerProficiencyProgress(uint16_t itemId, const s
 	}
 }
 
+void Player::sendScreenshotAndBannerUnlockedSpell(uint16_t spellId) const {
+	if (client) {
+		client->sendScreenshotAndBannerUnlockedSpell(spellId);
+	}
+}
+
+void Player::sendScreenshotAndBannerBountyTaskFinished(uint16_t raceId) const {
+	if (client) {
+		client->sendScreenshotAndBannerBountyTaskFinished(raceId);
+	}
+}
+
+void Player::sendScreenshotAndBannerWeeklyTaskSpecificFinished(uint16_t raceId) const {
+	if (client) {
+		client->sendScreenshotAndBannerWeeklyTaskSpecificFinished(raceId);
+	}
+}
+
+void Player::sendScreenshotAndBannerLeaderMonsterKilled(uint16_t raceId, uint32_t charmPoints) const {
+	if (client) {
+		client->sendScreenshotAndBannerLeaderMonsterKilled(raceId, charmPoints);
+	}
+}
+
+void Player::checkSpellUnlocksOnAdvance(uint32_t oldLevel, uint32_t newLevel, uint32_t oldMagLevel, uint32_t newMagLevel) const {
+	if (!client) {
+		return;
+	}
+
+	// Vocation spells that auto-unlock (needLearn == false) show the "New Spell
+	// Unlocked" banner the moment the player meets their level / magic level
+	// requirement. Learnable spells are taught explicitly (NPC/quest) and are
+	// handled through Player::learnInstantSpell / player:learnSpell instead.
+	for (const uint16_t spellId : g_spells().getSpellsByVocation(getVocationId())) {
+		const auto &spell = g_spells().getInstantSpellById(spellId);
+		if (!spell || spell->getSpellId() == 0 || spell->isLearnable()) {
+			continue;
+		}
+
+		const uint32_t reqLevel = spell->getLevel();
+		const uint32_t reqMagLevel = spell->getMagicLevel();
+		const bool wasAvailable = oldLevel >= reqLevel && oldMagLevel >= reqMagLevel;
+		const bool isAvailable = newLevel >= reqLevel && newMagLevel >= reqMagLevel;
+		if (!wasAvailable && isAvailable) {
+			sendScreenshotAndBannerUnlockedSpell(spell->getSpellId());
+		}
+	}
+}
+
 void Player::onThink(uint32_t interval) {
 	Creature::onThink(interval);
 
@@ -8457,7 +8620,7 @@ void Player::onThink(uint32_t interval) {
 		}
 	}
 
-	if (g_game().getWorldType() != WORLDTYPE_HARDCORE) {
+	if (g_game().worlds().getCurrentWorld()->type != WORLDTYPE_HARDCORE) {
 		checkSkullTicks(interval / 1000);
 	}
 
@@ -8705,9 +8868,9 @@ void Player::sendPrivateMessage(const std::shared_ptr<Player> &speaker, SpeakCla
 	}
 }
 
-void Player::sendCreatureSquare(const std::shared_ptr<Creature> &creature, SquareColor_t color) const {
+void Player::sendCreatureSquare(const std::shared_ptr<Creature> &creature, SquareColor_t markType, SquareColor_t weaponType) const {
 	if (client) {
-		client->sendCreatureSquare(creature, color);
+		client->sendCreatureSquare(creature, markType, weaponType);
 	}
 }
 
@@ -9138,6 +9301,7 @@ ReturnValue Player::addItemFromStash(uint16_t itemId, uint32_t itemCount) {
 	}
 
 	uint32_t addedItemCount = 0;
+	uint32_t totalWithdrawn = finalRetrievable;
 	uint32_t remainingToRetrieve = finalRetrievable;
 
 	if (itemType.stackable) {
@@ -9151,6 +9315,11 @@ ReturnValue Player::addItemFromStash(uint16_t itemId, uint32_t itemCount) {
 				auto &stackableItem = *it;
 				if (addValue == 0) {
 					break;
+				}
+
+				if (!stackableItem || !stackableItem->getParent()) {
+					it = stackableItemsCache.erase(it);
+					continue;
 				}
 
 				uint32_t spaceInStack = stackableItem->getStackSize() - stackableItem->getItemCount();
@@ -9238,6 +9407,13 @@ ReturnValue Player::addItemFromStash(uint16_t itemId, uint32_t itemCount) {
 				++cacheIndex;
 			}
 		}
+	}
+
+	// Refund unplaced items back to stash
+	if (addedItemCount < totalWithdrawn) {
+		uint32_t unplaced = totalWithdrawn - addedItemCount;
+		stashItems[itemId] += unplaced;
+		g_logger().warn("[addItemFromStash] Refunded {}x itemId: {} back to stash for player {}", unplaced, itemId, getName());
 	}
 
 	std::string itemName = itemType.name + (addedItemCount > 1 ? "s" : "");
@@ -9462,6 +9638,10 @@ void Player::stowItem(const std::shared_ptr<Item> &item, uint32_t count, bool al
 	}
 
 	stashContainer(itemDict);
+
+	if (totalItemsToStow > 0) {
+		g_callbacks().executeCallback(EventCallback_t::playerOnStowItem, &EventCallback::playerOnStowItem, getPlayer(), item, totalItemsToStow);
+	}
 }
 
 void Player::sendPreyData() const {
@@ -10833,7 +11013,7 @@ void Player::forgeResourceConversion(ForgeAction_t actionType) {
 			return;
 		}
 
-		const auto upgradeCost = dustLevel - 75;
+		const uint64_t upgradeCost = dustLevel > 100 ? 25 + (dustLevel - 100) / 20 : 25;
 		if (const auto dusts = getForgeDusts();
 		    upgradeCost > dusts) {
 			g_logger().error("[{}] Not enough dust", __FUNCTION__);
@@ -10844,7 +11024,7 @@ void Player::forgeResourceConversion(ForgeAction_t actionType) {
 		history.cost = upgradeCost;
 		history.gained = dustLevel;
 		removeForgeDusts(upgradeCost);
-		addForgeDustLevel(1);
+		addForgeDustLevel(20);
 	}
 
 	history.createdAt = getTimeNow();
@@ -11080,7 +11260,7 @@ void Player::registerForgeHistoryDescription(ForgeHistory history) {
 		detailsResponse << fmt::format("Converted {:d} slivers to {:d} exalted core.", history.cost, history.gained);
 	} else if (history.actionType == ForgeAction_t::INCREASELIMIT) {
 		history.actionType = ForgeAction_t::DUSTTOSLIVERS;
-		detailsResponse << fmt::format("Spent {:d} dust to increase the dust limit to {:d}.", history.cost, history.gained + 1);
+		detailsResponse << fmt::format("Spent {:d} dust to increase the dust limit to {:d}.", history.cost, history.gained + 20);
 	} else {
 		detailsResponse << "(unknown)";
 	}
@@ -12382,12 +12562,6 @@ void Player::resyncSpellCooldowns() const {
 	}
 }
 
-void Player::sendVirtueProtocol() const {
-	if (client && m_virtue != VIRTUE_NONE) {
-		client->sendVirtueProtocol(static_cast<uint8_t>(m_virtue));
-	}
-}
-
 VirtueMonk_t Player::getVirtue() const {
 	return m_virtue;
 }
@@ -12404,11 +12578,204 @@ void Player::setVirtue(const VirtueMonk_t virtueEnum) {
 			break;
 	}
 
-	sendVirtueProtocol();
+	sendStanceProtocol();
 
 	if (m_virtue != VIRTUE_NONE) {
 		sendSkills();
 	}
+}
+
+bool Player::isElementalStance(Stance_t stance) {
+	return stance == STANCE_MASTER_OF_FLAMES || stance == STANCE_MASTER_OF_THUNDER || stance == STANCE_MASTER_OF_DECAY;
+}
+
+uint16_t Player::getStanceSpellId(Stance_t stance) {
+	switch (stance) {
+		case STANCE_PROTECTOR:
+			return 132;
+		case STANCE_BLOOD_RAGE:
+			return 133;
+		case STANCE_SHARPSHOOTER:
+			return 313;
+		case STANCE_DIVINE_DEFIANCE:
+			return 314;
+		case STANCE_MASTER_OF_FLAMES:
+			return 304;
+		case STANCE_MASTER_OF_THUNDER:
+			return 305;
+		case STANCE_MASTER_OF_DECAY:
+			return 306;
+		case STANCE_SAP_STRENGTH:
+			return 311;
+		case STANCE_EXPOSE_WEAKNESS:
+			return 312;
+		case STANCE_SHARED_CONSERVATION:
+			return 309;
+		case STANCE_ELEMENTAL_SYNTHESIS:
+			return 319;
+		default:
+			return 0;
+	}
+}
+
+bool Player::isStanceCompatibleWithVocation(Stance_t stance, uint16_t vocationBaseId) {
+	switch (stance) {
+		case STANCE_NONE:
+			return true;
+		case STANCE_PROTECTOR:
+		case STANCE_BLOOD_RAGE:
+			return vocationBaseId == VOCATION_KNIGHT;
+		case STANCE_DIVINE_DEFIANCE:
+		case STANCE_SHARPSHOOTER:
+			return vocationBaseId == VOCATION_PALADIN;
+		case STANCE_EXPOSE_WEAKNESS:
+		case STANCE_SAP_STRENGTH:
+		case STANCE_MASTER_OF_FLAMES:
+		case STANCE_MASTER_OF_THUNDER:
+		case STANCE_MASTER_OF_DECAY:
+			return vocationBaseId == VOCATION_SORCERER;
+		case STANCE_SHARED_CONSERVATION:
+		case STANCE_ELEMENTAL_SYNTHESIS:
+			return vocationBaseId == VOCATION_DRUID;
+		default:
+			return false;
+	}
+}
+
+std::vector<uint16_t> Player::buildActiveStanceSpellIds() const {
+	std::vector<uint16_t> ids;
+	// Two independent groups for a sorcerer: m_stancePrimary holds the crippling stance
+	// (Sap Strength / Expose Weakness), m_stanceElemental holds the elemental stance
+	// (Master of Flames / Thunder / Decay). Both can be active at once -> both framed.
+	if (m_stancePrimary != STANCE_NONE) {
+		const uint16_t id = getStanceSpellId(m_stancePrimary);
+		if (id != 0) {
+			ids.push_back(id);
+		}
+	}
+	if (m_stanceElemental != STANCE_NONE) {
+		const uint16_t id = getStanceSpellId(m_stanceElemental);
+		if (id != 0) {
+			ids.push_back(id);
+		}
+	}
+
+	// Monk virtue (Harmony 274 / Justice 275 / Sustain 276) is a stance too: frame its action-bar
+	// slot through the same active-stance highlight. The dedicated 0xC1 virtue packet is disabled
+	// (it crashes the 15.25 client), so this frame is the virtue indicator.
+	switch (m_virtue) {
+		case VIRTUE_HARMONY:
+			ids.push_back(274);
+			break;
+		case VIRTUE_JUSTICE:
+			ids.push_back(275);
+			break;
+		case VIRTUE_SUSTAIN:
+			ids.push_back(276);
+			break;
+		default:
+			break;
+	}
+	return ids;
+}
+
+void Player::sendStanceProtocol() const {
+	if (!client) {
+		return;
+	}
+
+	// Always resend the COMPLETE active-stance set. The client whole-replaces its highlight
+	// set, so this frames every currently-active stance (1 or 2 for a sorcerer) and, when the
+	// set is empty, sends count 0 to clear all frames WITHOUT ever putting id 0 on the wire
+	// (which would otherwise frame every empty action-bar slot).
+	client->sendStanceProtocol(buildActiveStanceSpellIds());
+}
+
+bool Player::setStance(Stance_t stance) {
+	if (isElementalStance(stance)) {
+		return false; // elemental stances go through setElementalStance
+	}
+	// toggle-off when re-selecting the same stance
+	if (stance == m_stancePrimary) {
+		if (m_stancePrimary == STANCE_NONE) {
+			return false;
+		}
+		m_stancePrimary = STANCE_NONE;
+		sendStanceProtocol(); // resend full active set (count 0 if nothing left -> clean clear, never id 0)
+		sendSkills();
+		return true;
+	}
+	if (stance != STANCE_NONE) {
+		if (!vocation || !isStanceCompatibleWithVocation(stance, vocation->getBaseId())) {
+			return false;
+		}
+	}
+	m_stancePrimary = stance;
+	sendStanceProtocol(); // resend full active set (primary + elemental)
+	sendSkills();
+	return true;
+}
+
+bool Player::setElementalStance(Stance_t stance) {
+	if (stance != STANCE_NONE) {
+		if (!vocation || vocation->getBaseId() != VOCATION_SORCERER || !isElementalStance(stance)) {
+			return false;
+		}
+	}
+	// Vocation Adjustment: changing or toggling the elemental stance clears any armed conversion.
+	m_pendingElementConversion = COMBAT_NONE;
+	// toggle-off
+	if (stance == m_stanceElemental) {
+		if (m_stanceElemental == STANCE_NONE) {
+			return false;
+		}
+		m_stanceElemental = STANCE_NONE;
+		sendStanceProtocol(); // resend full active set (count 0 if nothing left -> clean clear, never id 0)
+		sendSkills();
+		return true;
+	}
+	m_stanceElemental = stance;
+	sendStanceProtocol(); // resend full active set (elemental + crippling)
+	sendSkills();
+	return true;
+}
+
+void Player::persistStances() {
+	// Vocation Adjustment: persist the active stances so they are restored on the next login.
+	kv()->scoped("stance")->set("primary", static_cast<int>(m_stancePrimary));
+	kv()->scoped("stance")->set("elemental", static_cast<int>(m_stanceElemental));
+}
+
+uint8_t Player::getMonkAuraVocMask() const {
+	// Monk virtue aura projected by Game::projectMonkVirtueAura on the 1s serene tick; lapses if not refreshed.
+	return (m_monkAuraExpiry >= OTSYS_TIME()) ? m_monkAuraVocMask : 0;
+}
+
+void Player::setMonkAuraVocMask(uint8_t mask) {
+	const bool wasActive = (m_monkAuraVocMask != 0) && (m_monkAuraExpiry >= OTSYS_TIME());
+	m_monkAuraVocMask = mask;
+	m_monkAuraExpiry = OTSYS_TIME() + 2500;
+	if (wasActive != (mask != 0)) {
+		// Refresh the Monk's Virtue bonus special-condition icon when the aura flips on/off.
+		sendIcons();
+	}
+}
+
+uint8_t Player::getMonkShrineCount() const {
+	// Way of the Monk stores honoured shrines at quests/the_way_of_the_monk_quest/shrineCounter
+	// (written from Lua via Player:questKV = kv():scoped("quests"):scoped(questName)).
+	const auto &questsScope = kv()->scoped("quests");
+	if (!questsScope) {
+		return 0;
+	}
+	const auto &monkScope = questsScope->scoped("the_way_of_the_monk_quest");
+	if (!monkScope) {
+		return 0;
+	}
+	const auto shrineCounter = monkScope->get("shrineCounter");
+	// Lua stores every number as a double KV value, so read via getNumber() (get<int>() would never
+	// match the double alternative and silently return 0). Mirrors Player::getBlessingCount.
+	return shrineCounter ? static_cast<uint8_t>(std::min<int>(static_cast<int>(shrineCounter->getNumber()), 255)) : 0;
 }
 
 uint16_t Player::getMantraTotal() const {
@@ -12454,6 +12821,121 @@ int16_t Player::getMantraAbsorbPercent(int16_t mantraAbsorbValue) const {
 
 EquippedWeaponProficiencyBonuses &Player::getEquippedWeaponProficiency() {
 	return equippedWeaponProficiency;
+}
+
+void Player::tryProcWeaponProficiencyHomingMissile(const std::shared_ptr<Creature> &target) {
+	if (!target || target->isRemoved() || target->getHealth() <= 0) {
+		return;
+	}
+
+	// Equipped weapon (ignore ammo so distance weapons resolve to the bow itself).
+	const auto &weapon = getWeapon(true);
+	if (!weapon) {
+		return;
+	}
+	const uint16_t itemId = weapon->getID();
+
+	// Player's unlocked/active perk slots for this weapon.
+	auto profIt = weaponProficiencies.find(itemId);
+	if (profIt == weaponProficiencies.end()) {
+		return;
+	}
+	const WeaponProficiencyData &playerProficiencyData = profIt->second;
+
+	// The weapon's proficiency tree (the perk catalogue). Nullptr-guarded (also logs internally).
+	const WeaponProficiencyStruct* proficiencyData = g_proficiencies().getProficiencyByItemId(itemId);
+	if (!proficiencyData) {
+		return;
+	}
+
+	for (const auto &lvl : proficiencyData->proficiencyDataLevel) {
+		for (const auto &perk : lvl.proficiencyDataPerks) {
+			if (perk.perkType != PROFICIENCY_PERK_ON_HIT_HOMING_MISSILE) {
+				continue;
+			}
+
+			// Active only if the player has unlocked this exact slot (level + position).
+			const bool isActive = std::any_of(
+				playerProficiencyData.activePerks.begin(), playerProficiencyData.activePerks.end(),
+				[&](const WeaponProficiencyPerk &p) {
+					return p.proficiencyLevel == lvl.proficiencyLevel && p.perkPosition == perk.positionSlot;
+				}
+			);
+			if (!isActive) {
+				continue;
+			}
+
+			if (perk.probability <= 0.0f || perk.multiplier <= 0.0f) {
+				continue;
+			}
+
+			// Roll Probability (e.g. 0.01 = 1%).
+			if (!boolean_random(static_cast<double>(perk.probability))) {
+				continue;
+			}
+
+			// Map ElementId (stored in perk.damageType) -> CombatType + the homing-missile target hit effect
+			// observed in the 15.25 client. These raw effect ids (176-181) are sent verbatim over the wire;
+			// the official client renders them as the element-specific homing-missile impact.
+			CombatType_t combatType = COMBAT_NONE;
+			uint16_t targetEffect = CONST_ME_NONE;
+			switch (perk.damageType) {
+				case PROFICIENCY_DAMAGETYPE_PHYSICAL:
+					combatType = COMBAT_PHYSICALDAMAGE;
+					targetEffect = CONST_ME_DRAWBLOOD;
+					break;
+				case PROFICIENCY_DAMAGETYPE_FIRE:
+					combatType = COMBAT_FIREDAMAGE;
+					targetEffect = 177;
+					break;
+				case PROFICIENCY_DAMAGETYPE_EARTH:
+					combatType = COMBAT_EARTHDAMAGE;
+					targetEffect = 178;
+					break;
+				case PROFICIENCY_DAMAGETYPE_ENERGY:
+					combatType = COMBAT_ENERGYDAMAGE;
+					targetEffect = 179;
+					break;
+				case PROFICIENCY_DAMAGETYPE_ICE:
+					combatType = COMBAT_ICEDAMAGE;
+					targetEffect = 176;
+					break;
+				case PROFICIENCY_DAMAGETYPE_HOLY:
+					combatType = COMBAT_HOLYDAMAGE;
+					targetEffect = 181;
+					break;
+				case PROFICIENCY_DAMAGETYPE_DEATH:
+					combatType = COMBAT_DEATHDAMAGE;
+					targetEffect = 180;
+					break;
+				default:
+					continue; // healing / unsupported element -> skip
+			}
+
+			// Damage = Multiplier * level (data-driven; Multiplier lives in proficiencies.json).
+			const int32_t dmg = static_cast<int32_t>(perk.multiplier * static_cast<float>(getLevel()));
+			if (dmg <= 0) {
+				continue;
+			}
+
+			// (b) shoot/distance effect caster -> target. missileId is the raw 15.25 shoot id from the json
+			// (e.g. 74 normal / 81 Stellar for holy); sent verbatim, the official client renders it.
+			g_game().addDistanceEffect(getPosition(), target->getPosition(), perk.missileId, static_self_cast<Player>());
+
+			// (c) magic hit effect on the target tile.
+			g_game().addMagicEffect(target->getPosition(), targetEffect);
+
+			// (a) element-typed damage (negative value = damage).
+			CombatDamage damage;
+			damage.origin = ORIGIN_SPELL;
+			damage.primary.type = combatType;
+			damage.primary.value = -dmg;
+			g_game().combatChangeHealth(static_self_cast<Player>(), target, damage);
+
+			// One proc per hit: stop after the first active homing-missile perk fires.
+			return;
+		}
+	}
 }
 
 void Player::addWeaponProficiencyExperience(const std::shared_ptr<MonsterType> &mType, const ForgeClassifications_t classification, const bool bossSoulpit) {
@@ -12579,6 +13061,341 @@ void Player::sendWeaponProficiencyInfo(const uint16_t itemId) const {
 	}
 }
 
+void Player::sendBossDifficultySelection(uint8_t selectedDifficulty, const std::vector<uint32_t> &numbers, const std::vector<std::string> &banners, const std::vector<std::string> &redMods, const std::vector<std::string> &greenMods) const {
+	if (client) {
+		client->sendBossDifficultySelection(selectedDifficulty, numbers, banners, redMods, greenMods);
+	}
+}
+
+void Player::sendCyclopediaDiscoveryTest(uint16_t mainAreaId, uint16_t subAreaId, const Position &base) {
+	if (!client) {
+		return;
+	}
+
+	client->sendCyclopediaMapDiscoveryData({ std::make_tuple(mainAreaId, static_cast<uint8_t>(1), static_cast<uint8_t>(14)) }, {}, { subAreaId });
+	client->sendCyclopediaMapSetCurrentArea(subAreaId);
+	static const int offsets[7][2] = { { 0, 0 }, { 2, 0 }, { -2, 0 }, { 0, 2 }, { 0, -2 }, { 3, 3 }, { -3, -3 } };
+	std::vector<std::pair<Position, uint8_t>> points;
+	points.reserve(7);
+	for (const auto &off : offsets) {
+		points.emplace_back(Position(static_cast<uint16_t>(base.x + off[0]), static_cast<uint16_t>(base.y + off[1]), base.z), static_cast<uint8_t>(0));
+	}
+	client->sendCyclopediaMapSetDiscoveryArea(subAreaId, true, 7, points);
+}
+
+void Player::sendCyclopediaMapDiscoveryData(const std::vector<std::tuple<uint16_t, uint8_t, uint8_t>> &mainAreas, const std::vector<uint16_t> &discoveredSubAreas, const std::vector<uint16_t> &discoverableSubAreas) {
+	discoveryMains = mainAreas;
+	discoveryDiscovered = discoveredSubAreas;
+	discoveryDiscoverable = discoverableSubAreas;
+	if (client) {
+		client->sendCyclopediaMapDiscoveryData(mainAreas, discoveredSubAreas, discoverableSubAreas);
+	}
+}
+
+void Player::resendCyclopediaMapDiscoveryData() const {
+	if (client && !discoveryMains.empty()) {
+		client->sendCyclopediaMapDiscoveryData(discoveryMains, discoveryDiscovered, discoveryDiscoverable);
+	}
+}
+
+void Player::sendCyclopediaMapSetCurrentArea(uint16_t subAreaId) const {
+	if (client) {
+		client->sendCyclopediaMapSetCurrentArea(subAreaId);
+	}
+}
+
+void Player::sendCyclopediaMapSetExploringArea(uint16_t subAreaId) const {
+	if (client) {
+		client->sendCyclopediaMapSetExploringArea(subAreaId);
+	}
+}
+
+void Player::sendCyclopediaMapDonations(uint64_t donationGoal, const std::vector<std::tuple<uint16_t, bool, uint64_t>> &areas) const {
+	if (client) {
+		client->sendCyclopediaMapDonations(donationGoal, areas);
+	}
+}
+
+void Player::sendCyclopediaMapSetDiscoveryArea(uint16_t subAreaId, bool active, uint8_t poiTarget, const std::vector<std::pair<Position, uint8_t>> &points) const {
+	if (client) {
+		client->sendCyclopediaMapSetDiscoveryArea(subAreaId, active, poiTarget, points);
+	}
+}
+
+void Player::sendWeaponProficiencyReshapeOffers(const uint16_t itemId) const {
+	if (client) {
+		client->sendWeaponProficiencyReshapeOffers(itemId);
+	}
+}
+
+uint8_t Player::getWeaponProficiencyVocationRegion() const {
+	// 15.30: the client builds the shaping option list from the PLAYER'S vocation (its profession byte 1-5 selects one
+	// of five 64-entry option arrays), never from the weapon type. Promoted vocations already fold to their base.
+	return Proficiencies::getShapeRegionForVocation(getPlayerVocationEnum());
+}
+
+std::vector<WeaponProficiencyPerkType_t> Player::rollWeaponProficiencyPerks(const size_t count, const std::vector<WeaponProficiencyPerkType_t> &exclude) const {
+	// Roll `count` DISTINCT catalogue indices from exactly the option list the 15.30 client shows this vocation
+	// (34 general perks + the vocation's 30 spell augments), skipping `exclude` (e.g. the perk currently in the slot).
+	std::vector<uint16_t> pool = Proficiencies::getShapeableIndicesForVocation(getPlayerVocationEnum());
+	std::erase_if(pool, [&exclude](const uint16_t index) {
+		return std::find(exclude.begin(), exclude.end(), static_cast<WeaponProficiencyPerkType_t>(index)) != exclude.end();
+	});
+	std::vector<WeaponProficiencyPerkType_t> result;
+	result.reserve(count);
+	while (result.size() < count && !pool.empty()) {
+		const auto pick = static_cast<size_t>(uniform_random(0, static_cast<int32_t>(pool.size()) - 1));
+		result.push_back(static_cast<WeaponProficiencyPerkType_t>(pool[pick]));
+		pool.erase(pool.begin() + static_cast<std::ptrdiff_t>(pick));
+	}
+	return result;
+}
+
+void Player::sanitizeWeaponProficiencyShapes(const uint16_t itemId) {
+	// Repair shaped slots holding an index the 15.30 client does not offer this vocation (data shaped before the
+	// catalogue fix, or a vocation change): re-roll them in place from the vocation's own list, keeping the rank.
+	auto it = weaponProficiencies.find(itemId);
+	if (it == weaponProficiencies.end()) {
+		return;
+	}
+	const uint16_t vocation = getPlayerVocationEnum();
+	for (auto &slot : it->second.modifiedSlots) {
+		const auto index = static_cast<uint16_t>(slot.perkType);
+		if (Proficiencies::isShapeIndexAllowedForVocation(index, vocation)) {
+			continue;
+		}
+		const auto rolled = rollWeaponProficiencyPerks(1);
+		if (rolled.empty()) {
+			break;
+		}
+		g_logger().info("[{}] Player {} weapon {} slot {}/{}: shaped perk index {} is not available to vocation {}, re-rolled to {}", __FUNCTION__, getName(), itemId, slot.proficiencyLevel, slot.perkPosition, index, vocation, static_cast<uint16_t>(rolled.front()));
+		slot.perkType = rolled.front();
+	}
+}
+
+void Player::modifyWeaponProficiencySlot(const uint16_t itemId, const uint8_t proficiencyLevel, const uint8_t perkPosition) {
+	// 15.30 (official "Perk Shaping" rules): the first shaped slot of a weapon costs 250 dust, the second one 1000 dust
+	// (the client additionally requires mastery of the weapon for it) and a weapon never has more than two shaped slots.
+	static constexpr uint64_t MODIFY_FIRST_SLOT_DUST_COST = 250;
+	static constexpr uint64_t MODIFY_SECOND_SLOT_DUST_COST = 1000;
+	static constexpr size_t MAX_SHAPED_SLOTS = 2;
+	auto it = weaponProficiencies.find(itemId);
+	if (it == weaponProficiencies.end()) {
+		sendTextMessage(MESSAGE_FAILURE, "You have no proficiency progress on this weapon.");
+		return;
+	}
+	const auto &tile = getTile();
+	if (!tile || !tile->hasFlag(TILESTATE_PROTECTIONZONE)) {
+		sendTextMessage(MESSAGE_FAILURE, "You can only modify proficiency slots inside a protection zone.");
+		return;
+	}
+	// Store 1-based; the wire request is 0-based.
+	const uint8_t storedLevel = static_cast<uint8_t>(proficiencyLevel + 1);
+	const uint8_t storedPosition = static_cast<uint8_t>(perkPosition + 1);
+	auto &proficiency = it->second;
+	for (const auto &slot : proficiency.modifiedSlots) {
+		if (slot.proficiencyLevel == storedLevel && slot.perkPosition == storedPosition) {
+			sendTextMessage(MESSAGE_FAILURE, "This slot is already shaped. Use Reshape to change its perk.");
+			return;
+		}
+	}
+	const size_t shapedCount = proficiency.modifiedSlots.size();
+	if (shapedCount >= MAX_SHAPED_SLOTS) {
+		sendTextMessage(MESSAGE_FAILURE, "You cannot shape more than two perks on the same weapon.");
+		return;
+	}
+	const uint64_t cost = shapedCount == 0 ? MODIFY_FIRST_SLOT_DUST_COST : MODIFY_SECOND_SLOT_DUST_COST;
+	if (getForgeDusts() < cost) {
+		sendTextMessage(MESSAGE_FAILURE, fmt::format("You need {} dust to shape this perk (you currently have {}).", cost, getForgeDusts()));
+		return;
+	}
+	const auto rolled = rollWeaponProficiencyPerks(1);
+	if (rolled.empty()) {
+		sendTextMessage(MESSAGE_FAILURE, "There is no perk available to shape for your vocation.");
+		return;
+	}
+	removeForgeDusts(cost);
+	// Rank 0 is the catalogue's base magnitude; Refine raises it up to rank 10.
+	proficiency.modifiedSlots.push_back({ storedLevel, storedPosition, rolled.front(), 0 });
+	applyEquippedWeaponProficiency(itemId);
+	sendWeaponProficiencyInfo(itemId);
+}
+
+void Player::refineWeaponProficiencySlot(const uint16_t itemId, const uint8_t proficiencyLevel, const uint8_t perkPosition) {
+	static constexpr uint8_t MAX_RANK = 10;
+	auto it = weaponProficiencies.find(itemId);
+	if (it == weaponProficiencies.end()) {
+		sendTextMessage(MESSAGE_FAILURE, "You have no proficiency progress on this weapon.");
+		return;
+	}
+	const auto &tile = getTile();
+	if (!tile || !tile->hasFlag(TILESTATE_PROTECTIONZONE)) {
+		sendTextMessage(MESSAGE_FAILURE, "You can only refine proficiency slots inside a protection zone.");
+		return;
+	}
+	const uint8_t storedLevel = static_cast<uint8_t>(proficiencyLevel + 1);
+	const uint8_t storedPosition = static_cast<uint8_t>(perkPosition + 1);
+	auto &proficiency = it->second;
+	WeaponProficiencyModifiedSlot* slot = nullptr;
+	for (auto &candidate : proficiency.modifiedSlots) {
+		if (candidate.proficiencyLevel == storedLevel && candidate.perkPosition == storedPosition) {
+			slot = &candidate;
+			break;
+		}
+	}
+	if (!slot) {
+		sendTextMessage(MESSAGE_FAILURE, "That slot has not been modified yet.");
+		return;
+	}
+	if (slot->value >= MAX_RANK) {
+		sendTextMessage(MESSAGE_FAILURE, "This perk is already at its maximum rank.");
+		return;
+	}
+	// 15.30 (official refine costs): rank 1 costs 125 dust and every further rank 75 more (200, 275, ... 800 for rank 10).
+	const uint64_t refineCost = 125 + 75 * static_cast<uint64_t>(slot->value);
+	if (getForgeDusts() < refineCost) {
+		sendTextMessage(MESSAGE_FAILURE, fmt::format("You need {} dust to refine this perk (you currently have {}).", refineCost, getForgeDusts()));
+		return;
+	}
+	removeForgeDusts(refineCost);
+	++slot->value;
+	applyEquippedWeaponProficiency(itemId);
+	sendWeaponProficiencyInfo(itemId);
+}
+
+void Player::maximiseWeaponProficiencySlot(const uint16_t itemId, const uint8_t proficiencyLevel, const uint8_t perkPosition) {
+	// TODO(15.25): official client charges 1 special tradeable item; not in data yet, so just set to max.
+	static constexpr uint8_t MAX_RANK = 10;
+	auto it = weaponProficiencies.find(itemId);
+	if (it == weaponProficiencies.end()) {
+		sendTextMessage(MESSAGE_FAILURE, "You have no proficiency progress on this weapon.");
+		return;
+	}
+	const auto &tile = getTile();
+	if (!tile || !tile->hasFlag(TILESTATE_PROTECTIONZONE)) {
+		sendTextMessage(MESSAGE_FAILURE, "You can only shape proficiency slots inside a protection zone.");
+		return;
+	}
+	const uint8_t storedLevel = static_cast<uint8_t>(proficiencyLevel + 1);
+	const uint8_t storedPosition = static_cast<uint8_t>(perkPosition + 1);
+	auto &proficiency = it->second;
+	WeaponProficiencyModifiedSlot* slot = nullptr;
+	for (auto &candidate : proficiency.modifiedSlots) {
+		if (candidate.proficiencyLevel == storedLevel && candidate.perkPosition == storedPosition) {
+			slot = &candidate;
+			break;
+		}
+	}
+	if (!slot) {
+		sendTextMessage(MESSAGE_FAILURE, "That slot has not been modified yet.");
+		return;
+	}
+	if (slot->value >= MAX_RANK) {
+		sendTextMessage(MESSAGE_FAILURE, "This perk is already at its maximum rank.");
+		return;
+	}
+	slot->value = MAX_RANK;
+	applyEquippedWeaponProficiency(itemId);
+	sendWeaponProficiencyInfo(itemId);
+}
+
+void Player::clearWeaponProficiencySlot(const uint16_t itemId, const uint8_t proficiencyLevel, const uint8_t perkPosition) {
+	auto it = weaponProficiencies.find(itemId);
+	if (it == weaponProficiencies.end()) {
+		sendTextMessage(MESSAGE_FAILURE, "You have no proficiency progress on this weapon.");
+		return;
+	}
+	const auto &tile = getTile();
+	if (!tile || !tile->hasFlag(TILESTATE_PROTECTIONZONE)) {
+		sendTextMessage(MESSAGE_FAILURE, "You can only shape proficiency slots inside a protection zone.");
+		return;
+	}
+	const uint8_t storedLevel = static_cast<uint8_t>(proficiencyLevel + 1);
+	const uint8_t storedPosition = static_cast<uint8_t>(perkPosition + 1);
+	auto &proficiency = it->second;
+	const auto removed = std::erase_if(proficiency.modifiedSlots, [storedLevel, storedPosition](const WeaponProficiencyModifiedSlot &s) {
+		return s.proficiencyLevel == storedLevel && s.perkPosition == storedPosition;
+	});
+	if (removed == 0) {
+		sendTextMessage(MESSAGE_FAILURE, "That slot has not been modified.");
+		return;
+	}
+	applyEquippedWeaponProficiency(itemId);
+	sendWeaponProficiencyInfo(itemId);
+}
+
+void Player::reshapeWeaponProficiencySlot(const uint16_t itemId, const uint8_t proficiencyLevel, const uint8_t perkPosition) {
+	static constexpr uint8_t RESHAPE_OFFER_COUNT = 3;
+	static constexpr uint64_t RESHAPE_DUST_COST = 250;
+	auto it = weaponProficiencies.find(itemId);
+	if (it == weaponProficiencies.end()) {
+		sendTextMessage(MESSAGE_FAILURE, "You have no proficiency progress on this weapon.");
+		return;
+	}
+	const auto &tile = getTile();
+	if (!tile || !tile->hasFlag(TILESTATE_PROTECTIONZONE)) {
+		sendTextMessage(MESSAGE_FAILURE, "You can only shape proficiency slots inside a protection zone.");
+		return;
+	}
+	const uint8_t storedLevel = static_cast<uint8_t>(proficiencyLevel + 1);
+	const uint8_t storedPosition = static_cast<uint8_t>(perkPosition + 1);
+	auto &proficiency = it->second;
+	WeaponProficiencyModifiedSlot* slot = nullptr;
+	for (auto &candidate : proficiency.modifiedSlots) {
+		if (candidate.proficiencyLevel == storedLevel && candidate.perkPosition == storedPosition) {
+			slot = &candidate;
+			break;
+		}
+	}
+	if (!slot) {
+		sendTextMessage(MESSAGE_FAILURE, "That slot has not been modified yet.");
+		return;
+	}
+	if (getForgeDusts() < RESHAPE_DUST_COST) {
+		sendTextMessage(MESSAGE_FAILURE, fmt::format("You need {} dust to reshape this perk (you currently have {}).", RESHAPE_DUST_COST, getForgeDusts()));
+		return;
+	}
+	removeForgeDusts(RESHAPE_DUST_COST);
+	proficiency.pendingReshapeLevel = storedLevel;
+	proficiency.pendingReshapePosition = storedPosition;
+	// Three distinct offers from this vocation's option list, never the perk already sitting in the slot.
+	proficiency.pendingReshapeOffers = rollWeaponProficiencyPerks(RESHAPE_OFFER_COUNT, { slot->perkType });
+	sendWeaponProficiencyReshapeOffers(itemId);
+}
+
+void Player::pickReshapeWeaponProficiencyOffer(const uint16_t itemId, const uint8_t offerIndex) {
+	// 15.25: the client sends the 0-based index of the clicked offer (left=0/middle=1/right=2).
+	auto it = weaponProficiencies.find(itemId);
+	if (it == weaponProficiencies.end()) {
+		return;
+	}
+	auto &proficiency = it->second;
+	if (proficiency.pendingReshapeOffers.empty()) {
+		return;
+	}
+	if (static_cast<size_t>(offerIndex) >= proficiency.pendingReshapeOffers.size()) {
+		return;
+	}
+	const auto chosen = proficiency.pendingReshapeOffers[offerIndex];
+	WeaponProficiencyModifiedSlot* slot = nullptr;
+	for (auto &candidate : proficiency.modifiedSlots) {
+		if (candidate.proficiencyLevel == proficiency.pendingReshapeLevel && candidate.perkPosition == proficiency.pendingReshapePosition) {
+			slot = &candidate;
+			break;
+		}
+	}
+	if (!slot) {
+		proficiency.pendingReshapeOffers.clear();
+		return;
+	}
+	slot->perkType = chosen;
+	proficiency.pendingReshapeOffers.clear();
+	proficiency.pendingReshapeLevel = 0;
+	proficiency.pendingReshapePosition = 0;
+	applyEquippedWeaponProficiency(itemId);
+	sendWeaponProficiencyInfo(itemId);
+}
+
 void Player::resetAllWeaponProficiencyPerks(const uint16_t itemId) {
 	auto it = weaponProficiencies.find(itemId);
 	if (it == weaponProficiencies.end()) {
@@ -12616,7 +13433,7 @@ void Player::applyEquippedWeaponProficiency(const uint16_t itemId) {
 				continue;
 			}
 
-			if (perk.perkValue < 0.0f) {
+			if (perk.perkValue < 0.0f && perk.perkType != PROFICIENCY_PERK_AUGMENT_TYPE) {
 				continue;
 			}
 
@@ -12862,6 +13679,101 @@ void Player::applyEquippedWeaponProficiency(const uint16_t itemId) {
 		}
 	}
 
+	// 15.30 SHAPE: apply the dust-shaped slots on top of the tree perks. modSlot.perkType is a CLIENT CATALOGUE INDEX
+	// (1-323, see WEAPON_PROFICIENCY_SHAPE_* in proficiencies_definitions.hpp) and modSlot.value its rank 0-10. Both
+	// decode exactly like the client (Proficiencies::decodeShapeIndex mirrors its index decoder and rank curves), so
+	// the bonus the player reads in the Shape dialog is the bonus the server applies.
+	sanitizeWeaponProficiencyShapes(itemId);
+	const auto highestCombatSkill = [this]() {
+		// "Highest combat skill" = the best of fist, club, sword, axe, distance and magic level.
+		skills_t best = SKILL_FIST;
+		uint16_t bestLevel = 0;
+		for (const skills_t skill : { SKILL_FIST, SKILL_CLUB, SKILL_SWORD, SKILL_AXE, SKILL_DISTANCE, SKILL_MAGLEVEL }) {
+			const uint16_t level = getSkillLevel(skill);
+			if (level > bestLevel) {
+				bestLevel = level;
+				best = skill;
+			}
+		}
+		return best;
+	};
+	for (const auto &modSlot : playerProficiencyData.modifiedSlots) {
+		const auto entry = Proficiencies::decodeShapeIndex(static_cast<uint16_t>(modSlot.perkType));
+		if (!entry.valid) {
+			g_logger().warn("[{}] Player {} weapon {}: unknown shaped perk index {}", __FUNCTION__, getName(), itemId, static_cast<uint16_t>(modSlot.perkType));
+			continue;
+		}
+		const float value = entry.valueAtRank(modSlot.value);
+		switch (entry.perkType) {
+			case PROFICIENCY_PERK_AUGMENT_TYPE: {
+				WeaponProficiencyAugment augment;
+				augment.spellId = entry.spellId;
+				augment.augmentType = entry.augmentType;
+				augment.value = value;
+				equippedWeaponProficiency.spellAugments.push_back(augment);
+				break;
+			}
+			case PROFICIENCY_PERK_BESTIARY_DAMAGE: {
+				equippedWeaponProficiency.bestiaryRacePercentDamageGain += value;
+				equippedWeaponProficiency.bestiaryId = entry.bestiaryId; // single-slot field: the last decoded race wins
+				break;
+			}
+			case PROFICIENCY_PERK_CRITICAL_HIT_CHANCE_FOR_OFFENSIVE_RUNES: {
+				equippedWeaponProficiency.critHitChanceForOffensiveRunes += static_cast<uint16_t>(value * 10000.0f);
+				break;
+			}
+			case PROFICIENCY_PERK_CRITICAL_HIT_CHANCE_FOR_AUTOATTACK: {
+				equippedWeaponProficiency.critHitChanceForAutoAttack += static_cast<uint16_t>(value * 10000.0f);
+				break;
+			}
+			case PROFICIENCY_PERK_CRITICAL_EXTRA_DAMAGE_FOR_OFFENSIVE_RUNES: {
+				equippedWeaponProficiency.critExtraDamageForOffensiveRunes += static_cast<uint16_t>(value * 10000.0f);
+				break;
+			}
+			case PROFICIENCY_PERK_CRITICAL_EXTRA_DAMAGE_FOR_AUTOATTACK: {
+				equippedWeaponProficiency.critExtraDamageForAutoAttack += static_cast<uint16_t>(value * 10000.0f);
+				break;
+			}
+			case PROFICIENCY_PERK_LIFE_GAIN_ONHIT: {
+				equippedWeaponProficiency.lifeGainOnHit += static_cast<uint8_t>(value);
+				break;
+			}
+			case PROFICIENCY_PERK_MANA_GAIN_ONKILL: {
+				equippedWeaponProficiency.manaGainOnKill += static_cast<uint8_t>(value);
+				break;
+			}
+			case PROFICIENCY_PERK_LIFE_GAIN_ONKILL: {
+				equippedWeaponProficiency.lifeGainOnKill += static_cast<uint8_t>(value);
+				break;
+			}
+			case PROFICIENCY_PERK_HIGHEST_COMBAT_SKILL_PERCENTAGE_AS_EXTRA_DAMAGE_FOR_AUTOATTACK: {
+				equippedWeaponProficiency.skillPercentageAsExtraDamageForAutoAttack[highestCombatSkill()] += value;
+				break;
+			}
+			case PROFICIENCY_PERK_HIGHEST_COMBAT_SKILL_PERCENTAGE_AS_EXTRA_DAMAGE_FOR_SPELLS: {
+				equippedWeaponProficiency.skillPercentageAsExtraDamageForSpells[highestCombatSkill()] += value;
+			}
+			case PROFICIENCY_PERK_HIGHEST_COMBAT_SKILL_PERCENTAGE_AS_EXTRA_HEALING_FOR_SPELLS: {
+				equippedWeaponProficiency.skillPercentageAsExtraHealingForSpells[highestCombatSkill()] += value;
+				break;
+			}
+			case PROFICIENCY_PERK_ALPHA_STRIKE_EXTRA_DAMAGE: {
+				equippedWeaponProficiency.alphaStrikeExtraDamage += value;
+				break;
+			}
+			case PROFICIENCY_PERK_OMEGA_STRIKE_EXTRA_DAMAGE: {
+				equippedWeaponProficiency.omegaStrikeExtraDamage += value;
+				break;
+			}
+			case PROFICIENCY_PERK_ARMOR_PENETRATION: {
+				equippedWeaponProficiency.armorPenetration += value;
+				break;
+			}
+			default:
+				break;
+		}
+	}
+
 	sendStats();
 	sendSkills();
 }
@@ -12887,7 +13799,7 @@ void Player::removeEquippedWeaponProficiency(const uint16_t itemId) {
 
 bool Player::canExiva(const std::string &spellParam) const {
 	const bool restrictOnlyOptional = g_configManager().getBoolean(EXIVA_RESTRICTIONS_ONLY_OPTIONAL_WORLDS);
-	const bool isOptionalWorld = g_game().getWorldType() == WORLDTYPE_OPTIONAL;
+	const bool isOptionalWorld = g_game().worlds().getCurrentWorld()->type == WORLDTYPE_OPTIONAL;
 
 	if (restrictOnlyOptional && !isOptionalWorld) {
 		return true;

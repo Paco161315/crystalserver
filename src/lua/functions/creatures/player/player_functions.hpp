@@ -41,6 +41,7 @@ class PlayerFunctions {
 	static int luaPlayerIsPlayer(lua_State* L);
 
 	static int luaPlayerGetGuid(lua_State* L);
+	static int luaPlayerGetSpellAimPosition(lua_State* L);
 	static int luaPlayerGetIp(lua_State* L);
 	static int luaPlayerGetAccountId(lua_State* L);
 	static int luaPlayerGetLastLoginSaved(lua_State* L);
@@ -121,6 +122,13 @@ class PlayerFunctions {
 
 	static int luaPlayerGetKills(lua_State* L);
 	static int luaPlayerSetKills(lua_State* L);
+	static int luaPlayerSendCreatureSquare(lua_State* L);
+	static int luaPlayerSendDiscoveryData(lua_State* L);
+	static int luaPlayerSendDiscoveryCurrentArea(lua_State* L);
+	static int luaPlayerSendDiscoveryExploring(lua_State* L);
+	static int luaPlayerSendDiscoveryDonations(lua_State* L);
+	static int luaPlayerSendDiscoveryArea(lua_State* L);
+	static int luaPlayerCheckNewTitles(lua_State* L);
 
 	static int luaPlayerGetFreeCapacity(lua_State* L);
 
@@ -295,6 +303,7 @@ class PlayerFunctions {
 	static int luaPlayerGetTransferableCoins(lua_State* L);
 	static int luaPlayerAddTransferableCoins(lua_State* L);
 	static int luaPlayerRemoveTransferableCoins(lua_State* L);
+	static int luaPlayerRemoveTransferableAndTibiaCoins(lua_State* L);
 
 	static int luaPlayerSendBlessStatus(lua_State* L);
 	static int luaPlayerHasBlessing(lua_State* L);
@@ -318,6 +327,7 @@ class PlayerFunctions {
 	static int luaPlayerPopupFYI(lua_State* L);
 
 	static int luaPlayerIsPzLocked(lua_State* L);
+	static int luaPlayerAddInFightTicks(lua_State* L);
 	static int luaPlayerIsOffline(lua_State* L);
 
 	static int luaPlayerGetClient(lua_State* L);
@@ -457,6 +467,9 @@ class PlayerFunctions {
 
 	static int luaPlayersendBannerType(lua_State* L);
 	static int luaPlayerSendQuestStatusUpdate(lua_State* L);
+	static int luaPlayerSendLeaderMonsterKilledBanner(lua_State* L);
+	static int luaPlayerAddLeaderMonsterKill(lua_State* L);
+	static int luaPlayerHasKilledLeaderMonster(lua_State* L);
 
 	static int luaPlayerSendIconBakragore(lua_State* L);
 	static int luaPlayerRemoveIconBakragore(lua_State* L);
@@ -475,10 +488,16 @@ class PlayerFunctions {
 	static int luaPlayerSetSereneCooldown(lua_State* L);
 	static int luaPlayerGetVirtue(lua_State* L);
 	static int luaPlayerSetVirtue(lua_State* L);
+	static int luaPlayerGetStance(lua_State* L);
+	static int luaPlayerSetStance(lua_State* L);
+	static int luaPlayerGetElementalStance(lua_State* L);
+	static int luaPlayerSetElementalStance(lua_State* L);
 
 	static int luaPlayerApplyImbuementScrollToItem(lua_State* L);
 	static int luaPlayerOnClearAllImbuementsOnEtcher(lua_State* L);
 	static int luaPlayerSendWeaponProficiencyExperience(lua_State* L);
+	static int luaPlayerSendBossDifficultySelection(lua_State* L);
+	static int luaPlayerSendCyclopediaDiscoveryTest(lua_State* L);
 
 	static int luaPlayerGetMapShader(lua_State* L);
 	static int luaPlayerSetMapShader(lua_State* L);
